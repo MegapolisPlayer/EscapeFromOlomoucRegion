@@ -1,3 +1,8 @@
+html, body {
+    margin: 0 !important;
+    padding: 10px !important;
+}
+
 body {
 	background-color: #009999;
 	color: #ffffff;
@@ -9,4 +14,28 @@ body {
 h {
 	font-size: 50px;
 	font-weight: bolder;
+}
+
+button {
+	font-size: 50px;
+	font-weight: normal;
+	padding: 5px;
+	font-family: Arial, FreeSans;
+	background-color: white;
+    color: #000080;
+}
+
+#draw_contain {
+	position: relative;
+}
+
+#draw {
+   position: absolute;
+   z-index: -1;
+}
+
+.draw_input_elem {
+    position: absolute;
+	font-family: Arial, FreeSans;
+	text-align: center;
 }

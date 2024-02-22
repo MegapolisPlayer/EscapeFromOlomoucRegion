@@ -3,12 +3,59 @@
 	<head>
 		<title>Escape from Olomouc Region 2.0</title>
 		<link rel="stylesheet" href="./landing.css">
+
+		<!-- basic -->
+		<script src="./javascript/declaration.js"></script>
+		<script src="./javascript/errorHandling.js"></script>
+
+		<!-- audiovisual stuff -->
+		<script src="./javascript/audioHandler.js"></script>
+		<script src="./javascript/canvasHandler.js"></script>
+
+		<!-- minigames -->
+		<script src="./javascript/minigames/waiter.js"></script>
+		<script src="./javascript/minigames/bench.js"></script>
+
+		<script src="./javascript/minigames/fishing.js"></script>
+		<script src="./javascript/minigames/bushelp.js"></script>
+
+		<script src="./javascript/minigames/dialect.js"></script>
+		<script src="./javascript/minigames/tickets.js"></script>
+		
+		<script src="./javascript/minigames/cashier.js"></script>
+
+		<script src="./javascript/minigames/cheesemaking.js"></script>
+		
+		<script src="./javascript/minigames/defense.js"></script>
+
+		<!-- cities -->
+		<script src="./javascript/cities/hranice.js"></script>
+		<script src="./javascript/cities/prerov.js"></script>
+		<script src="./javascript/cities/nezamyslice.js"></script>
+		<script src="./javascript/cities/prostejov.js"></script>
+		<script src="./javascript/cities/olomouc.js"></script>
+		<script src="./javascript/cities/studenka.js"></script>
+		<script src="./javascript/cities/ostrava.js"></script>
+		<!-- basically katowice -->
+		<script src="./javascript/credits.js"></script>
+
+		<script src="./javascript/saveload.js"></script>
+		<script src="./javascript/pause.js"></script>
+
+		<script src="./javascript/gameHandler.js"></script>
+
+		<script src="./javascript/main.js"></script>
 	</head>
-	<body>
+	<body onload="initWebpage()">
 		<h>Escape from the Olomouc Region</h>
 		<p>
 			This game is currently being updated.<br>
 			To play the old version (1.00) click <a href="https://megapolisplayer.github.io/game/escape_old/">HERE.</a><br>
+			<b>This version may be unstable, have bugs, gaps in content and more.</b><br>
 		</p>
+
+		<div id="draw_contain">
+		<canvas id="draw">This game is not playable without support for the HTML canvas.</canvas>
+		</div>
 	</body>
 </html>
