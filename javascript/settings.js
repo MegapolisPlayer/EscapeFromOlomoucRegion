@@ -1,0 +1,6 @@
+function renderSettings() {
+
+}
+function clearSettings() {
+
+}

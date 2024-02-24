@@ -1,0 +1,7 @@
+function loadGame() {
+
+}
+
+function saveGame() {
+	
+}

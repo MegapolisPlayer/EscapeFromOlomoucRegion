@@ -13,7 +13,6 @@ function canvasInit() {
 	ctx.lineWidth = 1;
 
 }
-
 function canvasFullscreen(afunc) {
 	canvas.width = window.screen.width;
 	canvas.height = window.screen.height;
@@ -22,7 +21,6 @@ function canvasFullscreen(afunc) {
 
 	if(afunc !== undefined) { afunc(); }
 }
-
 function canvasOriginal(afunc) {
 	canvas.width = 1000;
 	canvas.height = 500;
@@ -41,23 +39,46 @@ function canvasY(yvalue) {
 
 function canvasSetColor(color) {
 	ctx.fillStyle = color;
+}
+function canvasSetBorder(color) {
 	ctx.strokeStyle = color;
 }
+
 function canvasSetFont(font, fontsize, weight = "normal") {
-	ctx.font = weight+" "+fontsize+"px "+font;
+	canvas_fontFamily = font;
+	canvas_fontSize = String(fontsize);
+	canvas_fontWeight = weight;
+	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
+}
+function canvasSetFontFamily(fontfamily) {
+	canvas_fontFamily = fontfamily;
+	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
+}
+function canvasSetFontSize(fontsize) {
+	canvas_fontSize = String(fontsize);
+	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
+}
+function canvasSetFontWeight(weight) {
+	canvas_fontWeight = weight;
+	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
 
 function canvasClear(clearcolor) {
+	let temp = ctx.fillStyle;
 	ctx.fillStyle = clearcolor;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = temp;
 }
 
 function canvasTextS(text, x, y) {
 	ctx.fillText(text, x, y);
 }
-//TODO: align with normal text
 function canvasTextBorderS(text, x, y) {
-	ctx.strokeText(text, x, y);
+	ctx.strokeText(text, x - ctx.lineWidth, y - ctx.lineWidth);
+}
+function canvasTextAndBorderS(text, x, y) {
+	ctx.strokeText(text, x - ctx.lineWidth, y - ctx.lineWidth);
+	ctx.fillText(text, x, y);
 }
 
 function canvasTextM(text, x, y) {
@@ -88,7 +109,7 @@ function canvasTextBorderM(text, x, y) {
 //returns image
 async function loadImage(filename) {
 	let temp;
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve) => {
         temp = new Image();
         temp.src = filename;
         temp.onload = resolve;
@@ -99,7 +120,20 @@ async function loadImage(filename) {
 	return temp;
 }
 
-function canvasImage(image, x, y, sizex, sizey) {
+function waiterEventFromElement(element, event) {
+	//in promise: first arg resolve, then reject
+	return new Promise((resolve) => {
+	  const listener = () => {
+		element.removeEventListener(event, listener); resolve();
+	  }
+	  element.addEventListener(event, listener);
+	})
+}
+
+function canvasImage(image, x, y, scale) {
+	ctx.drawImage(image, x, y, image.width * scale, image.height * scale);
+}
+function canvasImageD(image, x, y, sizex, sizey) {
 	ctx.drawImage(image, x, y, sizex, sizey);
 }
 
@@ -107,7 +141,8 @@ function canvasImage(image, x, y, sizex, sizey) {
 // BUTTONS
 //
 
-function addButton(id, text, x, y, sizex, sizey) {
+//returns said button
+function addButton(id, text, x, y, sizex, sizey, fn) {
 	let btn = document.createElement("button");
 	
 	btn.className = "draw_input_elem";
@@ -119,14 +154,36 @@ function addButton(id, text, x, y, sizex, sizey) {
 	btn.style.setProperty("left", x+"px");
 	btn.style.setProperty("top", y+"px");
 
+	btn.addEventListener("click", fn);
+
 	document.getElementById("draw_contain").appendChild(btn);
+
+	return btn;
 }
 function removeButton(id) {
-	let btn = document.getElementById(id);
-	btn.parentElement.removeChild(btn);
+	document.getElementById(id).remove();
 }
 
 //
 // CHARACTERS
 //
 
+async function loadCharacter(charname) {
+	characters.push(await loadImage("assets/characters/"+charname+".png"));
+}
+async function loadPlayer(pname) {
+	players.push(await loadImage("assets/characters/p_"+pname+".png"));
+}
+async function loadCharacters() {
+	await loadPlayer("default");
+	await loadPlayer("winter");
+	await loadPlayer("girl");
+	await loadPlayer("girl_2");
+
+	await loadCharacter("army");
+	await loadCharacter("cook");
+	await loadCharacter("station");
+	await loadCharacter("train");
+	await loadCharacter("translator");
+	await loadCharacter("utility");
+}
