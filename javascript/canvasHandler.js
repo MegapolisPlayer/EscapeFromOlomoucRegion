@@ -160,6 +160,24 @@ function addButton(id, text, x, y, sizex, sizey, fn) {
 
 	return btn;
 }
+function addSmallButton(id, text, x, y, sizex, sizey, fn) {
+	let btn = document.createElement("button");
+	
+	btn.className = "draw_input_elem_small";
+	btn.id = id;
+	btn.innerHTML = text;
+
+	btn.style.setProperty("width", sizex+"px");
+	btn.style.setProperty("height", sizey+"px");
+	btn.style.setProperty("left", x+"px");
+	btn.style.setProperty("top", y+"px");
+
+	btn.addEventListener("click", fn);
+
+	document.getElementById("draw_contain").appendChild(btn);
+
+	return btn;
+}
 function removeButton(id) {
 	document.getElementById(id).remove();
 }
@@ -175,15 +193,48 @@ async function loadPlayer(pname) {
 	players.push(await loadImage("assets/characters/p_"+pname+".png"));
 }
 async function loadCharacters() {
-	await loadPlayer("default");
-	await loadPlayer("winter");
-	await loadPlayer("girl");
-	await loadPlayer("girl_2");
+	const promise = new Promise((resolve) => {
+		loadPlayer("default");
+		loadPlayer("winter");
+		loadPlayer("girl");
+		loadPlayer("girl_2");
+		loadCharacter("army");
+		loadCharacter("cook");
+		loadCharacter("station");
+		loadCharacter("train");
+		loadCharacter("translator");
+		loadCharacter("utility");
+		resolve();
+	});
 
-	await loadCharacter("army");
-	await loadCharacter("cook");
-	await loadCharacter("station");
-	await loadCharacter("train");
-	await loadCharacter("translator");
-	await loadCharacter("utility");
+	await promise; return;
+}
+
+//
+// LOADING
+//
+
+function canvasLoading(messageoverride = null) {
+	canvasClear("purple");
+	canvasTextS(((messageoverride == null) ? getTranslation(0) : messageoverride), canvasX(10), canvasY(10));
+	canvasSetFontSize(20);
+
+	canvasTextS("Translations", canvasX(10), canvasY(15));
+	canvasTextS("Music", canvasX(10), canvasY(20));
+	canvasTextS("SFX", canvasX(10), canvasY(25));
+	canvasTextS("Voice", canvasX(10), canvasY(30));
+	canvasTextS("Characters", canvasX(10), canvasY(35));
+}
+
+function canvasLoadingDone(place) {
+	let message;
+	switch(place) {
+		case(0): message = "Translations"; break;
+		case(1): message = "Music"; break;
+		case(2): message = "SFX"; break;
+		case(3): message = "Voice"; break;
+		case(4): message = "Characters"; break;
+	}
+
+	canvasTextS(message+" done", canvasX(10), canvasY(15 + (place * 5)));
 }

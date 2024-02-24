@@ -17,7 +17,6 @@ h {
 }
 
 button {
-	font-size: 35px;
 	font-weight: normal;
 	padding: 5px;
 	font-family: Arial, FreeSans;
@@ -35,7 +34,15 @@ button {
 }
 
 .draw_input_elem {
+	font-size: 35px;
     position: absolute;
 	font-family: Arial, FreeSans;
 	text-align: center;
+}
+.draw_input_elem_small {
+	font-size: 25px;
+	position: absolute;
+	font-family: Arial, FreeSans;
+	text-align: center;
+	padding: 1px;
 }
