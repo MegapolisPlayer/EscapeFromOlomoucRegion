@@ -1,49 +1,53 @@
-let musicURI = [
-	//main menu
-	"assets/music/Stormfront.mp3",
-	//intro
-	"assets/music/Faceoff.mp3",
-	//HNM
-	"assets/music/ImpendingBoom.mp3",
-	//Prerov
-	"assets/music/Nerves.mp3",
-	//Nezamyslice
-	"assets/music/LateNightRadio.mp3",
-	//Prostejov
-	"assets/music/StringImpromptu1.mp3",
-	//Olomouc
-	"assets/music/RoyalCoupling.mp3",
-	//Studenka
-	"assets/music/FailingDefense.mp3",
-	//Ostrava
-	"assets/music/TheParting.mp3",
-	//Credits
-	"assets/music/StartingOutWaltzVivace.mp3",
-	//Waiter mg
-	"assets/music/AlmostBliss.mp3",
-	//Fishing mg
-	"assets/music/PorchSwingDays.mp3",
-	//ticket check mg
-	"assets/music/Rollinat5.mp3",
-	//Direction help (Prerov BUS, Nezamyslice TRAIN) mg
-	"assets/music/CalltoAdventure.mp3",
-	//Dialect mg
-	"assets/music/DevonshireWaltzAllegretto.mp3",
-	//Cashier mg
-	"assets/music/Nonstop.mp3",
-	//Cleaning mg
-	"assets/music/Cipher.mp3",
-	//Cheesemaking in olomouc mg
-	"assets/music/NeonLaserHorizon.mp3",
-	//Defense mg
-	"assets/music/FiveArmies.mp3",
-	//wagon cutscenes
-	"assets/music/Pride.mp3"
+//audio crediting system
+let musicNames = [
+	//0, Main menu
+	"Stormfront",
+	//1, Intro
+	"Faceoff",
+	//2, HNM
+	"Impending Boom",
+	//3, Prerov
+	"Nerves",
+	//4, Nezamyslice
+	"Late Night Radio",
+	//5, Prostejov
+	"String Impromptu 1",
+	//6, Olomouc
+	"Royal Coupling",
+	//7, Studenka
+	"Failing Defense",
+	//8, Ostrava
+	"The Parting",
+	//9, Credits
+	"Starting Out Waltz Vivace",
+	//10, Waiter mg
+	"Almost Bliss",
+	//11, Fishing mg
+	"Porch Swing Days",
+	//12, Ticket check mg
+	"Rollin at 5",
+	//13, Direction help (Prerov BUS, Nezamyslice TRAIN) mg
+	"Call to Adventure",
+	//14, Dialect mg
+	"Devonshire Waltz Allegretto",
+	//15, Cashier mg
+	"Nonstop",
+	//16, Cleaning mg
+	"Cipher",
+	//17, Cheesemaking in olomouc mg
+	"Neon Laser Horizon",
+	//18, Defense mg
+	"Five Armies",
+	//19, wagon cutscenes
+	"Pride"
 ];
+
+let musicURI = [];
 
 async function loadMusic(toload) {
 	if(musicArray.length === 0) {
-		for(let i = 0; i < musicURI.length; i++) {
+		for(let i = 0; i < musicNames.length; i++) {
+			musicURI.push("assets/music/"+(musicNames[i].replaceAll(' ', ''))+".mp3");
 			musicArray.push(new Audio());
 		}
 	}
@@ -114,11 +118,11 @@ function audioToggle(elem) {
 	if(audioIsOn) {
 		musicArray[musicCurrent].pause();
 		audioIsOn = false;
-		elem.innerHTML = getTranslation(7);
+		elem.innerHTML = getTranslation(8);
 	}
 	else {
 		audioIsOn = true;
-		elem.innerHTML = getTranslation(8);
+		elem.innerHTML = getTranslation(9);
 	}
 }
 
@@ -142,6 +146,7 @@ function musicPlay(id) {
 	if(id >= musicArray.length || id == undefined) {
 		errorHandle("Music ID undefined or out of range.");
 	}
+	musicStop(musicCurrent);
 	musicCurrent = id;
 	if(!audioIsOn) { 
 		musicArray[id].pause();	return;
@@ -178,4 +183,8 @@ function voicePlay(id) {
 	}
 	if(!audioIsOn) { return; }
 	getVoiceTranslation(id).play();
+}
+
+function getTranslationAndVoice(id) {
+	voicePlay(id); return getTranslation(id);
 }

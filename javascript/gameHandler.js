@@ -4,89 +4,113 @@ let mainMenuImage;
 
 async function renderMainMenu() {
 	mainMenuImage = await loadImage("assets/photo/hnm/namesti.jpg");
-	canvasImageD(mainMenuImage, 0, 0, canvas.width, canvas.height);
+	canvasBackground(mainMenuImage);
 
 	//render text
-	canvasSetFontSize(48);
+	canvasSetLargeFont();
 	canvasSetColor("#000080");
 	canvasSetBorder("#ffffff");
-	canvasTextBorderS("Escape from the Olomouc Region", canvasX(5), canvasY(10));
-	canvasTextS("Escape from the Olomouc Region", canvasX(5), canvasY(10));
+	canvasTextBorderS(getTranslation(1), 5, 10);
+	canvasTextS(getTranslation(1), 5, 10);
 
 	canvasSetColor("#ffffff");
-	canvasSetFontSize(20);
+	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 25.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", canvasX(3), canvasY(90));
+	canvasTextM("Version 2.00-build1, 25.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
-	canvasImage(players[0], canvasX(20), canvasY(50), 0.15);
-	canvasImage(players[1], canvasX(30), canvasY(50), 0.15);
-	canvasImage(players[2], canvasX(45), canvasY(50), 0.15);
-	canvasImage(players[3], canvasX(55), canvasY(55), 0.15);
+	canvasImage(players[0], 20, 50, characterSizeMultiplier);
+	canvasImage(players[1], 30, 50, characterSizeMultiplier);
+	canvasImage(players[2], 45, 50, characterSizeMultiplier);
+	canvasImage(players[3], 55, 50, characterSizeMultiplier);
 
 	//play buttons
 	addButton(
-	"load", getTranslation(3), canvasX(65), canvasY(30), canvasX(30), canvasY(15),
-	(e) => { console.log("MM btn Load Game pressed"); loadGame(); }
+		"load", getTranslation(4), 65, 35, 30, 10,
+		(e) => { console.log("MM btn Load Game pressed"); loadGame(); }
 	);
 	addButton(
-	"settings", getTranslation(4), canvasX(65), canvasY(45), canvasX(30), canvasY(15),
-	(e) => { console.log("MM btn Settings pressed"); renderSettings(); }
+		"settings", getTranslation(5), 65, 45, 30, 10,
+		(e) => { console.log("MM btn Settings pressed"); renderSettings(); }
 	);
 	addButton(
-	"credits", getTranslation(5), canvasX(65), canvasY(60), canvasX(30), canvasY(15),
-	(e) => { console.log("MM btn Credits pressed"); clearMainMenu(); renderCredits(); } 
+		"credits", getTranslation(6), 65, 55, 30, 10,
+		(e) => { console.log("MM btn Credits pressed"); clearMainMenu(); renderCredits(); } 
 	); //reloads window
 	
 	//audio buttons
 	addButton(
-		"audio", getTranslation(7), canvasX(65), canvasY(75), canvasX(30), canvasY(15),
+		"audio", getTranslation(8), 65, 65, 30, 10,
 		(e) => { console.log("MM audio btn pressed"); musicRestart(0); audioToggle(e.target); musicPlay(0); }
 	);
 	
-	//wait until PLAY button pressed
-	await waiterEventFromElement(
-		addButton(
-		"play", getTranslation(2), canvasX(65), canvasY(15), canvasX(30), canvasY(15),
-		(e) => {console.log("MM btn Play pressed"); }
-	), "click");
+	let promises = [];
 
-}	
-async function clearMainMenu() {
+	promises.push(waiterEventFromElement(
+		addButton(
+		"play", getTranslation(2), 65, 15, 30, 10,
+		(e) => { info.speedrun = false; console.log("MM btn Play pressed"); }
+	), "click"));
+	promises.push(waiterEventFromElement(
+		addButton(
+		"speedrun", getTranslation(3), 65, 25, 30, 10,
+		(e) => { info.speedrun = true; console.log("MM btn Speedrun pressed"); } 
+	), "click"));
+
+	await Promise.any(promises);
+}
+function showMainMenu() {
+	showButton("play");
+	showButton("speedrun");
+	showButton("load");
+	showButton("settings");
+	showButton("credits");
+	showButton("audio");
+}
+function hideMainMenu() {
+	hideButton("play");
+	hideButton("speedrun");
+	hideButton("load");
+	hideButton("settings");
+	hideButton("credits");
+	hideButton("audio");
+}
+function clearMainMenu() {
 	removeButton("play");
+	removeButton("speedrun");
 	removeButton("load");
 	removeButton("settings");
 	removeButton("credits");
-
 	removeButton("audio");
 }
 
 // CHARACTER SELECTION
 
 async function renderCharacterSelection() {
-	canvasImageD(mainMenuImage, 0, 0, canvas.width, canvas.height);
+	canvasBackground(mainMenuImage);
 
 	//render text
 	canvasSetFontSize(48);
 	canvasSetColor("#000080");
 	canvasSetBorder("#ffffff");
-	canvasTextAndBorderS(getTranslation(12), canvasX(5), canvasY(10));
+	canvasTextAndBorderS(getTranslation(13), 5, 10);
 
-	//render characters (all of them, for show)
-	canvasImage(players[0], canvasX(5), canvasY(50), 0.15);
-	canvasImage(players[1], canvasX(30), canvasY(50), 0.15);
-	canvasImage(players[2], canvasX(55), canvasY(50), 0.15);
-	canvasImage(players[3], canvasX(80), canvasY(50), 0.15);
+	if(info.speedrun === true) {
+		canvasSetFontSize(20);
+		canvasTextAndBorderS(getTranslation(3)+" "+getTranslation(26), 10, 15);
+	}
 
-	//add buttons
+
+	//add buttons and render characters
 
 	let promises = [];
 
 	for(let i = 0; i < 4; i++) {
+		canvasImage(players[i], 5 + i * 25, 50, 0.15);
 		promises.push(
 			waiterEventFromElement(
 			addSmallButton(
-				"select"+String(i), getTranslation(13), canvasX(4 + i * 25), canvasY(90), canvasX(10), canvasY(10),
+				"select"+String(i), getTranslation(14), 4 + i * 25, 90, 10, 10,
 				(e) => { selectedPlayer = i; }
 			), "click"
 			)
@@ -121,6 +145,14 @@ function clearBackstory() {
 
 // GAME HANDLER
 
+async function playHandler() {
+	await renderCharacterSelection();
+	clearCharacterSelection();
+
+	await HNMHandler();
+	//add other cities here
+}
+
 async function gameHandler() {
 	canvasLoading("Loading..."); //no translations yet
 	
@@ -139,13 +171,12 @@ async function gameHandler() {
 	await loadVoice(); //voice
 	canvasLoadingDone(4);
 
+	canvasTextS("Loading other images...", 10, 40);
+	await loadArrows(); //arrows
+	canvasTextS("Loading other images... done", 10, 40);
+
 	await renderMainMenu();
 	clearMainMenu();
 
-	await renderCharacterSelection();
-	clearCharacterSelection();
-
-	await HNMHandler();
-
-	//add other cities here
+	playHandler();
 }

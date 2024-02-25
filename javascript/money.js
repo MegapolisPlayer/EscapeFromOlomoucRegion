@@ -10,5 +10,5 @@ function checkMoney() {
 }
 
 function renderMoney() {
-	
+	canvasCircleBoxBorder(90, 10);
 }

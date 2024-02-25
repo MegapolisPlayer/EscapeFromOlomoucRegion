@@ -7,13 +7,26 @@
 function canvasInit() {
 	canvas = document.getElementById("draw");
 	ctx = canvas.getContext("2d");
-
+	
+	canvas.width = 1000;
+	canvas.height = 500;
+	ctx.width = 1000;
+	ctx.height = 500;
 	ctx.fillStyle = "#ffffff";
-	ctx.strokeStyle = "#000000";
+	ctx.strokeStyle = "#ffffff";
 	ctx.lineWidth = 1;
+	
+	biggerWindowSize = ((canvas.width > canvas.height) ? canvas.width : canvas.height);
+	smallerWindowSize = ((canvas.width < canvas.height) ? canvas.width : canvas.height);	
 
+	fontSizeLarge = biggerWindowSize*0.048;
+	fontSizeSmall = biggerWindowSize*0.024;
+	characterSizeMultiplier = smallerWindowSize*0.0003;
+
+	canvasSetFont("Arial, FreeSans", fontSizeLarge, "bold");
+	canvasClear("#ffffff");
 }
-function canvasFullscreen(afunc) {
+function canvasFullscreen(afunc = undefined) {
 	canvas.width = window.screen.width;
 	canvas.height = window.screen.height;
 	ctx.width = window.screen.width;
@@ -21,7 +34,7 @@ function canvasFullscreen(afunc) {
 
 	if(afunc !== undefined) { afunc(); }
 }
-function canvasOriginal(afunc) {
+function canvasOriginal(afunc = undefined) {
 	canvas.width = 1000;
 	canvas.height = 500;
 	ctx.width = 1000;
@@ -39,12 +52,12 @@ function canvasY(yvalue) {
 
 function canvasRoundedBox(x, y, sizex, sizey, radius) {
 	ctx.beginPath();
-	ctx.roundRect(x, y, sizex, sizey, radius);
+	ctx.roundRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), radius);
 	ctx.fill();
 }
 function canvasRoundedBoxBorder(x, y, sizex, sizey, radius) {
 	ctx.beginPath();
-	ctx.roundRect(x, y, sizex, sizey, radius);
+	ctx.roundRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), radius);
 	ctx.stroke();
 }
 
@@ -54,21 +67,31 @@ function canvasRoundedBoxBorder(x, y, sizex, sizey, radius) {
 // 1.5 PI - top
 
 function canvasCircleBox(x, y, sizex, sizey) {
-	ctx.fillRect(x + (sizey/2), y, sizex - sizey, sizey);
+	let px = canvasX(x);
+	let py = canvasY(y);
+	let psizex = canvasX(sizex);
+	let psizey = canvasY(sizey);
+
+	ctx.fillRect(px + (psy/2), py, psizex - psizey, psizey);
 	ctx.beginPath();
-	ctx.arc(x + (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
-	ctx.arc(x + sizex - (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5);
+	ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
+	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
 	ctx.fill();
 }
 function canvasCircleBoxBorder(x, y, sizex, sizey) {
+	let px = canvasX(x);
+	let py = canvasY(y);
+	let psizex = canvasX(sizex);
+	let psizey = canvasY(sizey);
+
 	ctx.beginPath();
-	ctx.arc(x + (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
-	ctx.moveTo(x + (sizey/2), y);
-	ctx.lineTo(x + sizex - (sizey/2), y);
-	ctx.moveTo(x + (sizey/2), y + sizey);
-	ctx.lineTo(x + sizex - (sizey/2), y + sizey);
-	ctx.moveTo(x + sizex, y); //moves to beginning of circle drawing
-	ctx.arc(x + sizex - (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5);
+	ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
+	ctx.moveTo(px + (psizey/2), py);
+	ctx.lineTo(px + psizex - (psizey/2), py);
+	ctx.moveTo(px + (psizey/2), py + psizey);
+	ctx.lineTo(px + psizex - (psizey/2), py + psizey);
+	ctx.moveTo(px + psizex, py); //moves to beginning of circle drawing
+	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
 	ctx.stroke();
 }
 function canvasBox(x, y, sizex, sizey) {
@@ -103,6 +126,12 @@ function canvasSetFontWeight(weight) {
 	canvas_fontWeight = weight;
 	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
+function canvasSetSmallFont() {
+	canvasSetFontSize(fontSizeSmall);
+}
+function canvasSetLargeFont() {
+	canvasSetFontSize(fontSizeLarge);
+}
 
 function canvasClear(clearcolor) {
 	let temp = ctx.fillStyle;
@@ -112,17 +141,19 @@ function canvasClear(clearcolor) {
 }
 
 function canvasTextS(text, x, y) {
-	ctx.fillText(text, x, y);
+	ctx.fillText(text, canvasX(x), canvasY(y));
 }
 function canvasTextBorderS(text, x, y) {
-	ctx.strokeText(text, x - ctx.lineWidth, y - ctx.lineWidth);
+	ctx.strokeText(text, canvasX(x) - ctx.lineWidth, canvasY(y) - ctx.lineWidth);
 }
 function canvasTextAndBorderS(text, x, y) {
-	ctx.strokeText(text, x - ctx.lineWidth, y - ctx.lineWidth);
-	ctx.fillText(text, x, y);
+	ctx.strokeText(text, canvasX(x) - ctx.lineWidth, canvasY(y) - ctx.lineWidth);
+	ctx.fillText(text, canvasX(x), canvasY(y));
 }
 
 function canvasTextM(text, x, y) {
+	let px = canvasX(x);
+	let py = canvasY(y);
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -130,11 +161,13 @@ function canvasTextM(text, x, y) {
 	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 	lineheight *= 1.5;
 	for(let Id = 0; Id < lines.length; Id++) {
-		ctx.fillText(lines[Id], x, y + newlineyoffset);
+		ctx.fillText(lines[Id], px, py + newlineyoffset);
 		newlineyoffset += lineheight;
 	}
 }
 function canvasTextBorderM(text, x, y) {
+	let px = canvasX(x);
+	let py = canvasY(y);
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -142,7 +175,7 @@ function canvasTextBorderM(text, x, y) {
 	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 	lineheight *= 1.5;
 	for(let Id = 0; Id < lines.length; Id++) {
-		ctx.strokeText(lines[Id], x, y + newlineyoffset);
+		ctx.strokeText(lines[Id], px, py + newlineyoffset);
 		newlineyoffset += lineheight;
 	}
 }
@@ -151,10 +184,10 @@ function canvasTextBorderM(text, x, y) {
 async function loadImage(filename) {
 	let temp;
 	const promise = new Promise((resolve) => {
-        temp = new Image();
-        temp.src = filename;
-        temp.onload = resolve;
-    });
+		temp = new Image();
+		temp.src = filename;
+		temp.onload = resolve;
+	});
 
     await promise;
 	console.log("loadImage completed for " + filename);
@@ -171,87 +204,83 @@ function waiterEventFromElement(element, event) {
 	})
 }
 
+function canvasBackground(image) {
+	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+}
 function canvasImage(image, x, y, scale) {
-	ctx.drawImage(image, x, y, image.width * scale, image.height * scale);
+	ctx.drawImage(image, canvasX(x), canvasY(y), image.width * scale, image.height * scale);
 }
 function canvasImageD(image, x, y, sizex, sizey) {
-	ctx.drawImage(image, x, y, sizex, sizey);
+	ctx.drawImage(image, canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
+}
+function canvasCharacter(x, y, scale) {
+	canvasImage(players[selectedPlayer], canvasX(x), canvasY(y), characterSizeMultiplier*scale);
+}
+function canvasCharacterRedraw(x, y, scale, bgimage) {
+
 }
 
 //
 // BUTTONS
 //
 
-//returns said button
-function addButton(id, text, x, y, sizex, sizey, fn) {
+function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 	let btn = document.createElement("button");
-	
-	btn.className = "draw_input_elem";
 	btn.id = id;
 	btn.innerHTML = text;
-
-	btn.style.setProperty("width", sizex+"px");
-	btn.style.setProperty("height", sizey+"px");
-	btn.style.setProperty("left", x+"px");
-	btn.style.setProperty("top", y+"px");
-
+	btn.className = classname;
+	btn.style.setProperty("width", canvasX(sizex)+"px");
+	btn.style.setProperty("height", canvasY(sizey)+"px");
+	btn.style.setProperty("left", canvasX(x)+"px");
+	btn.style.setProperty("top", canvasY(y)+"px");
 	btn.addEventListener("click", fn);
-
+	btn.addEventListener("click", () => { sfxPlay(0); })
 	document.getElementById("draw_contain").appendChild(btn);
-
 	return btn;
 }
+
+//returns said button
+function addButton(id, text, x, y, sizex, sizey, fn) {
+	return internal_setButton(id, text, "draw_input_elem", x, y, sizex, sizey, fn);
+}
 function addSmallButton(id, text, x, y, sizex, sizey, fn) {
-	let btn = document.createElement("button");
-	
-	btn.className = "draw_input_elem_small";
-	btn.id = id;
-	btn.innerHTML = text;
-
-	btn.style.setProperty("width", sizex+"px");
-	btn.style.setProperty("height", sizey+"px");
-	btn.style.setProperty("left", x+"px");
-	btn.style.setProperty("top", y+"px");
-
-	btn.addEventListener("click", fn);
-
-	document.getElementById("draw_contain").appendChild(btn);
-
-	return btn;
+	return internal_setButton(id, text, "draw_input_elem_small", x, y, sizex, sizey, fn);
 }
 function removeButton(id) {
 	document.getElementById(id).remove();
+}
+
+function showButton(id) {
+	document.getElementById(id).style.setProperty("display", "block");
+}
+function hideButton(id) {
+	document.getElementById(id).style.setProperty("display", "none");
+}
+
+//
+// ARROWS
+//
+
+async function loadArrows() {
+	arrowImages.push(await loadImage("assets/arrow/left1.png"));
+	arrowImages.push(await loadImage("assets/arrow/left2.png"));
+	//TODO: add arrows images, add info symbol as well
 }
 
 //
 // CHARACTERS
 //
 
-async function loadCharacter(charname) {
-	characters.push(await loadImage("assets/characters/"+charname+".png"));
-}
-async function loadPlayer(pname) {
-	players.push(await loadImage("assets/characters/p_"+pname+".png"));
-}
 async function loadCharacters() {
-	const promise = new Promise((resolve) => {
-		loadPlayer("default");
-		loadPlayer("winter");
-		loadPlayer("girl");
-		loadPlayer("girl_2");
+	let charactersToLoad = ["default", "winter", "girl", "girl_2"];
+	for(let i = 0; i < charactersToLoad.length; i++) {
+		players.push(await loadImage("assets/characters/p_"+charactersToLoad[i]+".png"));
+	}
 
-		//TODO: organize playes so they are always in order!
-
-		loadCharacter("army");
-		loadCharacter("cook");
-		loadCharacter("station");
-		loadCharacter("train");
-		loadCharacter("translator");
-		loadCharacter("utility");
-		resolve();
-	});
-
-	await promise; return;
+	let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility"];
+	for(let i = 0; i < NPCSToLoad.length; i++) {
+		characters.push(await loadImage("assets/characters/"+NPCSToLoad[i]+".png"));
+	}
 }
 
 //
@@ -260,14 +289,14 @@ async function loadCharacters() {
 
 function canvasLoading(messageoverride = null) {
 	canvasClear("purple");
-	canvasTextS(((messageoverride == null) ? getTranslation(0) : messageoverride), canvasX(10), canvasY(10));
+	canvasTextS(((messageoverride == null) ? getTranslation(0) : messageoverride), 10, 10);
 	canvasSetFontSize(20);
 
-	canvasTextS("Translations", canvasX(10), canvasY(15));
-	canvasTextS("Music", canvasX(10), canvasY(20));
-	canvasTextS("SFX", canvasX(10), canvasY(25));
-	canvasTextS("Voice", canvasX(10), canvasY(30));
-	canvasTextS("Characters", canvasX(10), canvasY(35));
+	canvasTextS("Translations", 10, 15);
+	canvasTextS("Music", 10, 20);
+	canvasTextS("SFX", 10, 25);
+	canvasTextS("Voice", 10, 30);
+	canvasTextS("Characters", 10, 35);
 }
 
 function canvasLoadingDone(place) {
@@ -280,5 +309,5 @@ function canvasLoadingDone(place) {
 		case(4): message = "Characters"; break;
 	}
 
-	canvasTextS(message+" done", canvasX(10), canvasY(15 + (place * 5)));
+	canvasTextS(message+" done", 10, 15 + (place * 5));
 }

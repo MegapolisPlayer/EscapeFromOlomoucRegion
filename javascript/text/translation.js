@@ -8,9 +8,9 @@ async function loadTranslation() {
 			console.log("Translation file:\n"+xhr.response);
 			text = text.replaceAll('\r', ''); //remove opposition
 			let lineText = text.split('\n'); //divide and conquer
-			
 			for(let i = 0; i < lineText.length; i++) {
-				let splitText = lineText[i].split(',');
+				let splitText = lineText[i].split(';');
+				if(splitText.length == 0) { continue; }
 				for(let j = 0; j < splitText.length; j++) {
 					translations[j].push(splitText[j]);
 				}

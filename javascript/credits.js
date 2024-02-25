@@ -1,39 +1,86 @@
-let creditsDelay = 2500; //in milliseconds
+let creditsDelay = 3000; //in milliseconds
 let creditsCounter = 0;
 let creditsImg;
 
-function setCreditsStep(fn) {
+function setCreditsStep(titleid, text = "", fn = undefined) {
 	setTimeout(() => {
 		console.log("setCreditsStep callback: Next credits step!");
-		canvasImageD(creditsImg, 0, 0, canvas.width, canvas.height);
-		fn.call();
+		canvasBackground(creditsImg);
+		canvasSetFontWeight("bold");
+		canvasTextS(getTranslation(titleid), 5, 35);
+		canvasSetFontWeight("normal");
+		canvasTextM(text, 10, 35);
+		if(fn != undefined) { fn.call() };
 	}, creditsDelay * creditsCounter);
 	creditsCounter++;
 }
 
 async function renderCredits() {
 	creditsImg = await loadImage("assets/photo/katowice/credits.jpg");
+	loadMusic([9]);
+	musicPlay(9);
+	
+	canvasSetSmallFont();
+	addSmallButton("creditsskip", "Skip credits", 80, 0, 20, 10, () => { window.location.reload(); });
 
-	addButton("creditsskip", "Skip credits", canvasX(80), canvasY(0), canvasX(20), canvasY(10), () => { window.location.reload(); });
+	setCreditsStep(1);
+	setCreditsStep(29, `
+		Martin/MegapolisPlayer
+		Jirka/KohoutGD
+		<insert more names here>
+	`);
+	setCreditsStep(30, `
+		SReality, Freepik (jcomp), VlakemJednoduse.cz, Fortes Interactive, VagonWeb,
+		Pixabay (PickupImage, pexels)
+		From Wikimedia Commons (in no particular order):
+		Marie Čchiedzeová, Vojtěch Dočkal, Jiří Komárek, JirkaSv, Dezidor, Vitezslava,
+		Kamil Czianskim, Michal Klajban, STERUSSTUDENKA, Draceane, Herbert Frank,
+		Palickap, RPekar
+	`);
 
-	//credits
+	let musicNamesString = "\n";
+	for(let i = 0; i < musicNames.length; i++) {
+		musicNamesString += ("\"" + musicNames[i] + "\"");
+		if(i !== musicNames.length - 1) {
+			musicNamesString += ", "
+		}
+		if((i % 4 == 0 && i > 0) || i === musicNames.length - 1) {
+			musicNamesString += "\n";
+		}
+	}
 
-	setCreditsStep(() => {
-		canvasSetFontSize(48);
-		
-		canvasSetFontSize(20);
-	});
-	setCreditsStep(() => {
-		canvasSetFontSize(48);
-
-		canvasSetFontSize(20);
-	});
-	setCreditsStep(() => {
-		canvasSetFontSize(48);
-
-		canvasSetFontSize(20);
-	});
-	setCreditsStep(() => {
-		window.location.reload();
+	setCreditsStep(31, 
+		musicNamesString+
+		`Kevin MacLeod (incompetech.com)
+		Licensed under Creative Commons: By Attribution 3.0
+		http://creativecommons.org/licenses/by/3.0/
+	`);
+	setCreditsStep(32, `
+		Sound effects from Pixabay, UNIVERSFIELD
+		All sound effects hosted on Pixabay.
+	`);
+	setCreditsStep(33, `
+		Male characters -
+		Female characters -
+		Cook, Translator, Utility man -
+		Train conductor, Army -
+	`);
+	setCreditsStep(34, `
+		Čeština: Martin/MegapolisPlayer and Jirka/KohoutGD
+		English: Martin/MegapolisPlayer
+		Deutsch: Jirka/KohoutGD
+		Susština and Baština: Jirka/KohoutGD
+	`);
+	setCreditsStep(35, `
+		Nářečí ČJ: https://cs.wikiversity.org/wiki
+		English Dialect: https://en.wiktionary.org
+		Deutscher Dialekt:  
+		Susština and Baština: custom
+	`);
+	setCreditsStep(36, "\n"+getTranslation(37), () => {
+		removeButton("creditsskip");
+		window.addEventListener("click", () => {
+			window.location.reload();	
+		});
 	});
 }

@@ -4,17 +4,30 @@
 
 // DECLARATIONS
 
-// CANVAS
+// CANVAS, calc in canvas init and resize functions
 
 let canvas;
 let ctx;
-
 let canvas_fontSize = 0;
-let canvas_fontFamily = "";
+let canvas_fontFamily  = "";
 let canvas_fontWeight = "";
 
-let biggerWindowSize = (window.screen.width > window.screen.height) ? window.screen.width : window.screen.height;
-let fontSizeMultiplier = 0.025;
+let biggerWindowSize = 0;
+let smallerWindowSize = 0;
+
+let fontSizeLarge = 0;
+let fontSizeSmall = 0;
+let characterSizeMultiplier = 0;
+
+// ARROWS
+
+let arrowType = {
+	UP: 0,
+	LEFT: 1,
+	RIGHT: 2,
+	DOWN: 3
+};
+let arrowImages = [];
 
 // CHARACTERS
 
@@ -74,7 +87,8 @@ let settings = {
 let info = {
 	money: 0,
 	location_major: 0,
-	location_minor: 0
+	location_minor: 0,
+	speedrun: false,
 };
 
 let moneyLimit = 2500; //no minigames allowed above 2500
