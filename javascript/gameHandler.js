@@ -16,7 +16,7 @@ async function renderMainMenu() {
 	canvasSetColor("#ffffff");
 	canvasSetFontSize(20);
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 24.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", canvasX(3), canvasY(90));
+	canvasTextM("Version 2.00-build1, 25.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", canvasX(3), canvasY(90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], canvasX(20), canvasY(50), 0.15);
@@ -122,7 +122,7 @@ function clearBackstory() {
 // GAME HANDLER
 
 async function gameHandler() {
-	canvasLoading("Loading...");
+	canvasLoading("Loading..."); //no translations yet
 	
 	await loadMusic([0, 1]); //music
 	canvasLoadingDone(0);
@@ -140,12 +140,12 @@ async function gameHandler() {
 	canvasLoadingDone(4);
 
 	await renderMainMenu();
-
 	clearMainMenu();
 
 	await renderCharacterSelection();
-
 	clearCharacterSelection();
 
+	await HNMHandler();
 
+	//add other cities here
 }

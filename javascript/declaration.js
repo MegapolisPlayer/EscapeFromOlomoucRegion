@@ -78,17 +78,3 @@ let info = {
 };
 
 let moneyLimit = 2500; //no minigames allowed above 2500
-
-// UTILITIES
-
-function doesFileExist(file) {
-	try {
-		let xhr = new XMLHttpRequest();
-		xhr.open("HEAD", file);
-		xhr.send();
-		return true;
-	}
-	catch {
-		return false;
-	}
-}

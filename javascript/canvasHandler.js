@@ -37,6 +37,47 @@ function canvasY(yvalue) {
 	return Math.trunc(canvas.height*(yvalue/100));
 }
 
+function canvasRoundedBox(x, y, sizex, sizey, radius) {
+	ctx.beginPath();
+	ctx.roundRect(x, y, sizex, sizey, radius);
+	ctx.fill();
+}
+function canvasRoundedBoxBorder(x, y, sizex, sizey, radius) {
+	ctx.beginPath();
+	ctx.roundRect(x, y, sizex, sizey, radius);
+	ctx.stroke();
+}
+
+// 0 - right side
+// 0.5 PI - bottom
+// PI - left size
+// 1.5 PI - top
+
+function canvasCircleBox(x, y, sizex, sizey) {
+	ctx.fillRect(x + (sizey/2), y, sizex - sizey, sizey);
+	ctx.beginPath();
+	ctx.arc(x + (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
+	ctx.arc(x + sizex - (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5);
+	ctx.fill();
+}
+function canvasCircleBoxBorder(x, y, sizex, sizey) {
+	ctx.beginPath();
+	ctx.arc(x + (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
+	ctx.moveTo(x + (sizey/2), y);
+	ctx.lineTo(x + sizex - (sizey/2), y);
+	ctx.moveTo(x + (sizey/2), y + sizey);
+	ctx.lineTo(x + sizex - (sizey/2), y + sizey);
+	ctx.moveTo(x + sizex, y); //moves to beginning of circle drawing
+	ctx.arc(x + sizex - (sizey/2), y + (sizey/2), sizey/2, Math.PI * 1.5, Math.PI * 0.5);
+	ctx.stroke();
+}
+function canvasBox(x, y, sizex, sizey) {
+	ctx.fillRect(x, y, sizex, sizey);
+}
+function canvasBoxBorder(x, y, sizex, sizey) {
+	ctx.strokeRect(x, y, sizex, sizey);
+}
+
 function canvasSetColor(color) {
 	ctx.fillStyle = color;
 }
@@ -198,6 +239,9 @@ async function loadCharacters() {
 		loadPlayer("winter");
 		loadPlayer("girl");
 		loadPlayer("girl_2");
+
+		//TODO: organize playes so they are always in order!
+
 		loadCharacter("army");
 		loadCharacter("cook");
 		loadCharacter("station");
