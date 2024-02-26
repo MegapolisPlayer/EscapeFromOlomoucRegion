@@ -19,6 +19,8 @@ let fontSizeLarge = 0;
 let fontSizeSmall = 0;
 let characterSizeMultiplier = 0;
 
+let mainMenuImage;
+
 // ARROWS
 
 let arrowType = {
@@ -89,6 +91,7 @@ let info = {
 	location_major: 0,
 	location_minor: 0,
 	speedrun: false,
+	currentTicketPrice: 0,
 };
 
 let moneyLimit = 2500; //no minigames allowed above 2500

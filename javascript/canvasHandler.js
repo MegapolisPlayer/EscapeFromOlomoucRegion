@@ -72,7 +72,7 @@ function canvasCircleBox(x, y, sizex, sizey) {
 	let psizex = canvasX(sizex);
 	let psizey = canvasY(sizey);
 
-	ctx.fillRect(px + (psy/2), py, psizex - psizey, psizey);
+	ctx.fillRect(px + (psizey/2), py, psizex - psizey, psizey);
 	ctx.beginPath();
 	ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
 	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
@@ -193,6 +193,13 @@ async function loadImage(filename) {
 	console.log("loadImage completed for " + filename);
 	return temp;
 }
+async function loadImages(filenames_array) {
+	let temparr = [];
+	for(let i = 0; i < filenames_array.length; i++) {
+		temparr.push(await loadImage(filenames_array[i]));
+	}
+	return temparr;
+}
 
 function waiterEventFromElement(element, event) {
 	//in promise: first arg resolve, then reject
@@ -214,10 +221,11 @@ function canvasImageD(image, x, y, sizex, sizey) {
 	ctx.drawImage(image, canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
 }
 function canvasCharacter(x, y, scale) {
-	canvasImage(players[selectedPlayer], canvasX(x), canvasY(y), characterSizeMultiplier*scale);
+	//canvas space processing for x, y happens in canvasImage
+	canvasImage(players[selectedPlayer], x, y, scale*characterSizeMultiplier);
 }
 function canvasCharacterRedraw(x, y, scale, bgimage) {
-
+	//TODO: finish
 }
 
 //
@@ -289,14 +297,10 @@ async function loadCharacters() {
 
 function canvasLoading(messageoverride = null) {
 	canvasClear("purple");
+	canvasSetColor("#ffffff");
+	canvasSetLargeFont();
 	canvasTextS(((messageoverride == null) ? getTranslation(0) : messageoverride), 10, 10);
-	canvasSetFontSize(20);
-
-	canvasTextS("Translations", 10, 15);
-	canvasTextS("Music", 10, 20);
-	canvasTextS("SFX", 10, 25);
-	canvasTextS("Voice", 10, 30);
-	canvasTextS("Characters", 10, 35);
+	canvasSetSmallFont();
 }
 
 function canvasLoadingDone(place) {

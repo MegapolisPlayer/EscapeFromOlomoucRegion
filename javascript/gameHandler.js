@@ -1,28 +1,31 @@
 // MAIN MENU
 
-let mainMenuImage;
-
-async function renderMainMenu() {
-	mainMenuImage = await loadImage("assets/photo/hnm/namesti.jpg");
+function renderMainMenu() {
 	canvasBackground(mainMenuImage);
 
 	//render text
 	canvasSetLargeFont();
 	canvasSetColor("#000080");
 	canvasSetBorder("#ffffff");
-	canvasTextBorderS(getTranslation(1), 5, 10);
-	canvasTextS(getTranslation(1), 5, 10);
+	canvasSetFontWeight("bold");
+	canvasTextAndBorderS(getTranslation(1), 5, 10);
 
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 25.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 26.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
 	canvasImage(players[1], 30, 50, characterSizeMultiplier);
 	canvasImage(players[2], 45, 50, characterSizeMultiplier);
 	canvasImage(players[3], 55, 50, characterSizeMultiplier);
+}
+
+async function loadMainMenu() {
+	mainMenuImage = await loadImage("assets/photo/hnm/namesti.jpg");
+
+	renderMainMenu();
 
 	//play buttons
 	addButton(
@@ -31,7 +34,13 @@ async function renderMainMenu() {
 	);
 	addButton(
 		"settings", getTranslation(5), 65, 45, 30, 10,
-		(e) => { console.log("MM btn Settings pressed"); renderSettings(); }
+		async (e) => { 
+			console.log("MM btn Settings pressed");
+			hideMainMenu();
+			await renderSettings();
+			renderMainMenu();
+			showMainMenu();
+		}
 	);
 	addButton(
 		"credits", getTranslation(6), 65, 55, 30, 10,
@@ -90,7 +99,7 @@ async function renderCharacterSelection() {
 	canvasBackground(mainMenuImage);
 
 	//render text
-	canvasSetFontSize(48);
+	canvasSetLargeFont();
 	canvasSetColor("#000080");
 	canvasSetBorder("#ffffff");
 	canvasTextAndBorderS(getTranslation(13), 5, 10);
@@ -109,10 +118,10 @@ async function renderCharacterSelection() {
 		canvasImage(players[i], 5 + i * 25, 50, 0.15);
 		promises.push(
 			waiterEventFromElement(
-			addSmallButton(
-				"select"+String(i), getTranslation(14), 4 + i * 25, 90, 10, 10,
-				(e) => { selectedPlayer = i; }
-			), "click"
+				addSmallButton(
+					"select"+String(i), getTranslation(14), 4 + i * 25, 90, 10, 10,
+					(e) => { selectedPlayer = i; }
+				), "click"
 			)
 		);
 	}
@@ -155,7 +164,13 @@ async function playHandler() {
 
 async function gameHandler() {
 	canvasLoading("Loading..."); //no translations yet
-	
+	//text only on first load
+	canvasTextS("Translations", 10, 15);
+	canvasTextS("Music", 10, 20);
+	canvasTextS("SFX", 10, 25);
+	canvasTextS("Voice", 10, 30);
+	canvasTextS("Characters", 10, 35);
+
 	await loadMusic([0, 1]); //music
 	canvasLoadingDone(0);
 
@@ -175,7 +190,7 @@ async function gameHandler() {
 	await loadArrows(); //arrows
 	canvasTextS("Loading other images... done", 10, 40);
 
-	await renderMainMenu();
+	await loadMainMenu();
 	clearMainMenu();
 
 	playHandler();

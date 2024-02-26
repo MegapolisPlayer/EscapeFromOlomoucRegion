@@ -76,6 +76,10 @@ async function loadSFX() {
 		sfxArray.push(new Audio("assets/sfx/GameOver.mp3"));
 		sfxArray.push(new Audio("assets/sfx/TrainBrake.mp3"));
 
+		for(let i = 0; i < sfxArray.length; i++) {
+			sfxArray[i].volume = 0.3;
+		}
+
 		resolve();
 	});
 
@@ -131,7 +135,7 @@ function audioVolume(newvolume) {
 		musicArray[i].volume = newvolume;
 	}
 	for(let i = 0; i < sfxArray.length; i++) {
-		sfxArray[i].volume = newvolume*0.75;
+		sfxArray[i].volume = newvolume*0.3;
 	}
 	for(let i = 0; i < voice.length; i++) {
 		for(let j = 0; j < voice[i].length; j++) {

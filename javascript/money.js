@@ -10,5 +10,17 @@ function checkMoney() {
 }
 
 function renderMoney() {
-	canvasCircleBoxBorder(90, 10);
+	canvasSetColor("#ffffff");
+	canvasCircleBox(80, 0, 20, 10);
+	if(info.money < 0) {
+		canvasSetColor("#800000");
+	}
+	else if(info.money > info.currentTicketPrice) {
+		canvasSetColor("#008000");
+	}
+	else {
+		canvasSetColor("#000080");
+	}
+	canvasSetSmallFont();
+	canvasTextS(getTranslation(48)+": "+String(info.money), 83, 7);
 }
