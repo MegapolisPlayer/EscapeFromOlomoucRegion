@@ -46,3 +46,11 @@ button {
 	text-align: center;
 	padding: 1px;
 }
+.draw_input_elem_arrow {
+	position: absolute;
+	opacity: 0; /* display: none and visibility: hidden make element stop working!!! */
+}
+.draw_input_elem_pause {
+	position: absolute;
+	opacity: 0;
+}

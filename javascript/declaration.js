@@ -24,14 +24,17 @@ let mainMenuImage;
 // ARROWS
 
 let arrowType = {
-	UP: 0,
-	LEFT: 1,
-	RIGHT: 2,
-	DOWN: 3
+	LEFT: 0,
+	RIGHT: 1,
+	UP: 2,
+	DOWN: 3,
+	INFO: 4
 };
 let arrowImages = [];
 
-// CHARACTERS
+let arrowSize = 100;
+
+// CHARACTERS  
 
 let characters = [];
 let players = [];

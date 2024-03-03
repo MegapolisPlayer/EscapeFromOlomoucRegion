@@ -222,7 +222,12 @@ function canvasImageD(image, x, y, sizex, sizey) {
 }
 function canvasCharacter(x, y, scale) {
 	//canvas space processing for x, y happens in canvasImage
-	canvasImage(players[selectedPlayer], x, y, scale*characterSizeMultiplier);
+	canvasImage(
+		players[selectedPlayer],
+		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
 }
 function canvasCharacterRedraw(x, y, scale, bgimage) {
 	//TODO: finish
@@ -237,10 +242,10 @@ function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 	btn.id = id;
 	btn.innerHTML = text;
 	btn.className = classname;
-	btn.style.setProperty("width", canvasX(sizex)+"px");
-	btn.style.setProperty("height", canvasY(sizey)+"px");
-	btn.style.setProperty("left", canvasX(x)+"px");
-	btn.style.setProperty("top", canvasY(y)+"px");
+	btn.style.setProperty("width", sizex+"px");
+	btn.style.setProperty("height", sizey+"px");
+	btn.style.setProperty("left", x+"px");
+	btn.style.setProperty("top", y+"px");
 	btn.addEventListener("click", fn);
 	btn.addEventListener("click", () => { sfxPlay(0); })
 	document.getElementById("draw_contain").appendChild(btn);
@@ -249,10 +254,10 @@ function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 
 //returns said button
 function addButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem", x, y, sizex, sizey, fn);
+	return internal_setButton(id, text, "draw_input_elem", canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), fn);
 }
 function addSmallButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem_small", x, y, sizex, sizey, fn);
+	return internal_setButton(id, text, "draw_input_elem_small", canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), fn);
 }
 function removeButton(id) {
 	document.getElementById(id).remove();
@@ -270,9 +275,40 @@ function hideButton(id) {
 //
 
 async function loadArrows() {
-	arrowImages.push(await loadImage("assets/arrow/left1.png"));
-	arrowImages.push(await loadImage("assets/arrow/left2.png"));
-	//TODO: add arrows images, add info symbol as well
+	arrowImages.push(await loadImage("assets/arrow/left.png"));
+	arrowImages.push(await loadImage("assets/arrow/right.png"));
+	arrowImages.push(await loadImage("assets/arrow/top.png"));
+	arrowImages.push(await loadImage("assets/arrow/bottom.png"));
+	arrowImages.push(await loadImage("assets/arrow/info.png"));
+}
+
+function addArrow(id, x, y, type, fn) {
+	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), 100, 100);
+	return internal_setButton(id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), 100, 100, fn);
+}
+function removeArrow(id) {
+	removeButton(id);
+}
+function clearArrows() {
+	document.getElementById("draw_contain").querySelectorAll(".draw_input_elem_arrow").forEach((val) => {
+		val.remove();
+	});
+}
+
+function ArrowInfo(x, y, type, fn) {
+	this.x = x;
+	this.y = y;
+	this.type = type;
+	this.fn = fn;
+}
+
+//takes in array of ArrowInfos
+function renderArrows(arrows) {
+	let tempPromises = [];
+	for(let i = 0; i < arrows.length; i++) {
+		tempPromises.push(waiterEventFromElement(addArrow("", arrows[i].x, arrows[i].y, arrows[i].type, () => { arrows[i].fn.call(); clearArrows(); }), "click"));
+	}
+	return Promise.any(tempPromises);
 }
 
 //

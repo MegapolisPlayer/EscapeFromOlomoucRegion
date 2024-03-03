@@ -4,59 +4,63 @@ let HNMnextLocation = 0;
 async function HNMDomov() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
-	canvasCharacter(60, 15, 2.5);
+	canvasCharacter(70, 60, 2.5);
 	renderMoney();
+	renderSpeedrunMode();
 
-	//let nextLocationPromise1 = waiterEventFromElement(
-		//todo: add arrows
-	//);
-
-	return new Promise(() => {});
-}
-function HNMDomovClear() {
-
+	return renderArrows([new ArrowInfo(90, 80, arrowType.RIGHT, () => { HNMnextLocation = 1; })]);
 }
 
 async function HNMNamesti() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
+	canvasCharacter(50, 60, 1);
 	renderMoney();
-	return new Promise(() => {});
-}
-function HNMNamestiClear() {
-
-}
-
-async function HNMRestaurace() {
-	console.log("HNM "+info.location_minor);
-	canvasBackground(HNMimages[info.location_minor]);
-	renderMoney();
-	return new Promise(() => {});
-}
-function HNMRestauraceClear() {
-
+	renderSpeedrunMode();
+	
+	return renderArrows([
+		new ArrowInfo(10, 90, arrowType.LEFT, () => { HNMnextLocation = 0; }),
+		new ArrowInfo(90, 90, arrowType.RIGHT, () => { HNMnextLocation = 2; })
+	]);
 }
 
 async function HNMNadrazi() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
+	canvasCharacter(35, 60, 1.7);
 	renderMoney();
-	return new Promise(() => {});
-}
-function HNMNadraziClear() {
+	renderSpeedrunMode();
 
+	return renderArrows([
+		new ArrowInfo(10, 90, arrowType.LEFT, () => { HNMnextLocation = 1; }),
+		new ArrowInfo(95, 75, arrowType.UP, () => { HNMnextLocation = 3; }),
+		new ArrowInfo(85, 85, arrowType.DOWN, () => { HNMnextLocation = 4; })
+	]);
+}
+
+async function HNMRestaurace() {
+	console.log("HNM "+info.location_minor);
+	canvasBackground(HNMimages[info.location_minor]);
+	canvasCharacter(70, 90, 2); //for player
+	renderMoney();
+	renderSpeedrunMode();
+	
+	return renderArrows([
+		new ArrowInfo(90, 90, arrowType.DOWN, () => { HNMnextLocation = 2; }),
+	]);
 }
 
 async function HNMNastupiste() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
+	canvasCharacter(65, 70, 1.3);
 	renderMoney();
-	return new Promise(() => {});
-}
-function HNMNastupisteClear() {
+	renderSpeedrunMode();
 
+	return renderArrows([
+		new ArrowInfo(50, 90, arrowType.DOWN, () => { HNMnextLocation = 2; }),
+	]);
 }
-
 
 async function HNMHandler() {
 	// HANDLER <-> DOMOV
@@ -85,21 +89,21 @@ async function HNMHandler() {
 	
 	musicPlay(2); //start playing AFTER loading
 
-	let HNMpromisesArray = [];
+	let HNMpromise;
 	while(HNMnextLocation != -1) {
 		info.location_minor = HNMnextLocation;
 
 		switch(info.location_minor) {
 			case(-1): break; //to next city
-			case(0): HNMpromisesArray.push(HNMDomov()); break;
-			case(1): HNMpromisesArray.push(HNMNamesti()); break;
-			case(2): HNMpromisesArray.push(HNMNadrazi()); break;
-			case(3): HNMpromisesArray.push(HNMRestaurace()); break;
-			case(4): HNMpromisesArray.push(HNMNastupiste()); break;
+			case(0): HNMpromise = HNMDomov(); break;
+			case(1): HNMpromise = HNMNamesti(); break;
+			case(2): HNMpromise = HNMNadrazi(); break;
+			case(3): HNMpromise = HNMRestaurace(); break;
+			case(4): HNMpromise = HNMNastupiste(); break;
 		}
 
 		//we wait until any promise met, then loop again
-		await Promise.any(HNMpromisesArray);
+		await HNMpromise;
 	}
 
 	return;
