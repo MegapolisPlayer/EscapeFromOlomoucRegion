@@ -32,3 +32,24 @@ function getTranslation(id) {
 function getVoiceTranslation(id) {
 	return voice[translationSelected][id];
 }
+
+function wrapText(str, maxwidth) {
+	let splitstr = str.split(' '); //split to words
+	let tempstr = "";
+	let textWidth = 0;
+
+	for(let i = 0; i < splitstr.length; i++) {
+		textWidth += ctx.measureText(splitstr[i] + ' ').width;
+
+		if(textWidth > maxwidth) {
+			tempstr += '\n';
+			textWidth = 0;
+		}
+		else {
+			tempstr += splitstr[i];
+			tempstr += ' ';
+		}
+	}
+
+	return tempstr;
+}

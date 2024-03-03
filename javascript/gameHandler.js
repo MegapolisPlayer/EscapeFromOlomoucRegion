@@ -13,7 +13,7 @@ function renderMainMenu() {
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 26.2.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 3.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -137,29 +137,60 @@ async function clearCharacterSelection() {
 // DISCLAIMER
 
 function renderDisclaimer() {
+	console.log("disclaimer");
+	canvasSetBrightness(50);
+	canvasBackground(mainMenuImage);
+	canvasResetBrightness();
 
-}
-function clearDisclaimer() {
+	canvasSetFontWeight("bold");
+	canvasSetLargeFont();
+	canvasSetColor("#800000");
+	canvasSetBorder("#ffffff");
+	canvasTextAndBorderS(getTranslation(43), 5, 10);
 
+	canvasSetFontWeight("normal");
+	canvasSetSmallFont();
+	canvasSetColor("#ffffff");
+	canvasTextM(wrapText(getTranslation(44), canvas.width - canvasX(20)), 10, 20);
+
+	return renderArrows([
+		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
+	]);
 }
 
 // BACKSTORY
 
 function renderBackstory() {
+	console.log("backstory");
+	canvasSetBrightness(75);
+	canvasBackground(mainMenuImage);
+	canvasResetBrightness();
 
+	canvasSetLargeFont();
+	canvasSetColor("#000080");
+	canvasSetBorder("#ffffff");
+	canvasTextAndBorderS(getTranslation(45), 5, 10);
+
+	canvasSetSmallFont();
+	canvasSetColor("#ffffff");
+	canvasTextM(wrapText(getTranslation(46), canvas.width - canvasX(20)), 10, 20);
+
+	return renderArrows([
+		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
+	]);
 }
-function clearBackstory() {
-
-}
-
 // GAME HANDLER
 
 async function playHandler() {
 	await renderCharacterSelection();
 	clearCharacterSelection();
 
+	await renderDisclaimer();
+	await renderBackstory();
+
 	await HNMHandler();
-	//add other cities here
+
+	//TODO: add other cities here
 }
 
 async function gameHandler() {
@@ -179,6 +210,7 @@ async function gameHandler() {
 
 	await loadCharacters(); //characters
 	canvasLoadingDone(2);
+	setCharacterInterval(); //set animation interval
 	
 	await loadTranslation(); //translations
 	canvasLoadingDone(3);
@@ -188,6 +220,7 @@ async function gameHandler() {
 
 	canvasTextS("Loading other images...", 10, 40);
 	await loadArrows(); //arrows
+	setArrowInterval(); //set interval
 	canvasTextS("Loading other images... done", 10, 40);
 
 	await loadMainMenu();

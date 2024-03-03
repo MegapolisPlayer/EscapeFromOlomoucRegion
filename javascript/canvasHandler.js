@@ -107,6 +107,12 @@ function canvasSetColor(color) {
 function canvasSetBorder(color) {
 	ctx.strokeStyle = color;
 }
+function canvasSetBrightness(brightness) {
+	ctx.filter = "brightness("+brightness+"%)";
+}
+function canvasResetBrightness() {
+	ctx.filter = "brightness(100%)";
+}
 
 function canvasSetFont(font, fontsize, weight = "normal") {
 	canvas_fontFamily = font;
@@ -229,8 +235,25 @@ function canvasCharacter(x, y, scale) {
 		scale*characterSizeMultiplier
 	);
 }
-function canvasCharacterRedraw(x, y, scale, bgimage) {
-	//TODO: finish
+function canvasCharacterRemove(x, y, scale, bgimage) {
+	canvasImageD(
+		bgimage,
+		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
+}
+
+function canvasNPC(characterid, x, y, scale) {
+	canvasImage(
+		characters[characterid],
+		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
+}
+function canvasNPCRemove(x, y, scale, bgimage) {
+	canvasCharacterRemove(x, y, scale, bgimage);
 }
 
 //
@@ -274,27 +297,6 @@ function hideButton(id) {
 // ARROWS
 //
 
-async function loadArrows() {
-	arrowImages.push(await loadImage("assets/arrow/left.png"));
-	arrowImages.push(await loadImage("assets/arrow/right.png"));
-	arrowImages.push(await loadImage("assets/arrow/top.png"));
-	arrowImages.push(await loadImage("assets/arrow/bottom.png"));
-	arrowImages.push(await loadImage("assets/arrow/info.png"));
-}
-
-function addArrow(id, x, y, type, fn) {
-	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), 100, 100);
-	return internal_setButton(id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), 100, 100, fn);
-}
-function removeArrow(id) {
-	removeButton(id);
-}
-function clearArrows() {
-	document.getElementById("draw_contain").querySelectorAll(".draw_input_elem_arrow").forEach((val) => {
-		val.remove();
-	});
-}
-
 function ArrowInfo(x, y, type, fn) {
 	this.x = x;
 	this.y = y;
@@ -302,11 +304,67 @@ function ArrowInfo(x, y, type, fn) {
 	this.fn = fn;
 }
 
+function SavedArrowInfo(id, x, y, type, fn) {
+	this.id = id;
+	this.x = x;
+	this.y = y;
+	this.type = type;
+	this.fn = fn;
+}
+
+async function loadArrows() {
+	arrowImages.push(await loadImage("assets/arrow/left.png"));
+	arrowImages.push(await loadImage("assets/arrow/right.png"));
+	arrowImages.push(await loadImage("assets/arrow/top.png"));
+	arrowImages.push(await loadImage("assets/arrow/bottom.png"));
+	arrowImages.push(await loadImage("assets/arrow/info.png"));
+
+	arrowImages2.push(await loadImage("assets/arrow/left2.png"));
+	arrowImages2.push(await loadImage("assets/arrow/right2.png"));
+	arrowImages2.push(await loadImage("assets/arrow/top2.png"));
+	arrowImages2.push(await loadImage("assets/arrow/bottom2.png"));
+	arrowImages2.push(await loadImage("assets/arrow/info2.png"));
+}
+
+function setArrowInterval() {
+	arrowAnimationInterval = window.setInterval(() => {
+		for(let i = 0; i < arrowList.length; i++) {
+			ctx.drawImage(
+				(arrowAnimationState == false) ? arrowImages2[arrowList[i].type] : arrowImages[arrowList[i].type],
+				canvasX(arrowList[i].x) - (arrowSize/2),
+				canvasY(arrowList[i].y) - (arrowSize/2), 
+				arrowSize, arrowSize
+			);
+		}
+		arrowAnimationState = !arrowAnimationState;
+	}, 700);
+}
+
+function addArrow(id, x, y, type, fn) {
+	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), arrowSize, arrowSize);
+	arrowList.push(new SavedArrowInfo(id, x, y, type, fn));
+	return internal_setButton(id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), arrowSize, arrowSize, fn);
+}
+function removeArrow(id) {
+	removeButton(id);
+	for(let i = 0; i < arrowList.length; i++) {
+		if(arrowList[i].id == id) {
+			arrowList[i].splice(i, 1);
+		}
+	}
+}
+function clearArrows() {
+	document.getElementById("draw_contain").querySelectorAll(".draw_input_elem_arrow").forEach((val) => {
+		val.remove();
+	});
+	arrowList.length = 0;
+}
+
 //takes in array of ArrowInfos
 function renderArrows(arrows) {
 	let tempPromises = [];
 	for(let i = 0; i < arrows.length; i++) {
-		tempPromises.push(waiterEventFromElement(addArrow("", arrows[i].x, arrows[i].y, arrows[i].type, () => { arrows[i].fn.call(); clearArrows(); }), "click"));
+		tempPromises.push(waiterEventFromElement(addArrow("renderArrows"+String(i), arrows[i].x, arrows[i].y, arrows[i].type, () => { arrows[i].fn.call(); clearArrows(); }), "click"));
 	}
 	return Promise.any(tempPromises);
 }
@@ -321,10 +379,24 @@ async function loadCharacters() {
 		players.push(await loadImage("assets/characters/p_"+charactersToLoad[i]+".png"));
 	}
 
+	NPC = {
+		ARMY: 0,
+		COOK: 1,
+		STATION: 2,
+		TRAIN: 3,
+		TRANSLATOR: 4,
+		UTILITY: 5
+	};
 	let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility"];
 	for(let i = 0; i < NPCSToLoad.length; i++) {
 		characters.push(await loadImage("assets/characters/"+NPCSToLoad[i]+".png"));
 	}
+}
+
+function setCharacterInterval() {
+	characterAnimationInterval = window.setInterval(() => {
+		//TODO: finish!
+	}, 1000);
 }
 
 //

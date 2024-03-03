@@ -31,12 +31,20 @@ let arrowType = {
 	INFO: 4
 };
 let arrowImages = [];
+let arrowImages2 = []; //second stage of animation
 
 let arrowSize = 100;
+
+let arrowList = [];
+let arrowAnimationInterval;
+let arrowAnimationState = false; //false - default, true - animated
 
 // CHARACTERS  
 
 let characters = [];
+
+let NPC = {}; //set in loadCharacters function
+
 let players = [];
 
 let selectedPlayer = 0;
