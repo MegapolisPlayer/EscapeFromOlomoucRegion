@@ -24,7 +24,6 @@ function renderMainMenu() {
 
 async function loadMainMenu() {
 	mainMenuImage = await loadImage("assets/photo/hnm/namesti.jpg");
-
 	renderMainMenu();
 
 	//play buttons
@@ -138,6 +137,8 @@ async function clearCharacterSelection() {
 
 function renderDisclaimer() {
 	console.log("disclaimer");
+
+	musicPlay(1);
 	canvasSetBrightness(50);
 	canvasBackground(mainMenuImage);
 	canvasResetBrightness();

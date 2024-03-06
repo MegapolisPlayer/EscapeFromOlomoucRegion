@@ -19,6 +19,8 @@ let fontSizeLarge = 0;
 let fontSizeSmall = 0;
 let characterSizeMultiplier = 0;
 
+let currentBGImage;
+
 let mainMenuImage;
 
 // ARROWS
@@ -37,15 +39,27 @@ let arrowSize = 100;
 
 let arrowList = [];
 let arrowAnimationInterval;
+let arrowAnimationIntervalTime = 700;
 let arrowAnimationState = false; //false - default, true - animated
 
 // CHARACTERS  
 
+let player = {
+	X: 0,
+	Y: 0,
+	SCALE: 1,
+	ISON: false,
+};
+
 let characters = [];
+let characterAnimationInterval;
+let characterAnimationIntervalTime = 600;
+let characterAnimationState = false; //works for players too
 
 let NPC = {}; //set in loadCharacters function
 
 let players = [];
+let players2 = []; //second stage of animation
 
 let selectedPlayer = 0;
 

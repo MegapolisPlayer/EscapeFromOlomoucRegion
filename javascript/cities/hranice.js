@@ -4,7 +4,7 @@ let HNMnextLocation = 0;
 async function HNMDomov() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
-	canvasCharacter(70, 60, 2.5);
+	canvasPlayer(70, 60, 2.5);
 	renderMoney();
 	renderSpeedrunMode();
 
@@ -14,7 +14,7 @@ async function HNMDomov() {
 async function HNMNamesti() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
-	canvasCharacter(50, 60, 1);
+	canvasPlayer(50, 60, 1);
 	renderMoney();
 	renderSpeedrunMode();
 	
@@ -27,7 +27,7 @@ async function HNMNamesti() {
 async function HNMNadrazi() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
-	canvasCharacter(35, 60, 1.7);
+	canvasPlayer(35, 60, 1.7);
 	renderMoney();
 	renderSpeedrunMode();
 
@@ -41,7 +41,7 @@ async function HNMNadrazi() {
 async function HNMRestaurace() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
-	canvasCharacter(70, 90, 2); //for player
+	canvasPlayer(70, 90, 2); //for player
 	renderMoney();
 	renderSpeedrunMode();
 	
@@ -53,7 +53,7 @@ async function HNMRestaurace() {
 async function HNMNastupiste() {
 	console.log("HNM "+info.location_minor);
 	canvasBackground(HNMimages[info.location_minor]);
-	canvasCharacter(65, 70, 1.3);
+	canvasPlayer(65, 70, 1.3);
 	renderMoney();
 	renderSpeedrunMode();
 

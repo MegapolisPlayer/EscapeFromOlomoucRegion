@@ -219,41 +219,17 @@ function waiterEventFromElement(element, event) {
 
 function canvasBackground(image) {
 	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+	currentBGImage = image;
 }
 function canvasImage(image, x, y, scale) {
 	ctx.drawImage(image, canvasX(x), canvasY(y), image.width * scale, image.height * scale);
 }
 function canvasImageD(image, x, y, sizex, sizey) {
-	ctx.drawImage(image, canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
-}
-function canvasCharacter(x, y, scale) {
-	//canvas space processing for x, y happens in canvasImage
-	canvasImage(
-		players[selectedPlayer],
-		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
+	ctx.drawImage(
+		image,
+		image.width*x/100, image.height*y/100, image.width*sizex/100, image.height*sizey/100,
+		canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey)
 	);
-}
-function canvasCharacterRemove(x, y, scale, bgimage) {
-	canvasImageD(
-		bgimage,
-		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
-	);
-}
-
-function canvasNPC(characterid, x, y, scale) {
-	canvasImage(
-		characters[characterid],
-		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
-	);
-}
-function canvasNPCRemove(x, y, scale, bgimage) {
-	canvasCharacterRemove(x, y, scale, bgimage);
 }
 
 //
@@ -337,7 +313,7 @@ function setArrowInterval() {
 			);
 		}
 		arrowAnimationState = !arrowAnimationState;
-	}, 700);
+	}, arrowAnimationIntervalTime);
 }
 
 function addArrow(id, x, y, type, fn) {
@@ -378,6 +354,9 @@ async function loadCharacters() {
 	for(let i = 0; i < charactersToLoad.length; i++) {
 		players.push(await loadImage("assets/characters/p_"+charactersToLoad[i]+".png"));
 	}
+	for(let i = 0; i < charactersToLoad.length; i++) {
+		players2.push(await loadImage("assets/characters/p2_"+charactersToLoad[i]+".png"));
+	}
 
 	NPC = {
 		ARMY: 0,
@@ -393,10 +372,82 @@ async function loadCharacters() {
 	}
 }
 
+function canvasPlayer(x, y, scale) {
+	//canvas space processing for x, y happens in canvasImage
+	canvasImage(
+		players[selectedPlayer],
+		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
+	player.X = x;
+	player.Y = y;
+	player.SCALE = scale;
+	player.ISON = true;
+}
+function canvasPlayer2(x, y, scale) {
+	//canvas space processing for x, y happens in canvasImage
+	canvasImage(
+		players2[selectedPlayer],
+		x-(players2[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(players2[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
+	player.X = x;
+	player.Y = y;
+	player.SCALE = scale;
+	player.ISON = true;
+}
+
+function canvasPlayerRemove(x, y, scale, bgimage) {
+	canvasImageD(
+		bgimage,
+		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width*100,
+		players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height*100
+	);
+	player.X = x;
+	player.Y = y;
+	player.SCALE = scale;
+	player.ISON = false;
+}
+
+function canvasNPC(characterid, x, y, scale) {
+	canvasImage(
+		characters[characterid],
+		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
+}
+
+function canvasNPC2(characterid, x, y, scale) {
+	canvasImage(
+		characters2[characterid],
+		x-(characters2[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(characters2[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		scale*characterSizeMultiplier
+	);
+}
+
+function canvasNPCRemove(x, y, scale, bgimage) {
+	canvasPlayerRemove(x, y, scale, bgimage);
+}
+
 function setCharacterInterval() {
 	characterAnimationInterval = window.setInterval(() => {
-		//TODO: finish!
-	}, 1000);
+		if(player.ISON) {
+			canvasPlayerRemove(player.X, player.Y, player.SCALE, currentBGImage);
+			if(characterAnimationState == false) {
+				canvasPlayer(player.X, player.Y, player.SCALE);
+			}
+			else {
+				canvasPlayer2(player.X, player.Y, player.SCALE);
+			}
+			characterAnimationState = !characterAnimationState;
+		}
+	}, characterAnimationIntervalTime);
 }
 
 //
