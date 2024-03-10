@@ -50,18 +50,21 @@ let player = {
 	SCALE: 1,
 	ISON: false,
 };
+let NPC = {}; //set in loadCharacters function, types of NPCs
 
-let characters = [];
+
+let npcs = [];
 let characterAnimationInterval;
 let characterAnimationIntervalTime = 600;
 let characterAnimationState = false; //works for players too
 
-let NPC = {}; //set in loadCharacters function
-
+//images
 let players = [];
 let players2 = []; //second stage of animation
-
 let selectedPlayer = 0;
+
+let characters = [];
+let characters2 = []; //second stage of animation
 
 // AUDIO
 
@@ -115,6 +118,7 @@ let info = {
 	money: 0,
 	location_major: 0,
 	location_minor: 0,
+	location_minor_next: 0,
 	speedrun: false,
 	currentTicketPrice: 0,
 };

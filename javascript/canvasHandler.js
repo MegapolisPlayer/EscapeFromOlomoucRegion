@@ -144,6 +144,8 @@ function canvasClear(clearcolor) {
 	ctx.fillStyle = clearcolor;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = temp;
+
+	npcs.length = 0;
 }
 
 function canvasTextS(text, x, y) {
@@ -366,9 +368,13 @@ async function loadCharacters() {
 		TRANSLATOR: 4,
 		UTILITY: 5
 	};
+
 	let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility"];
 	for(let i = 0; i < NPCSToLoad.length; i++) {
 		characters.push(await loadImage("assets/characters/"+NPCSToLoad[i]+".png"));
+	}
+	for(let i = 0; i < charactersToLoad.length; i++) {
+		characters2.push(await loadImage("assets/characters/2_"+NPCSToLoad[i]+".png"));
 	}
 }
 
@@ -413,7 +419,19 @@ function canvasPlayerRemove(x, y, scale, bgimage) {
 	player.ISON = false;
 }
 
+function NPCInfo(type, x, y, scale) {
+	this.X = x;
+	this.Y = y;
+	this.SCALE = scale;
+	this.TYPE = type;
+}
+
 function canvasNPC(characterid, x, y, scale) {
+	npcs.push(new NPCInfo(characterid, x, y, scale));
+	canvasDrawNPC(characterid, x, y, scale);
+}
+
+function canvasDrawNPC(characterid, x, y, scale) {
 	canvasImage(
 		characters[characterid],
 		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
@@ -422,7 +440,7 @@ function canvasNPC(characterid, x, y, scale) {
 	);
 }
 
-function canvasNPC2(characterid, x, y, scale) {
+function canvasDrawNPC2(characterid, x, y, scale) {
 	canvasImage(
 		characters2[characterid],
 		x-(characters2[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
@@ -431,8 +449,25 @@ function canvasNPC2(characterid, x, y, scale) {
 	);
 }
 
-function canvasNPCRemove(x, y, scale, bgimage) {
-	canvasPlayerRemove(x, y, scale, bgimage);
+function canvasNPCRemove(characterid, x, y, scale, bgimage) {
+	canvasImageD(
+		bgimage,
+		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
+		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
+		characters[characterid].width*scale*characterSizeMultiplier/canvas.width*100,
+		characters[characterid].height*scale*characterSizeMultiplier/canvas.height*100
+	);
+}
+
+function canvasNPCDelete() {
+	for(let i = 0; i < npcs.length; i++) {
+		if(npcs[i].x == X, npcs[i].y == Y) {
+			npcs.splice(i, 1); return;
+		}
+	}
+}
+function canvasNPCClear() {
+	npcs.length = 0;
 }
 
 function setCharacterInterval() {
@@ -445,8 +480,18 @@ function setCharacterInterval() {
 			else {
 				canvasPlayer2(player.X, player.Y, player.SCALE);
 			}
-			characterAnimationState = !characterAnimationState;
 		}
+		for(let i = 0; i < npcs.length; i++) {
+			canvasNPCRemove(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE, currentBGImage);
+			//invert so looks better
+			if(characterAnimationState == true) {
+				canvasDrawNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
+			}
+			else {
+				canvasDrawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
+			}
+		}
+		characterAnimationState = !characterAnimationState;
 	}, characterAnimationIntervalTime);
 }
 

@@ -1,4 +1,7 @@
 function errorHandle(message) {
+	window.clearInterval(arrowAnimationInterval);
+	window.clearInterval(characterAnimationInterval);
+
 	canvasClear("#800000");
 	canvasSetColor("#ffffff");
 	canvasTextM(":(\nAn error occured somewhere\n"+message+"\nCheck the console for more information.\n", 10, 10);

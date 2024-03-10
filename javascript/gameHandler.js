@@ -13,7 +13,7 @@ function renderMainMenu() {
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 3.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 10.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -190,8 +190,12 @@ async function playHandler() {
 	await renderBackstory();
 
 	await HNMHandler();
-
-	//TODO: add other cities here
+	await PrerovHandler();
+	await NezamysliceHandler();
+	await ProstejovHandler();
+	await OlomoucHandler();
+	await StudenkaHandler();
+	await OstravaHandler();
 }
 
 async function gameHandler() {
