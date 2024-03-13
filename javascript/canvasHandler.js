@@ -95,10 +95,10 @@ function canvasCircleBoxBorder(x, y, sizex, sizey) {
 	ctx.stroke();
 }
 function canvasBox(x, y, sizex, sizey) {
-	ctx.fillRect(x, y, sizex, sizey);
+	ctx.fillRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
 }
 function canvasBoxBorder(x, y, sizex, sizey) {
-	ctx.strokeRect(x, y, sizex, sizey);
+	ctx.strokeRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
 }
 
 function canvasSetColor(color) {
@@ -112,6 +112,10 @@ function canvasSetBrightness(brightness) {
 }
 function canvasResetBrightness() {
 	ctx.filter = "brightness(100%)";
+}
+function canvasGetBrightness() {
+	let str = String(ctx.filter);
+	return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
 }
 
 function canvasSetFont(font, fontsize, weight = "normal") {
@@ -234,265 +238,20 @@ function canvasImageD(image, x, y, sizex, sizey) {
 	);
 }
 
-//
-// BUTTONS
-//
-
-function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
-	let btn = document.createElement("button");
-	btn.id = id;
-	btn.innerHTML = text;
-	btn.className = classname;
-	btn.style.setProperty("width", sizex+"px");
-	btn.style.setProperty("height", sizey+"px");
-	btn.style.setProperty("left", x+"px");
-	btn.style.setProperty("top", y+"px");
-	btn.addEventListener("click", fn);
-	btn.addEventListener("click", () => { sfxPlay(0); })
-	document.getElementById("draw_contain").appendChild(btn);
-	return btn;
-}
-
-//returns said button
-function addButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem", canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), fn);
-}
-function addSmallButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem_small", canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), fn);
-}
-function removeButton(id) {
-	document.getElementById(id).remove();
-}
-
-function showButton(id) {
-	document.getElementById(id).style.setProperty("display", "block");
-}
-function hideButton(id) {
-	document.getElementById(id).style.setProperty("display", "none");
-}
-
-//
-// ARROWS
-//
-
-function ArrowInfo(x, y, type, fn) {
-	this.x = x;
-	this.y = y;
-	this.type = type;
-	this.fn = fn;
-}
-
-function SavedArrowInfo(id, x, y, type, fn) {
-	this.id = id;
-	this.x = x;
-	this.y = y;
-	this.type = type;
-	this.fn = fn;
-}
-
-async function loadArrows() {
-	arrowImages.push(await loadImage("assets/arrow/left.png"));
-	arrowImages.push(await loadImage("assets/arrow/right.png"));
-	arrowImages.push(await loadImage("assets/arrow/top.png"));
-	arrowImages.push(await loadImage("assets/arrow/bottom.png"));
-	arrowImages.push(await loadImage("assets/arrow/info.png"));
-
-	arrowImages2.push(await loadImage("assets/arrow/left2.png"));
-	arrowImages2.push(await loadImage("assets/arrow/right2.png"));
-	arrowImages2.push(await loadImage("assets/arrow/top2.png"));
-	arrowImages2.push(await loadImage("assets/arrow/bottom2.png"));
-	arrowImages2.push(await loadImage("assets/arrow/info2.png"));
-}
-
-function setArrowInterval() {
-	arrowAnimationInterval = window.setInterval(() => {
-		for(let i = 0; i < arrowList.length; i++) {
-			ctx.drawImage(
-				(arrowAnimationState == false) ? arrowImages2[arrowList[i].type] : arrowImages[arrowList[i].type],
-				canvasX(arrowList[i].x) - (arrowSize/2),
-				canvasY(arrowList[i].y) - (arrowSize/2), 
-				arrowSize, arrowSize
-			);
-		}
-		arrowAnimationState = !arrowAnimationState;
-	}, arrowAnimationIntervalTime);
-}
-
-function addArrow(id, x, y, type, fn) {
-	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), arrowSize, arrowSize);
-	arrowList.push(new SavedArrowInfo(id, x, y, type, fn));
-	return internal_setButton(id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), arrowSize, arrowSize, fn);
-}
-function removeArrow(id) {
-	removeButton(id);
-	for(let i = 0; i < arrowList.length; i++) {
-		if(arrowList[i].id == id) {
-			arrowList[i].splice(i, 1);
-		}
+async function canvasFadeOut() {
+	animationBlocked = true;
+	while(canvasGetBrightness() > 3) {
+		await new Promise((resolve) => {
+			window.setTimeout(() => {
+				canvasSetBrightness(canvasGetBrightness() - 5);
+				canvasBackground(currentBGImage);
+				resolve();
+			}, 50);
+		});
 	}
-}
-function clearArrows() {
-	document.getElementById("draw_contain").querySelectorAll(".draw_input_elem_arrow").forEach((val) => {
-		val.remove();
-	});
-	arrowList.length = 0;
-}
-
-//takes in array of ArrowInfos
-function renderArrows(arrows) {
-	let tempPromises = [];
-	for(let i = 0; i < arrows.length; i++) {
-		tempPromises.push(waiterEventFromElement(addArrow("renderArrows"+String(i), arrows[i].x, arrows[i].y, arrows[i].type, () => { arrows[i].fn.call(); clearArrows(); }), "click"));
-	}
-	return Promise.any(tempPromises);
-}
-
-//
-// CHARACTERS
-//
-
-async function loadCharacters() {
-	let charactersToLoad = ["default", "winter", "girl", "girl_2"];
-	for(let i = 0; i < charactersToLoad.length; i++) {
-		players.push(await loadImage("assets/characters/p_"+charactersToLoad[i]+".png"));
-	}
-	for(let i = 0; i < charactersToLoad.length; i++) {
-		players2.push(await loadImage("assets/characters/p2_"+charactersToLoad[i]+".png"));
-	}
-
-	NPC = {
-		ARMY: 0,
-		COOK: 1,
-		STATION: 2,
-		TRAIN: 3,
-		TRANSLATOR: 4,
-		UTILITY: 5
-	};
-
-	let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility"];
-	for(let i = 0; i < NPCSToLoad.length; i++) {
-		characters.push(await loadImage("assets/characters/"+NPCSToLoad[i]+".png"));
-	}
-	for(let i = 0; i < charactersToLoad.length; i++) {
-		characters2.push(await loadImage("assets/characters/2_"+NPCSToLoad[i]+".png"));
-	}
-}
-
-function canvasPlayer(x, y, scale) {
-	//canvas space processing for x, y happens in canvasImage
-	canvasImage(
-		players[selectedPlayer],
-		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
-	);
-	player.X = x;
-	player.Y = y;
-	player.SCALE = scale;
-	player.ISON = true;
-}
-function canvasPlayer2(x, y, scale) {
-	//canvas space processing for x, y happens in canvasImage
-	canvasImage(
-		players2[selectedPlayer],
-		x-(players2[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players2[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
-	);
-	player.X = x;
-	player.Y = y;
-	player.SCALE = scale;
-	player.ISON = true;
-}
-
-function canvasPlayerRemove(x, y, scale, bgimage) {
-	canvasImageD(
-		bgimage,
-		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width*100,
-		players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height*100
-	);
-	player.X = x;
-	player.Y = y;
-	player.SCALE = scale;
-	player.ISON = false;
-}
-
-function NPCInfo(type, x, y, scale) {
-	this.X = x;
-	this.Y = y;
-	this.SCALE = scale;
-	this.TYPE = type;
-}
-
-function canvasNPC(characterid, x, y, scale) {
-	npcs.push(new NPCInfo(characterid, x, y, scale));
-	canvasDrawNPC(characterid, x, y, scale);
-}
-
-function canvasDrawNPC(characterid, x, y, scale) {
-	canvasImage(
-		characters[characterid],
-		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
-	);
-}
-
-function canvasDrawNPC2(characterid, x, y, scale) {
-	canvasImage(
-		characters2[characterid],
-		x-(characters2[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters2[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
-	);
-}
-
-function canvasNPCRemove(characterid, x, y, scale, bgimage) {
-	canvasImageD(
-		bgimage,
-		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		characters[characterid].width*scale*characterSizeMultiplier/canvas.width*100,
-		characters[characterid].height*scale*characterSizeMultiplier/canvas.height*100
-	);
-}
-
-function canvasNPCDelete() {
-	for(let i = 0; i < npcs.length; i++) {
-		if(npcs[i].x == X, npcs[i].y == Y) {
-			npcs.splice(i, 1); return;
-		}
-	}
-}
-function canvasNPCClear() {
-	npcs.length = 0;
-}
-
-function setCharacterInterval() {
-	characterAnimationInterval = window.setInterval(() => {
-		if(player.ISON) {
-			canvasPlayerRemove(player.X, player.Y, player.SCALE, currentBGImage);
-			if(characterAnimationState == false) {
-				canvasPlayer(player.X, player.Y, player.SCALE);
-			}
-			else {
-				canvasPlayer2(player.X, player.Y, player.SCALE);
-			}
-		}
-		for(let i = 0; i < npcs.length; i++) {
-			canvasNPCRemove(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE, currentBGImage);
-			//invert so looks better
-			if(characterAnimationState == true) {
-				canvasDrawNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
-			}
-			else {
-				canvasDrawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
-			}
-		}
-		characterAnimationState = !characterAnimationState;
-	}, characterAnimationIntervalTime);
+	canvasResetBrightness();
+	animationBlocked = false;
+	return;
 }
 
 //

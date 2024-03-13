@@ -13,7 +13,7 @@ function renderMainMenu() {
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 10.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 13.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -152,33 +152,23 @@ function renderDisclaimer() {
 	canvasSetFontWeight("normal");
 	canvasSetSmallFont();
 	canvasSetColor("#ffffff");
-	canvasTextM(wrapText(getTranslation(44), canvas.width - canvasX(20)), 10, 20);
+	canvasTextM(wrapText(getTranslation(44), 80), 10, 20);
 
 	return renderArrows([
 		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
 	]);
 }
 
-// BACKSTORY
+// CUTSCENE
 
-function renderBackstory() {
-	console.log("backstory");
+async function renderCutscene() {
+	console.log("cutscene");
 	canvasSetBrightness(75);
 	canvasBackground(mainMenuImage);
-	canvasResetBrightness();
 
-	canvasSetLargeFont();
-	canvasSetColor("#000080");
-	canvasSetBorder("#ffffff");
-	canvasTextAndBorderS(getTranslation(45), 5, 10);
-
-	canvasSetSmallFont();
-	canvasSetColor("#ffffff");
-	canvasTextM(wrapText(getTranslation(46), canvas.width - canvasX(20)), 10, 20);
-
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
+	await canvasFadeOut();
+	await cutsceneNews();
+	await canvasFadeOut();
 }
 // GAME HANDLER
 
@@ -187,7 +177,7 @@ async function playHandler() {
 	clearCharacterSelection();
 
 	await renderDisclaimer();
-	await renderBackstory();
+	await renderCutscene();
 
 	await HNMHandler();
 	await PrerovHandler();

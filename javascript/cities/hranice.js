@@ -7,7 +7,7 @@ async function HNMDomov() {
 	renderMoney();
 	renderSpeedrunMode();
 
-	return renderArrows([new ArrowInfo(90, 80, arrowType.RIGHT, () => { info.location_minor_next = 1; })]);
+	return renderArrows([new ArrowInfo(90, 80, arrowType.RIGHT, async () => { info.location_minor_next = 1; })]);
 }
 
 async function HNMNamesti() {
@@ -81,7 +81,7 @@ async function HNMHandler() {
 	info.location_minor_next = 0;
 	
 	canvasLoading();
-	await loadMusic([3]);
+	await loadMusic([2, 10]);
 	HNMimages = await loadImages([
 		"assets/photo/hnm/domov.png",
 		"assets/photo/hnm/namesti.jpg",
@@ -96,14 +96,13 @@ async function HNMHandler() {
 	canvasBackground(HNMimages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 
-	await renderDialogue(0);
+	dialogueBegin();
+	await dialogueNext(0);
+	dialogueEnd();
 
 	let promise;
 	while(info.location_minor_next != -1) {
 		info.location_minor = info.location_minor_next;
-
-		//clear NPCs when switching location
-		canvasNPCClear();
 
 		switch(info.location_minor) {
 			case(-1): break; //to next city
@@ -116,6 +115,12 @@ async function HNMHandler() {
 
 		//we wait until any promise met, then loop again
 		await promise;
+
+		//cleanup code, moved here so doesnt get called on first entry to location
+
+		//clear NPCs when switching location
+		canvasNPCClear();
+		await canvasFadeOut(); //fade out AFTER clear!
 	}
 
 	return;

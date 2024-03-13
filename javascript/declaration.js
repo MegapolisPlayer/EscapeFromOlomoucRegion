@@ -23,6 +23,13 @@ let currentBGImage;
 
 let mainMenuImage;
 
+let animationBlocked = false;
+
+// MAPS
+
+let mapBGImage;
+let maps = [];
+
 // ARROWS
 
 let arrowType = {
@@ -51,7 +58,6 @@ let player = {
 	ISON: false,
 };
 let NPC = {}; //set in loadCharacters function, types of NPCs
-
 
 let npcs = [];
 let characterAnimationInterval;
@@ -94,6 +100,10 @@ let translationBA = [];
 let translationSelected = 0;
 
 let translations = [ translationEN, translationCZ, translationDE, translationSUS, translationBA ];
+
+// DIALOGUE
+
+let dialogueEnabled = false;
 
 // SETTINGS AND INFORMATION
 

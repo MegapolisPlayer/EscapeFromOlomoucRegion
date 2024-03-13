@@ -75,6 +75,7 @@ async function loadSFX() {
 		sfxArray.push(new Audio("assets/sfx/Shoot.mp3"));
 		sfxArray.push(new Audio("assets/sfx/GameOver.mp3"));
 		sfxArray.push(new Audio("assets/sfx/TrainBrake.mp3"));
+		sfxArray.push(new Audio("assets/sfx/News.mp3"));
 
 		for(let i = 0; i < sfxArray.length; i++) {
 			sfxArray[i].volume = 0.3;
@@ -155,21 +156,16 @@ function musicPlay(id) {
 	if(!audioIsOn) { 
 		musicArray[id].pause();	return;
 	}
+	musicArray[id].currentTime = 0;
 	musicArray[id].play();
 }
-function musicStop(id) {
-	if(id >= musicArray.length || id == undefined) {
-		errorHandle("Music ID undefined or out of range.");
-	}
+function musicStop() {
 	if(!audioIsOn) { return; }
-	musicArray[id].pause();
+	musicArray[musicCurrent].pause();
 }
-function musicRestart(id) {
-	if(id >= musicArray.length || id == undefined) {
-		errorHandle("Music ID undefined or out of range.");
-	}
+function musicRestart() {
 	if(!audioIsOn) { return; }
-	musicArray[id].currentTime = 0;
+	musicArray[musicCurrent].currentTime = 0;
 }
 
 function sfxPlay(id) {
@@ -179,6 +175,13 @@ function sfxPlay(id) {
 	if(!audioIsOn) { return; };
 	sfxArray[id].currentTime = 0;
 	sfxArray[id].play();
+}
+function sfxStop(id) {
+	if(id >= musicArray.length || id == undefined) {
+		errorHandle("Music ID undefined or out of range.");
+	}
+	if(!audioIsOn) { return; }
+	sfxArray[id].pause();
 }
 
 function voicePlay(id) {

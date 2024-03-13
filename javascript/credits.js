@@ -1,4 +1,4 @@
-let creditsDelay = 3000; //in milliseconds
+let creditsDelay = 3500; //in milliseconds
 let creditsCounter = 0;
 let creditsImg;
 
@@ -36,6 +36,11 @@ async function renderCredits() {
 		Marie Čchiedzeová, Vojtěch Dočkal, Jiří Komárek, JirkaSv, Dezidor, Vitezslava,
 		Kamil Czianskim, Michal Klajban, STERUSSTUDENKA, Draceane, Herbert Frank,
 		Palickap, RPekar
+	`);
+	setCreditsStep(30, `
+		Map images: Copyright (c) OpenStreetMap contributors
+		https://www.openstreetmap.org/copyright
+		Available under the ODL (Open Database License).
 	`);
 
 	let musicNamesString = "\n";

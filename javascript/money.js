@@ -22,5 +22,5 @@ function renderMoney() {
 		canvasSetColor("#000080");
 	}
 	canvasSetSmallFont();
-	canvasTextS(getTranslation(48)+": "+String(info.money), 83, 7);
+	canvasTextS(getTranslation(51)+": "+String(info.money), 83, 7);
 }
