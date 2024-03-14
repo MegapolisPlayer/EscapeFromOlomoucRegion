@@ -17,7 +17,7 @@ async function cutsceneNews() {
 		canvasSetColor("#000080");
 		canvasBox(0, 70, 100, 30);
 		canvasSetColor("#ffffff");
-		canvasTextM(wrapText(getTranslationAndVoice(46+i), 80), 10, 80);
+		await canvasTypewriterM(wrapText(getTranslationAndVoice(46+i), 80), 10, 80);
 
 		await renderArrows([
 			new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),

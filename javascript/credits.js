@@ -5,6 +5,7 @@ let creditsImg;
 function setCreditsStep(titleid, text = "", fn = undefined) {
 	setTimeout(() => {
 		console.log("setCreditsStep callback: Next credits step!");
+		canvasSetColor("#ffffff");
 		canvasBackground(creditsImg);
 		canvasSetFontWeight("bold");
 		canvasTextS(getTranslation(titleid), 5, 35);

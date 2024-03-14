@@ -96,9 +96,11 @@ async function HNMHandler() {
 	canvasBackground(HNMimages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 
-	dialogueBegin();
-	await dialogueNext(0);
-	dialogueEnd();
+	if(!info.speedrun) {
+		dialogueBegin();
+		await dialogueNext(0);
+		dialogueEnd();
+	}
 
 	let promise;
 	while(info.location_minor_next != -1) {

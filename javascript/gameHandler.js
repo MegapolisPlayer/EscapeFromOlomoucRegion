@@ -13,7 +13,7 @@ function renderMainMenu() {
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 13.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 14.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -114,7 +114,7 @@ async function renderCharacterSelection() {
 	let promises = [];
 
 	for(let i = 0; i < 4; i++) {
-		canvasImage(players[i], 5 + i * 25, 50, 0.15);
+		canvasImage(players[i], 5 + i * 25, 50, characterSizeMultiplier);
 		promises.push(
 			waiterEventFromElement(
 				addSmallButton(
@@ -166,9 +166,11 @@ async function renderCutscene() {
 	canvasSetBrightness(75);
 	canvasBackground(mainMenuImage);
 
-	await canvasFadeOut();
-	await cutsceneNews();
-	await canvasFadeOut();
+	await canvasFadeOut(5);
+	if(!info.speedrun) {
+		await cutsceneNews();
+		await canvasFadeOut(5);
+	}
 }
 // GAME HANDLER
 
@@ -216,6 +218,8 @@ async function gameHandler() {
 	canvasTextS("Loading other images...", 10, 40);
 	await loadArrows(); //arrows
 	setArrowInterval(); //set interval
+	//textures
+
 	canvasTextS("Loading other images... done", 10, 40);
 
 	await loadMainMenu();

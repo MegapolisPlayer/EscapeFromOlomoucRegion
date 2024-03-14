@@ -4,6 +4,15 @@
 // CANVAS
 //
 
+function canvasSet() {
+	biggerWindowSize = ((canvas.width > canvas.height) ? canvas.width : canvas.height);
+	smallerWindowSize = ((canvas.width < canvas.height) ? canvas.width : canvas.height);	
+
+	fontSizeLarge = biggerWindowSize*0.048;
+	fontSizeSmall = biggerWindowSize*0.024;
+	characterSizeMultiplier = smallerWindowSize*0.0003;
+}
+
 function canvasInit() {
 	canvas = document.getElementById("draw");
 	ctx = canvas.getContext("2d");
@@ -16,31 +25,10 @@ function canvasInit() {
 	ctx.strokeStyle = "#ffffff";
 	ctx.lineWidth = 1;
 	
-	biggerWindowSize = ((canvas.width > canvas.height) ? canvas.width : canvas.height);
-	smallerWindowSize = ((canvas.width < canvas.height) ? canvas.width : canvas.height);	
-
-	fontSizeLarge = biggerWindowSize*0.048;
-	fontSizeSmall = biggerWindowSize*0.024;
-	characterSizeMultiplier = smallerWindowSize*0.0003;
-
+	canvasSet();
+	
 	canvasSetFont("Arial, FreeSans", fontSizeLarge, "bold");
 	canvasClear("#ffffff");
-}
-function canvasFullscreen(afunc = undefined) {
-	canvas.width = window.screen.width;
-	canvas.height = window.screen.height;
-	ctx.width = window.screen.width;
-	ctx.height = window.screen.height;
-
-	if(afunc !== undefined) { afunc(); }
-}
-function canvasOriginal(afunc = undefined) {
-	canvas.width = 1000;
-	canvas.height = 500;
-	ctx.width = 1000;
-	ctx.height = 500;
-
-	if(afunc !== undefined) { afunc(); }
 }
 
 function canvasX(xvalue) {
@@ -48,6 +36,10 @@ function canvasX(xvalue) {
 }
 function canvasY(yvalue) {
 	return Math.trunc(canvas.height*(yvalue/100));
+}
+
+function canvasGetScale() {
+	return canvas.width/1000;
 }
 
 function canvasRoundedBox(x, y, sizex, sizey, radius) {
@@ -114,8 +106,9 @@ function canvasResetBrightness() {
 	ctx.filter = "brightness(100%)";
 }
 function canvasGetBrightness() {
-	let str = String(ctx.filter);
-	return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
+	//let str = String(ctx.filter);
+	//return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
+	return parseFloat(ctx.filter);
 }
 
 function canvasSetFont(font, fontsize, weight = "normal") {
@@ -172,8 +165,8 @@ function canvasTextM(text, x, y) {
 	//lowest point from line + highest point from line
 	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 	lineheight *= 1.5;
-	for(let Id = 0; Id < lines.length; Id++) {
-		ctx.fillText(lines[Id], px, py + newlineyoffset);
+	for(let i = 0; i < lines.length; i++) {
+		ctx.fillText(lines[i], px, py + newlineyoffset);
 		newlineyoffset += lineheight;
 	}
 }
@@ -186,8 +179,42 @@ function canvasTextBorderM(text, x, y) {
 	//lowest point from line + highest point from line
 	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 	lineheight *= 1.5;
-	for(let Id = 0; Id < lines.length; Id++) {
-		ctx.strokeText(lines[Id], px, py + newlineyoffset);
+	for(let i = 0; i < lines.length; i++) {
+		ctx.strokeText(lines[i], px, py + newlineyoffset);
+		newlineyoffset += lineheight;
+	}
+}
+
+//typewriter function write letter by letter
+
+async function canvasTypewriterS(text, x, y) {
+	for(let i = 0; i < text.length; i++) {
+		ctx.fillText(text.substring(0,i), canvasX(x), canvasY(y));
+		await new Promise((resolve) => {
+			window.setTimeout(() => {
+				resolve();
+			}, 50);
+		});
+	}
+}
+async function canvasTypewriterM(text, x, y) {
+	let px = canvasX(x);
+	let py = canvasY(y);
+	let lines = text.split('\n');
+	let newlineyoffset = 0;
+	let metrics = ctx.measureText(text);
+	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+	lineheight *= 1.5;
+
+	for(let i = 0; i < lines.length; i++) {
+		for(let j = 0; j < lines[i].length; j++) {
+			ctx.fillText(lines[i].substring(0,j), px, py + newlineyoffset);
+			await new Promise((resolve) => {
+				window.setTimeout(() => {
+					resolve();
+				}, 50);
+			});
+		}
 		newlineyoffset += lineheight;
 	}
 }
@@ -238,12 +265,12 @@ function canvasImageD(image, x, y, sizex, sizey) {
 	);
 }
 
-async function canvasFadeOut() {
+async function canvasFadeOut(strength = 10) {
 	animationBlocked = true;
 	while(canvasGetBrightness() > 3) {
 		await new Promise((resolve) => {
 			window.setTimeout(() => {
-				canvasSetBrightness(canvasGetBrightness() - 5);
+				canvasSetBrightness(canvasGetBrightness() - strength);
 				canvasBackground(currentBGImage);
 				resolve();
 			}, 50);

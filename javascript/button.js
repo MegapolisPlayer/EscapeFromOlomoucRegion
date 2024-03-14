@@ -67,9 +67,9 @@ function setArrowInterval() {
 		for(let i = 0; i < arrowList.length; i++) {
 			ctx.drawImage(
 				(arrowAnimationState == false) ? arrowImages2[arrowList[i].type] : arrowImages[arrowList[i].type],
-				canvasX(arrowList[i].x) - (arrowSize/2),
-				canvasY(arrowList[i].y) - (arrowSize/2), 
-				arrowSize, arrowSize
+				canvasX(arrowList[i].x) - (arrowSize/2*canvasGetScale()),
+				canvasY(arrowList[i].y) - (arrowSize/2*canvasGetScale()), 
+				arrowSize*canvasGetScale(), arrowSize*canvasGetScale()
 			);
 		}
 		arrowAnimationState = !arrowAnimationState;
@@ -77,9 +77,12 @@ function setArrowInterval() {
 }
 
 function addArrow(id, x, y, type, fn) {
-	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), arrowSize, arrowSize);
+	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2*canvasGetScale()), canvasY(y) - (arrowSize/2*canvasGetScale()), arrowSize*canvasGetScale(), arrowSize*canvasGetScale());
 	arrowList.push(new SavedArrowInfo(id, x, y, type, fn));
-	return internal_setButton(id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2), canvasY(y) - (arrowSize/2), arrowSize, arrowSize, fn);
+	return internal_setButton(
+		id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2*canvasGetScale()), canvasY(y) - (arrowSize/2*canvasGetScale()),
+		arrowSize*canvasGetScale(), arrowSize*canvasGetScale(), fn
+	);
 }
 function removeArrow(id) {
 	removeButton(id);

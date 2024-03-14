@@ -12,7 +12,7 @@ async function dialogueNext(id) {
 	canvasSetColor("#000000");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM(wrapText(getTranslationAndVoice(id), 90), 5, 85);
+	await canvasTypewriterM(wrapText(getTranslationAndVoice(id), 90), 5, 85);
 
 	return renderArrows([
 		new ArrowInfo(92, 92, arrowType.RIGHT, () => {}),

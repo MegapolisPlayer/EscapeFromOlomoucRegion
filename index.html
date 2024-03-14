@@ -83,6 +83,11 @@
 
 		<div id="draw_contain">
 		<canvas id="draw">This game is not playable without support for the HTML canvas.</canvas>
+		<div id="draw_buffer" style="width: 1000px; height: 500px;"></div>
 		</div>
+		<button onclick="canvasFullscreen()">Fullscreen/Na Plnou Obrazovku</button>
+		<button onclick="canvasResizeTo(1000, 500)">Default size/Základní rozměr</button>
+		<button onclick="canvasResizeTo(640, 480)">640x480</button>
+		<button onclick="canvasResizeTo(1280, 720)">1280x720</button>
 	</body>
 </html>
