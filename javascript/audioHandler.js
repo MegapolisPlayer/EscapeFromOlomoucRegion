@@ -76,6 +76,7 @@ async function loadSFX() {
 		sfxArray.push(new Audio("assets/sfx/GameOver.mp3"));
 		sfxArray.push(new Audio("assets/sfx/TrainBrake.mp3"));
 		sfxArray.push(new Audio("assets/sfx/News.mp3"));
+		sfxArray.push(new Audio("assets/sfx/Type.mp3"));
 
 		for(let i = 0; i < sfxArray.length; i++) {
 			sfxArray[i].volume = 0.3;
@@ -175,6 +176,20 @@ function sfxPlay(id) {
 	if(!audioIsOn) { return; };
 	sfxArray[id].currentTime = 0;
 	sfxArray[id].play();
+}
+function sfxPlayLoud(id) {
+	if(id >= sfxArray.length || id == undefined) {
+		errorHandle("SFX ID undefined or out of range.");
+	}
+	if(!audioIsOn) { return; };
+
+	let tempVolume = sfxArray[id].volume;
+	sfxArray[id].volume = 1;
+	sfxArray[id].currentTime = 0;
+	sfxArray[id].play();
+	sfxArray[id].addEventListener("ended", () => {
+		sfxArray[id].volume = tempVolume;
+    });
 }
 function sfxStop(id) {
 	if(id >= musicArray.length || id == undefined) {

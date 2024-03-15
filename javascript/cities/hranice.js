@@ -90,12 +90,18 @@ async function HNMHandler() {
 		"assets/photo/hnm/nastupiste.jpg"
 	]);
 	
+	//map
+	if(!info.speedrun) {
+		musicPlay(1);
+		await renderMapDay1();
+	}
+
 	musicPlay(2); //start playing AFTER loading
 
-	//entry dialogue
 	canvasBackground(HNMimages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
-
+	
+	//entry dialogue
 	if(!info.speedrun) {
 		dialogueBegin();
 		await dialogueNext(0);

@@ -28,7 +28,7 @@ let animationBlocked = false;
 // MAPS
 
 let mapBGImage;
-let maps = [];
+let mapFGImage;
 
 // ARROWS
 

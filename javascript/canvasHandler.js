@@ -11,6 +11,8 @@ function canvasSet() {
 	fontSizeLarge = biggerWindowSize*0.048;
 	fontSizeSmall = biggerWindowSize*0.024;
 	characterSizeMultiplier = smallerWindowSize*0.0003;
+
+	canvasSetSmallFont();
 }
 
 function canvasInit() {
@@ -106,9 +108,8 @@ function canvasResetBrightness() {
 	ctx.filter = "brightness(100%)";
 }
 function canvasGetBrightness() {
-	//let str = String(ctx.filter);
-	//return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
-	return parseFloat(ctx.filter);
+	let str = String(ctx.filter);
+	return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
 }
 
 function canvasSetFont(font, fontsize, weight = "normal") {
@@ -189,6 +190,7 @@ function canvasTextBorderM(text, x, y) {
 
 async function canvasTypewriterS(text, x, y) {
 	for(let i = 0; i < text.length; i++) {
+		sfxPlay(11);
 		ctx.fillText(text.substring(0,i), canvasX(x), canvasY(y));
 		await new Promise((resolve) => {
 			window.setTimeout(() => {
@@ -196,6 +198,7 @@ async function canvasTypewriterS(text, x, y) {
 			}, 50);
 		});
 	}
+	sfxStop(11);
 }
 async function canvasTypewriterM(text, x, y) {
 	let px = canvasX(x);
@@ -208,6 +211,7 @@ async function canvasTypewriterM(text, x, y) {
 
 	for(let i = 0; i < lines.length; i++) {
 		for(let j = 0; j < lines[i].length; j++) {
+			sfxPlay(11); //adjust volume!
 			ctx.fillText(lines[i].substring(0,j), px, py + newlineyoffset);
 			await new Promise((resolve) => {
 				window.setTimeout(() => {
@@ -217,6 +221,7 @@ async function canvasTypewriterM(text, x, y) {
 		}
 		newlineyoffset += lineheight;
 	}
+	sfxStop(11);
 }
 
 //returns image
@@ -265,13 +270,22 @@ function canvasImageD(image, x, y, sizex, sizey) {
 	);
 }
 
+function canvasImageEqualSides(image, x, y, size) {
+	ctx.drawImage(
+		image,
+		image.width*x/100, image.height*y/100, image.width, image.height,
+		canvasX(x), canvasY(y), size, size
+	);
+}
+
 async function canvasFadeOut(strength = 10) {
 	animationBlocked = true;
+	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
 	while(canvasGetBrightness() > 3) {
 		await new Promise((resolve) => {
 			window.setTimeout(() => {
 				canvasSetBrightness(canvasGetBrightness() - strength);
-				canvasBackground(currentBGImage);
+				canvasBackground(savedcvs);
 				resolve();
 			}, 50);
 		});

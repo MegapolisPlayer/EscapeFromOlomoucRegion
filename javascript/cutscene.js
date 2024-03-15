@@ -15,7 +15,7 @@ async function cutsceneNews() {
 
 	for(let i = 0; i < 3; i++) {
 		canvasSetColor("#000080");
-		canvasBox(0, 70, 100, 30);
+		canvasImageD(mapBGImage, 0, 70, 100, 30);
 		canvasSetColor("#ffffff");
 		await canvasTypewriterM(wrapText(getTranslationAndVoice(46+i), 80), 10, 80);
 

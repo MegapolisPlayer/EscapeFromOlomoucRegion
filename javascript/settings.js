@@ -5,6 +5,10 @@ async function renderSettings() {
 	canvasSetBorder("#ffffff");
 	canvasTextAndBorderS(getTranslation(5), 5, 10);
 
+	//settings changes
+
+	
+
 	let promise = waiterEventFromElement(
 		addButton(
 		"back", getTranslation(38), 70, 90, 30, 10,

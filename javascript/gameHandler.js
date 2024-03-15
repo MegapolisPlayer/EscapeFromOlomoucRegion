@@ -8,12 +8,12 @@ function renderMainMenu() {
 	canvasSetColor("#000080");
 	canvasSetBorder("#ffffff");
 	canvasSetFontWeight("bold");
-	canvasTextAndBorderS(getTranslation(1), 5, 10);
+	canvasTextAndBorderS(getTranslation(1), 5,  10);
 
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 14.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 15.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -218,7 +218,9 @@ async function gameHandler() {
 	canvasTextS("Loading other images...", 10, 40);
 	await loadArrows(); //arrows
 	setArrowInterval(); //set interval
-	//textures
+	//map
+	mapBGImage = await loadImage("assets/map/mapbg.png");
+	mapFGImage = await loadImage("assets/map/mapbase.png");
 
 	canvasTextS("Loading other images... done", 10, 40);
 

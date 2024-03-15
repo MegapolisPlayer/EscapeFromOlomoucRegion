@@ -40,7 +40,7 @@ async function canvasResizeTo(x, y) {
 	//resize buttons and arrows
 
 	let cvsc = document.getElementById("draw_contain");
-	let btns = cvsc.querySelectorAll(".draw_input_elem, .draw_input_elem_arrow");
+	let btns = cvsc.querySelectorAll(".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small");
 
 	btns.forEach((val) => {
 		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))*canvasGetScale()/oldscale+"px");
