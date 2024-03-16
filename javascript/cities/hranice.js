@@ -7,7 +7,7 @@ async function HNMDomov() {
 	renderMoney();
 	renderSpeedrunMode();
 
-	return renderArrows([new ArrowInfo(90, 80, arrowType.RIGHT, async () => { info.location_minor_next = 1; })]);
+	return renderArrow(new ArrowInfo(90, 80, arrowType.RIGHT, async () => { info.location_minor_next = 1; }));
 }
 
 async function HNMNamesti() {
@@ -45,9 +45,7 @@ async function HNMRestaurace() {
 	renderMoney();
 	renderSpeedrunMode();
 	
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }),
-	]);
+	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }));
 }
 
 async function HNMNastupiste() {
@@ -58,9 +56,7 @@ async function HNMNastupiste() {
 	renderMoney();
 	renderSpeedrunMode();
 
-	return renderArrows([
-		new ArrowInfo(50, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }),
-	]);
+	return renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }));
 }
 
 async function HNMHandler() {
@@ -93,7 +89,8 @@ async function HNMHandler() {
 	//map
 	if(!info.speedrun) {
 		musicPlay(1);
-		await renderMapDay1();
+		await renderMap(1);
+		await canvasFadeOut();
 	}
 
 	musicPlay(2); //start playing AFTER loading
@@ -126,9 +123,9 @@ async function HNMHandler() {
 
 		//cleanup code, moved here so doesnt get called on first entry to location
 
+		await canvasFadeOut();
 		//clear NPCs when switching location
 		canvasNPCClear();
-		await canvasFadeOut(); //fade out AFTER clear!
 	}
 
 	return;

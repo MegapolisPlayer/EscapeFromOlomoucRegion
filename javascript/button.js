@@ -8,7 +8,9 @@ function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 	btn.style.setProperty("left", x+"px");
 	btn.style.setProperty("top", y+"px");
 	btn.addEventListener("click", fn);
-	btn.addEventListener("click", () => { sfxPlay(0); })
+	btn.addEventListener("click", () => { 
+		if(settings.music_enabled) { sfxPlay(0); }
+	})
 	document.getElementById("draw_contain").appendChild(btn);
 	return btn;
 }
@@ -20,6 +22,9 @@ function addButton(id, text, x, y, sizex, sizey, fn) {
 function addSmallButton(id, text, x, y, sizex, sizey, fn) {
 	return internal_setButton(id, text, "draw_input_elem_small", canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), fn);
 }
+function addVerySmallButton(id, text, x, y, sizex, sizey, fn) {
+	return internal_setButton(id, text, "draw_input_elem_vsmall", canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), fn);
+}
 function removeButton(id) {
 	document.getElementById(id).remove();
 }
@@ -30,6 +35,7 @@ function showButton(id) {
 function hideButton(id) {
 	document.getElementById(id).style.setProperty("display", "none");
 }
+
 
 function ArrowInfo(x, y, type, fn) {
 	this.x = x;
@@ -67,9 +73,9 @@ function setArrowInterval() {
 		for(let i = 0; i < arrowList.length; i++) {
 			ctx.drawImage(
 				(arrowAnimationState == false) ? arrowImages2[arrowList[i].type] : arrowImages[arrowList[i].type],
-				canvasX(arrowList[i].x) - (arrowSize/2*canvasGetScale()),
-				canvasY(arrowList[i].y) - (arrowSize/2*canvasGetScale()), 
-				arrowSize*canvasGetScale(), arrowSize*canvasGetScale()
+				canvasX(arrowList[i].x) - (arrowSize/2*canvasGetScaleX()),
+				canvasY(arrowList[i].y) - (arrowSize/2*canvasGetScaleY()), 
+				arrowSize*canvasGetScaleX(), arrowSize*canvasGetScaleX()
 			);
 		}
 		arrowAnimationState = !arrowAnimationState;
@@ -77,18 +83,19 @@ function setArrowInterval() {
 }
 
 function addArrow(id, x, y, type, fn) {
-	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2*canvasGetScale()), canvasY(y) - (arrowSize/2*canvasGetScale()), arrowSize*canvasGetScale(), arrowSize*canvasGetScale());
+	ctx.drawImage(arrowImages[type], canvasX(x) - (arrowSize/2*canvasGetScaleX()), canvasY(y) - (arrowSize/2*canvasGetScaleY()), arrowSize*canvasGetScaleX(), arrowSize*canvasGetScaleX());
 	arrowList.push(new SavedArrowInfo(id, x, y, type, fn));
 	return internal_setButton(
-		id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2*canvasGetScale()), canvasY(y) - (arrowSize/2*canvasGetScale()),
-		arrowSize*canvasGetScale(), arrowSize*canvasGetScale(), fn
+		id, "", "draw_input_elem_arrow", canvasX(x) - (arrowSize/2*canvasGetScaleX()), canvasY(y) - (arrowSize/2*canvasGetScaleY()),
+		arrowSize*canvasGetScaleX(), arrowSize*canvasGetScaleX(), fn
 	);
 }
 function removeArrow(id) {
 	removeButton(id);
 	for(let i = 0; i < arrowList.length; i++) {
 		if(arrowList[i].id == id) {
-			arrowList[i].splice(i, 1);
+			console.log("Removed arrow no.", i);
+			arrowList.splice(i, 1);
 		}
 	}
 }
@@ -99,6 +106,11 @@ function clearArrows() {
 	arrowList.length = 0;
 }
 
+//takes in 1 ArrowInfo
+function renderArrow(arrow) {
+	let randomValue = String(Math.trunc(Math.random()*10000));
+	return waiterEventFromElement(addArrow("renderArrow"+randomValue, arrow.x, arrow.y, arrow.type, () => { arrow.fn.call(); removeArrow("renderArrow"+randomValue); }), "click");
+}
 //takes in array of ArrowInfos
 function renderArrows(arrows) {
 	let tempPromises = [];

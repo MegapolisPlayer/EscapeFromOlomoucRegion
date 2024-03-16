@@ -40,8 +40,11 @@ function canvasY(yvalue) {
 	return Math.trunc(canvas.height*(yvalue/100));
 }
 
-function canvasGetScale() {
+function canvasGetScaleX() {
 	return canvas.width/1000;
+}
+function canvasGetScaleY() {
+	return canvas.height/500;
 }
 
 function canvasRoundedBox(x, y, sizex, sizey, radius) {
@@ -190,7 +193,7 @@ function canvasTextBorderM(text, x, y) {
 
 async function canvasTypewriterS(text, x, y) {
 	for(let i = 0; i < text.length; i++) {
-		sfxPlay(11);
+		if(i % 3 == 0) { sfxPlay(11); }
 		ctx.fillText(text.substring(0,i), canvasX(x), canvasY(y));
 		await new Promise((resolve) => {
 			window.setTimeout(() => {
@@ -211,7 +214,7 @@ async function canvasTypewriterM(text, x, y) {
 
 	for(let i = 0; i < lines.length; i++) {
 		for(let j = 0; j < lines[i].length; j++) {
-			sfxPlay(11); //adjust volume!
+			if(j % 3 == 0) { sfxPlay(11); } //adjust volume!
 			ctx.fillText(lines[i].substring(0,j), px, py + newlineyoffset);
 			await new Promise((resolve) => {
 				window.setTimeout(() => {
@@ -281,7 +284,7 @@ function canvasImageEqualSides(image, x, y, size) {
 async function canvasFadeOut(strength = 10) {
 	animationBlocked = true;
 	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
-	while(canvasGetBrightness() > 3) {
+	while(canvasGetBrightness() > 5) {
 		await new Promise((resolve) => {
 			window.setTimeout(() => {
 				canvasSetBrightness(canvasGetBrightness() - strength);

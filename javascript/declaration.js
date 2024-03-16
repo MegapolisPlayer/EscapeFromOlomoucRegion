@@ -28,7 +28,7 @@ let animationBlocked = false;
 // MAPS
 
 let mapBGImage;
-let mapFGImage;
+let mapImages = [];
 
 // ARROWS
 
@@ -87,8 +87,6 @@ let voiceBA = [];
 
 let voice = [ voiceEN, voiceCZ, voiceDE, voiceSUS, voiceBA ];
 
-let audioIsOn = false;
-
 // TRANSLATIONS
 
 let translationEN = [];
@@ -100,6 +98,7 @@ let translationBA = [];
 let translationSelected = 0;
 
 let translations = [ translationEN, translationCZ, translationDE, translationSUS, translationBA ];
+let translationNames = [ "English", "Čeština", "Deutsch", "Susština", "Baština" ];
 
 // DIALOGUE
 
@@ -110,18 +109,18 @@ let dialogueEnabled = false;
 let settings = {
 	//easy - 0, medium - 1, hard - 2
 	difficulty: 1,
-	//easy - 0.80, medium - 1, hard - 1.2
+	//easy - 0.80, medium - 1, hard - 1.2: use for money
 	diff_multiplier: 1,
 	//easy - 10000, medium - 5000, hard - 1000
 	random_loss_chance: 5000,
 	//easy: -1000, medium: -500, hard: -100
 	debt_limit: -500,
 	//volume of music
-	volume: 1,
+	volume: 0.7,
 	//music and sfx
-	music_enabled: true,
+	music_enabled: false,
 	//voiceover enabled
-	voice_enabled: true,
+	voice_enabled: false,
 };
 
 let info = {
@@ -131,6 +130,11 @@ let info = {
 	location_minor_next: 0,
 	speedrun: false,
 	currentTicketPrice: 0,
+	paused: false,
 };
 
 let moneyLimit = 2500; //no minigames allowed above 2500
+
+let timeBegin;
+let timePlaying;
+let timerInterval;

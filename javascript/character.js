@@ -132,12 +132,14 @@ function setCharacterInterval() {
 
 			if(dialogueEnabled) {
 				canvasSetColor("#ffffff");
+				//we expect this to take less than 50ms
 				canvasBox(
 					player.X-(players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width/2*100),
 					80,
 					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100,
 					20
 				);
+				canvasSetColor("#000000"); //for the text, if we dont manage fast enough it will redraw on next char
 			}
 		}
 		for(let i = 0; i < npcs.length; i++) {

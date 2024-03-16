@@ -1,65 +1,23 @@
-function renderMapBase(day, city) {
+async function loadMaps() {
+	mapBGImage = await loadImage("assets/map/mapbg.png");
+
+	for(let i = 0; i < 7; i++) {
+		mapImages.push(await loadImage("assets/map/"+String(i+1)+".png"));
+	}
+}
+
+async function renderMap(day) {
 	canvasBackground(mapBGImage);
-	canvasImage(mapFGImage, 10, 10, (smallerWindowSize/mapFGImage.height)*0.8);
+	canvasImage(mapImages[day-1], 10, 10, (smallerWindowSize/mapImages[day-1].height)*0.8);
 
 	canvasSetLargeFont();
 	canvasSetColor("#ffffff");
-	canvasTextM(getTranslation(50)+" "+String(day)+"\n"+getTranslation(city), 80, 10);
-}
+	canvasSetFontWeight("bold");
+	canvasTextS(getTranslation(50)+" "+String(day), 80, 20);
 
-//hranice na morave
-async function renderMapDay1() {
-	renderMapBase(1, 52);
+	canvasSetSmallFont();
+	canvasSetFontWeight("normal");
+	canvasTextS(getTranslation(52+day-1), 70, 30);
 
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
-}
-//prerov
-async function renderMapDay2() {
-	renderMapBase(2, 53);
-	
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
-}
-//nezamyslice
-async function renderMapDay3() {
-	renderMapBase(3, 54);
-
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
-}
-//prostejov
-async function renderMapDay4() {
-	renderMapBase(4, 55);
-
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
-}
-//olomouc
-async function renderMapDay5() {
-	renderMapBase(5, 56);
-
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
-}
-//studenka
-async function renderMapDay52() {
-	renderMapBase(5, 57);
-
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
-}
-//ostrava
-async function renderMapDay6() {
-	renderMapBase(6, 58);
-
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
+	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }

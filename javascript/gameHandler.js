@@ -13,7 +13,8 @@ function renderMainMenu() {
 	canvasSetColor("#ffffff");
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
-	canvasTextM("Version 2.00-build1, 15.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	//Date changes here!!!
+	canvasTextM("Version 2.00-build1, 16.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -37,6 +38,14 @@ async function loadMainMenu() {
 			console.log("MM btn Settings pressed");
 			hideMainMenu();
 			await renderSettings();
+			
+			document.getElementById("play").innerHTML = getTranslation(2);
+			document.getElementById("speedrun").innerHTML = getTranslation(3);
+			document.getElementById("load").innerHTML = getTranslation(4);
+			document.getElementById("settings").innerHTML = getTranslation(5);
+			document.getElementById("credits").innerHTML = getTranslation(6);
+			document.getElementById("audio").innerHTML = ((settings.music_enabled == true) ? getTranslation(9) : getTranslation(8));
+			
 			renderMainMenu();
 			showMainMenu();
 		}
@@ -154,9 +163,7 @@ function renderDisclaimer() {
 	canvasSetColor("#ffffff");
 	canvasTextM(wrapText(getTranslation(44), 80), 10, 20);
 
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => {}),
-	]);
+	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
 
 // CUTSCENE
@@ -169,9 +176,38 @@ async function renderCutscene() {
 	await canvasFadeOut(5);
 	if(!info.speedrun) {
 		await cutsceneNews();
-		await canvasFadeOut(5);
+		await canvasFadeOut();
 	}
 }
+
+// GAME OVER SCREEN
+
+async function gameOver(text) {
+	let btns = document.getElementById("draw_contain").querySelectorAll(".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small, .draw_input_elem_vsmall");
+	btns.forEach((val) => { val.remove(); });
+
+	musicPlay(1);
+	canvasClear("#000000");
+
+	canvasSetColor("#800000");
+	canvasSetFontWeight("bold");
+	canvasSetLargeFont();
+	canvasTextS(getTranslation(59), 10, 20);
+
+	canvasSetColor("#ffffff");
+	canvasSetFontWeight("normal");
+	canvasSetSmallFont();
+	canvasTextM(wrapText(text, 80), 10, 40);
+
+	await waiterEventFromElement(
+		addButton(
+		"quit", getTranslation(12), 80, 90, 20, 10,
+		(e) => { removeButton("quit"); }
+	), "click");
+
+	window.location.reload();
+}
+
 // GAME HANDLER
 
 async function playHandler() {
@@ -181,6 +217,8 @@ async function playHandler() {
 	await renderDisclaimer();
 	await renderCutscene();
 
+	timerBegin();
+
 	await HNMHandler();
 	await PrerovHandler();
 	await NezamysliceHandler();
@@ -188,6 +226,10 @@ async function playHandler() {
 	await OlomoucHandler();
 	await StudenkaHandler();
 	await OstravaHandler();
+
+	timerEnd();
+
+	await renderCredits();
 }
 
 async function gameHandler() {
@@ -198,6 +240,7 @@ async function gameHandler() {
 	canvasTextS("SFX", 10, 25);
 	canvasTextS("Voice", 10, 30);
 	canvasTextS("Characters", 10, 35);
+	canvasTextS("Maps", 10, 40);
 
 	await loadMusic([0, 1]); //music
 	canvasLoadingDone(0);
@@ -215,14 +258,13 @@ async function gameHandler() {
 	await loadVoice(); //voice
 	canvasLoadingDone(4);
 
-	canvasTextS("Loading other images...", 10, 40);
+	await loadMaps();
+	canvasTextS("Maps done", 10, 40);
+
+	canvasTextS("Loading other images...", 10, 45);
 	await loadArrows(); //arrows
 	setArrowInterval(); //set interval
-	//map
-	mapBGImage = await loadImage("assets/map/mapbg.png");
-	mapFGImage = await loadImage("assets/map/mapbase.png");
-
-	canvasTextS("Loading other images... done", 10, 40);
+	canvasTextS("Loading other images... done", 10, 45);
 
 	await loadMainMenu();
 	clearMainMenu();

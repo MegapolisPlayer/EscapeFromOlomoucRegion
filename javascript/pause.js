@@ -2,6 +2,17 @@
 //not affected by clear
 //make only once basically
 
-function addPause() {
+function makePause() {
+
+}
+
+function hidePause() {
+
+}
+function showPause() {
+
+}
+
+function renderPause() {
 
 }

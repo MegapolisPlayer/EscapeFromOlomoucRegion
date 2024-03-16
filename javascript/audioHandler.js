@@ -2,7 +2,7 @@
 let musicNames = [
 	//0, Main menu
 	"Stormfront",
-	//1, Intro
+	//1, Intro, game over
 	"Faceoff",
 	//2, HNM
 	"Impending Boom",
@@ -121,14 +121,30 @@ async function loadVoice() {
 }
 
 function audioToggle(elem) {
-	if(audioIsOn) {
+	musicToggle();
+	if(elem != undefined) { elem.innerHTML = getTranslation(settings.music_enabled ? 9 : 8); }
+	settings.voice_enabled = settings.music_enabled;
+}
+
+function musicToggle(elem) {
+	if(settings.music_enabled) {
 		musicArray[musicCurrent].pause();
-		audioIsOn = false;
-		elem.innerHTML = getTranslation(8);
+		settings.music_enabled = false;
+		if(elem != undefined) { elem.innerHTML = getTranslation(27); }
 	}
 	else {
-		audioIsOn = true;
-		elem.innerHTML = getTranslation(9);
+		settings.music_enabled = true;
+		if(elem != undefined) { elem.innerHTML = getTranslation(26); }
+	}
+}
+function voiceToggle(elem) {
+	if(settings.voice_enabled) {
+		settings.voice_enabled = false;
+		elem.innerHTML = getTranslation(27);
+	}
+	else {
+		settings.voice_enabled = true;
+		elem.innerHTML = getTranslation(26);
 	}
 }
 
@@ -154,18 +170,18 @@ function musicPlay(id) {
 	}
 	musicStop(musicCurrent);
 	musicCurrent = id;
-	if(!audioIsOn) { 
+	if(!settings.music_enabled) { 
 		musicArray[id].pause();	return;
 	}
 	musicArray[id].currentTime = 0;
 	musicArray[id].play();
 }
 function musicStop() {
-	if(!audioIsOn) { return; }
+	if(!settings.music_enabled) { return; }
 	musicArray[musicCurrent].pause();
 }
 function musicRestart() {
-	if(!audioIsOn) { return; }
+	if(!settings.music_enabled) { return; }
 	musicArray[musicCurrent].currentTime = 0;
 }
 
@@ -173,7 +189,7 @@ function sfxPlay(id) {
 	if(id >= sfxArray.length || id == undefined) {
 		errorHandle("SFX ID undefined or out of range.");
 	}
-	if(!audioIsOn) { return; };
+	if(!settings.music_enabled) { return; };
 	sfxArray[id].currentTime = 0;
 	sfxArray[id].play();
 }
@@ -181,7 +197,7 @@ function sfxPlayLoud(id) {
 	if(id >= sfxArray.length || id == undefined) {
 		errorHandle("SFX ID undefined or out of range.");
 	}
-	if(!audioIsOn) { return; };
+	if(!settings.music_enabled) { return; };
 
 	let tempVolume = sfxArray[id].volume;
 	sfxArray[id].volume = 1;
@@ -195,7 +211,7 @@ function sfxStop(id) {
 	if(id >= musicArray.length || id == undefined) {
 		errorHandle("Music ID undefined or out of range.");
 	}
-	if(!audioIsOn) { return; }
+	if(!settings.music_enabled) { return; }
 	sfxArray[id].pause();
 }
 
@@ -203,7 +219,7 @@ function voicePlay(id) {
 	if(id == undefined) {
 		errorHandle("Voiceover ID undefined.");
 	}
-	if(!audioIsOn) { return; }
+	if(!settings.voice_enabled) { return; }
 	getVoiceTranslation(id).play();
 }
 

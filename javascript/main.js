@@ -24,7 +24,8 @@ async function canvasResizeTo(x, y) {
 	//save state
 	//window.open(canvas.toDataURL("image/png", 1)); //debug
 	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
-	let oldscale = canvasGetScale();
+	let oldscaleX = canvasGetScaleX();
+	let oldscaleY = canvasGetScaleY();
 
 	//change vars
 	let cvselem = document.getElementById("draw");
@@ -39,16 +40,14 @@ async function canvasResizeTo(x, y) {
 
 	//resize buttons and arrows
 
-	let cvsc = document.getElementById("draw_contain");
-	let btns = cvsc.querySelectorAll(".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small");
-
+	let btns =  document.getElementById("draw_contain").querySelectorAll(".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small, .draw_input_elem_vsmall");
 	btns.forEach((val) => {
-		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))*canvasGetScale()/oldscale+"px");
-		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))*canvasGetScale()/oldscale+"px");
-		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width"))*canvasGetScale()/oldscale+"px");
-		val.style.setProperty("height", parseFloat(val.style.getPropertyValue("height"))*canvasGetScale()/oldscale+"px");
+		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvasGetScaleY()/oldscaleY+"px");
+		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvasGetScaleX()/oldscaleX+"px");
+		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvasGetScaleX()/oldscaleX+"px");
+		val.style.setProperty("height", parseFloat(val.style.getPropertyValue("height"))*canvasGetScaleY()/oldscaleY+"px");
 
-		val.style.setProperty("font-size", parseFloat(val.style.getPropertyValue("font-size"))*canvasGetScale()/oldscale+"px");
+		val.style.setProperty("font-size", parseFloat(val.style.getPropertyValue("font-size"))*canvasGetScaleX()/oldscaleX+"px");
 	});
 	
 	canvasSet();

@@ -7,6 +7,9 @@ function removeMoney(amount) {
 
 function checkMoney() {
 	//check for debt limit, money limit
+	if(info.money <= settings.debt_limit) {
+		gameOver(getTranslation(40));
+	}
 }
 
 function renderMoney() {
