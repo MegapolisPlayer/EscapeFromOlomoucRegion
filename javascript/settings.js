@@ -82,7 +82,7 @@ async function renderSettings() {
 		audioVolume(settings.volume);
 		document.getElementById("vol").innerHTML = settings.volume;
 	});
-	addVerySmallButton("vol", "0.7", 35, 35, 10, 5, () => {
+	addVerySmallButton("vol", String(settings.volume), 35, 35, 10, 5, () => {
 		settings.volume = 0.7;
 		settings.volume = Number(Number(settings.volume).toFixed(1));
 		audioVolume(settings.volume);

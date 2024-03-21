@@ -101,6 +101,9 @@ function canvasBoxBorder(x, y, sizex, sizey) {
 function canvasSetColor(color) {
 	ctx.fillStyle = color;
 }
+function canvasGetColor() {
+	return ctx.fillStyle;
+}
 function canvasSetBorder(color) {
 	ctx.strokeStyle = color;
 }
@@ -113,6 +116,13 @@ function canvasResetBrightness() {
 function canvasGetBrightness() {
 	let str = String(ctx.filter);
 	return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
+}
+
+function canvasSetAlpha(alpha) {
+	ctx.globalAlpha = alpha;
+}
+function canvasResetAlpha() {
+	ctx.globalAlpha = 1;
 }
 
 function canvasSetFont(font, fontsize, weight = "normal") {
@@ -204,8 +214,6 @@ async function canvasTypewriterS(text, x, y) {
 	sfxStop(11);
 }
 async function canvasTypewriterM(text, x, y) {
-	let px = canvasX(x);
-	let py = canvasY(y);
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -215,7 +223,7 @@ async function canvasTypewriterM(text, x, y) {
 	for(let i = 0; i < lines.length; i++) {
 		for(let j = 0; j < lines[i].length; j++) {
 			if(j % 3 == 0) { sfxPlay(11); } //adjust volume!
-			ctx.fillText(lines[i].substring(0,j), px, py + newlineyoffset);
+			ctx.fillText(lines[i].substring(0,j), canvasX(x),  canvasY(y) + newlineyoffset);
 			await new Promise((resolve) => {
 				window.setTimeout(() => {
 					resolve();
@@ -248,16 +256,6 @@ async function loadImages(filenames_array) {
 	return temparr;
 }
 
-function waiterEventFromElement(element, event) {
-	//in promise: first arg resolve, then reject
-	return new Promise((resolve) => {
-	  const listener = () => {
-		element.removeEventListener(event, listener); resolve();
-	  }
-	  element.addEventListener(event, listener);
-	})
-}
-
 function canvasBackground(image) {
 	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 	currentBGImage = image;
@@ -273,11 +271,25 @@ function canvasImageD(image, x, y, sizex, sizey) {
 	);
 }
 
-function canvasImageEqualSides(image, x, y, size) {
+function canvasImagePart(image, x, y, size) {
 	ctx.drawImage(
 		image,
 		image.width*x/100, image.height*y/100, image.width, image.height,
-		canvasX(x), canvasY(y), size, size
+		canvasX(x), canvasY(y), canvasX(size), canvasY(size)
+	);
+}
+function canvasImageSamesizeX(image, x, y, size) {
+	ctx.drawImage(
+		image,
+		0, 0, image.width, image.height,
+		canvasX(x), canvasY(y), canvasX(size), canvasX(size)
+	);
+}
+function canvasImageSamesizeY(image, x, y, size) {
+	ctx.drawImage(
+		image,
+		0, 0, image.width, image.height,
+		canvasX(x), canvasY(y), canvasY(size), canvasY(size)
 	);
 }
 

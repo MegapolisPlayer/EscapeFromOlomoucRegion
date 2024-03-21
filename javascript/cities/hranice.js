@@ -1,34 +1,23 @@
 let HNMimages = [];
 
-async function HNMDomov() {
-	console.log("HNM "+info.location_minor);
-	canvasBackground(HNMimages[info.location_minor]);
+function HNMDomov() {
 	canvasPlayer(70, 60, 2.5);
-	renderMoney();
-	renderSpeedrunMode();
 
 	return renderArrow(new ArrowInfo(90, 80, arrowType.RIGHT, async () => { info.location_minor_next = 1; }));
 }
 
-async function HNMNamesti() {
-	console.log("HNM "+info.location_minor);
-	canvasBackground(HNMimages[info.location_minor]);
+function HNMNamesti() {
 	canvasPlayer(50, 60, 1);
-	renderMoney();
-	renderSpeedrunMode();
 	
 	return renderArrows([
 		new ArrowInfo(10, 90, arrowType.LEFT, () => { info.location_minor_next = 0; }),
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { info.location_minor_next = 2; })
+		new ArrowInfo(90, 90, arrowType.RIGHT, () => { info.location_minor_next = 2; }),
+		new ArrowInfo(45, 90, arrowType.DOWN, () => { info.location_minor_next = 5; })
 	]);
 }
 
-async function HNMNadrazi() {
-	console.log("HNM "+info.location_minor);
-	canvasBackground(HNMimages[info.location_minor]);
+function HNMNadrazi() {
 	canvasPlayer(35, 60, 1.7);
-	renderMoney();
-	renderSpeedrunMode();
 
 	return renderArrows([
 		new ArrowInfo(10, 90, arrowType.LEFT, () => { info.location_minor_next = 1; }),
@@ -37,26 +26,40 @@ async function HNMNadrazi() {
 	]);
 }
 
-async function HNMRestaurace() {
-	console.log("HNM "+info.location_minor);
-	canvasBackground(HNMimages[info.location_minor]);
-	canvasNPC(NPC.COOK, 90, 50, 2);
+function HNMRestaurace() {
+	canvasNPC(NPC.COOK, 90, 50, 2, async() => { 
+		hideAllInput();
+		await minigameWaiter();
+		canvasBackground(HNMimages[info.location_minor]);
+		showAllInput();
+	});
 	canvasPlayer(70, 90, 3); //for player
-	renderMoney();
-	renderSpeedrunMode();
 	
 	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }));
 }
 
-async function HNMNastupiste() {
-	console.log("HNM "+info.location_minor);
-	canvasBackground(HNMimages[info.location_minor]);
+function HNMNastupiste() {
 	canvasPlayer(65, 70, 1.3);
-	canvasNPC(NPC.STATION, 40, 70, 1.3);
-	renderMoney();
-	renderSpeedrunMode();
 
-	return renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }));
+	return Promise.any([
+	renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { info.location_minor_next = 2; })),
+	canvasNPC(NPC.TRAIN, 40, 70, 1.3, (e) => {
+		clearArrows();
+		e.target.remove();
+		info.location_minor_next = -1;
+		info.location_major++;
+	})]);
+}
+
+let HNMPropastEndingTimer;
+let HNMVisitedPropast = false;
+
+function HNMPropast() {
+	canvasPlayer(10, 90, 2.5);
+	HNMVisitedPropast = true;
+	HNMPropastEndingTimer = Date.now();
+
+	return renderArrow(new ArrowInfo(40, 90, arrowType.DOWN, () => { info.location_minor_next = 1; }));
 }
 
 async function HNMHandler() {
@@ -83,7 +86,8 @@ async function HNMHandler() {
 		"assets/photo/hnm/namesti.jpg",
 		"assets/photo/hnm/nadrazi.jpg",
 		"assets/photo/hnm/restaurace.jpg",
-		"assets/photo/hnm/nastupiste.jpg"
+		"assets/photo/hnm/nastupiste.jpg",
+		"assets/photo/hnm/propast.jpg"
 	]);
 	
 	//map
@@ -94,7 +98,9 @@ async function HNMHandler() {
 	}
 
 	musicPlay(2); //start playing AFTER loading
+	animationBlocked = false;
 
+	showPause();
 	canvasBackground(HNMimages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 	
@@ -109,17 +115,31 @@ async function HNMHandler() {
 	while(info.location_minor_next != -1) {
 		info.location_minor = info.location_minor_next;
 
+		console.log("HNM "+info.location_minor);
+		canvasBackground(HNMimages[info.location_minor]);
+
 		switch(info.location_minor) {
-			case(-1): break; //to next city
 			case(0): promise = HNMDomov(); break;
 			case(1): promise = HNMNamesti(); break;
 			case(2): promise = HNMNadrazi(); break;
 			case(3): promise = HNMRestaurace(); break;
 			case(4): promise = HNMNastupiste(); break;
+			case(5): promise = HNMPropast(); break;
+			default: break;
 		}
+		renderMoney();
+		renderSpeedrunMode();
+		renderPause();
 
 		//we wait until any promise met, then loop again
 		await promise;
+
+		if(info.location_major != 0) { 
+			hidePause();
+			canvasPlayerDisable();
+			animationBlocked = true;
+			break;
+		}
 
 		//cleanup code, moved here so doesnt get called on first entry to location
 
@@ -127,6 +147,4 @@ async function HNMHandler() {
 		//clear NPCs when switching location
 		canvasNPCClear();
 	}
-
-	return;
 }

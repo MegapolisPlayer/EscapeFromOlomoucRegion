@@ -1,3 +1,13 @@
+function waiterEventFromElement(element, event) {
+	//in promise: first arg resolve, then reject
+	return new Promise((resolve) => {
+	  const listener = () => {
+		element.removeEventListener(event, listener); resolve();
+	  }
+	  element.addEventListener(event, listener);
+	})
+}
+
 function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 	let btn = document.createElement("button");
 	btn.id = id;
@@ -64,9 +74,7 @@ async function loadArrows() {
 	arrowImages2.push(await loadImage("assets/arrow/top2.png"));
 	arrowImages2.push(await loadImage("assets/arrow/bottom2.png"));
 	arrowImages2.push(await loadImage("assets/arrow/info2.png"));
-}
 
-function setArrowInterval() {
 	arrowAnimationInterval = window.setInterval(() => {
 		if(animationBlocked) return;
 
@@ -118,4 +126,21 @@ function renderArrows(arrows) {
 		tempPromises.push(waiterEventFromElement(addArrow("renderArrows"+String(i), arrows[i].x, arrows[i].y, arrows[i].type, () => { arrows[i].fn.call(); clearArrows(); }), "click"));
 	}
 	return Promise.any(tempPromises);
+}
+
+function getAllInput() {
+	return document.getElementById("draw_contain")
+			.querySelectorAll(
+				".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small, .draw_input_elem_vsmall, .draw_input_elem_npc"
+			);	 //no pause, it does not get deleted!
+}
+function hideAllInput() {
+	getAllInput().forEach((val) => {
+		val.style.setProperty("display", "none");
+	});
+}
+function showAllInput() {
+	getAllInput().forEach((val) => {
+		val.style.setProperty("display", "block");
+	});
 }

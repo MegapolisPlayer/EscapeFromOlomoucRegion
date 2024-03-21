@@ -14,7 +14,7 @@ function renderMainMenu() {
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
 	//Date changes here!!!
-	canvasTextM("Version 2.00-build1, 16.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
+	canvasTextM("Version 2.00-build1, 21.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, <insert more names here>", (3), (90));
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -183,8 +183,7 @@ async function renderCutscene() {
 // GAME OVER SCREEN
 
 async function gameOver(text) {
-	let btns = document.getElementById("draw_contain").querySelectorAll(".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small, .draw_input_elem_vsmall");
-	btns.forEach((val) => { val.remove(); });
+	getAllInput().forEach((val) => { val.remove(); });
 
 	musicPlay(1);
 	canvasClear("#000000");
@@ -224,11 +223,11 @@ async function playHandler() {
 	await NezamysliceHandler();
 	await ProstejovHandler();
 	await OlomoucHandler();
+	await cutsceneStudenka();
 	await StudenkaHandler();
 	await OstravaHandler();
-
 	timerEnd();
-
+	await cutscenePoland();
 	await renderCredits();
 }
 
@@ -250,7 +249,6 @@ async function gameHandler() {
 
 	await loadCharacters(); //characters
 	canvasLoadingDone(2);
-	setCharacterInterval(); //set animation interval
 	
 	await loadTranslation(); //translations
 	canvasLoadingDone(3);
@@ -263,7 +261,7 @@ async function gameHandler() {
 
 	canvasTextS("Loading other images...", 10, 45);
 	await loadArrows(); //arrows
-	setArrowInterval(); //set interval
+	await loadPause(); //pause menu
 	canvasTextS("Loading other images... done", 10, 45);
 
 	await loadMainMenu();

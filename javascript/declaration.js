@@ -23,11 +23,12 @@ let currentBGImage;
 
 let mainMenuImage;
 
-let animationBlocked = false;
+let animationBlocked = true;
 
 // MAPS
 
-let mapBGImage;
+let woodImage;
+let steelImage;
 let mapImages = [];
 
 // ARROWS
@@ -48,6 +49,15 @@ let arrowList = [];
 let arrowAnimationInterval;
 let arrowAnimationIntervalTime = 700;
 let arrowAnimationState = false; //false - default, true - animated
+
+// PAUSE
+
+let pause1;
+let pause2;
+let pauseInterval;
+let pauseButton;
+let pauseAnimationState = false;
+let pauseEnabled = false; 
 
 // CHARACTERS  
 
@@ -133,7 +143,13 @@ let info = {
 	paused: false,
 };
 
+let achievements = {
+	propast: false,
+};
+
 let moneyLimit = 2500; //no minigames allowed above 2500
+
+// TIME
 
 let timeBegin;
 let timePlaying;

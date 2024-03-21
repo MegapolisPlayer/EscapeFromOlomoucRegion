@@ -32,11 +32,11 @@ async function renderCredits() {
 	`);
 	setCreditsStep(30, `
 		SReality, Freepik (jcomp), VlakemJednoduse.cz, Fortes Interactive, VagonWeb,
-		Pixabay (PickupImage, pexels)
+		Pixabay (PickupImage, pexels, igormattio)
 		From Wikimedia Commons (in no particular order):
 		Marie Čchiedzeová, Vojtěch Dočkal, Jiří Komárek, JirkaSv, Dezidor, Vitezslava,
 		Kamil Czianskim, Michal Klajban, STERUSSTUDENKA, Draceane, Herbert Frank,
-		Palickap, RPekar
+		Palickap, RPekar, Radim Holiš, Vojtěch Dočkal
 	`);
 	setCreditsStep(30, `
 		Map images: Copyright (c) OpenStreetMap contributors

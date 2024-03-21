@@ -38,21 +38,22 @@ button {
 }
 
 .draw_input_elem {
-	font-size: 35px;
+	font-size: clamp(20px, 35px, 70px);
     position: absolute;
 	font-family: Arial, FreeSans;
 	text-align: center;
 }
 .draw_input_elem_small {
-	font-size: 25px;
+	font-size: clamp(10px, 25px, 50px);
 	position: absolute;
 	font-family: Arial, FreeSans;
 	text-align: center;
 	padding: 1px;
 }
 .draw_input_elem_vsmall {
-	font-size: 10px;
-	font-weight: bold; /* readability */
+	font-size: clamp(5px, 10px, 20px);
+	font-weight: bold;
+	/* readability */
 	position: absolute;
 	font-family: Arial, FreeSans;
 	text-align: center;
@@ -60,9 +61,14 @@ button {
 }
 .draw_input_elem_arrow {
 	position: absolute;
-	opacity: 0; /* display: none and visibility: hidden make element stop working!!! */
+	opacity: 0;
+	/* display: none and visibility: hidden make element stop working!!! */
 }
 .draw_input_elem_pause {
+	position: absolute;
+	opacity: 0;
+}
+.draw_input_elem_npc {
 	position: absolute;
 	opacity: 0;
 }

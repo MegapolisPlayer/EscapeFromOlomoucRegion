@@ -26,8 +26,8 @@ async function dialogueChoice() {
 	canvasSetColor("#ffffff");
 	canvasRoundedBox(0, 80, 100, 20, 10);
 
-	canvasSetColor("#000000");
-	canvasSetSmallFont();
+	
+
 
 	return renderArrow(new ArrowInfo(92, 92, arrowType.RIGHT, () => {}),);
 }

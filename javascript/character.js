@@ -13,17 +13,70 @@ async function loadCharacters() {
 		STATION: 2,
 		TRAIN: 3,
 		TRANSLATOR: 4,
-		UTILITY: 5
+		UTILITY: 5,
+		CHEESEMAKER: 6,
 	};
 
-	let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility"];
+	let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility", "cheesemaker"];
 	for(let i = 0; i < NPCSToLoad.length; i++) {
 		characters.push(await loadImage("assets/characters/"+NPCSToLoad[i]+".png"));
 	}
-	for(let i = 0; i < charactersToLoad.length; i++) {
+	for(let i = 0; i < NPCSToLoad.length; i++) {
 		characters2.push(await loadImage("assets/characters/2_"+NPCSToLoad[i]+".png"));
 	}
+
+	//Interval setup
+
+	characterAnimationInterval = window.setInterval(() => {
+		if(animationBlocked) return;
+
+		if(player.ISON) {
+			canvasPlayerRemove(player.X, player.Y, player.SCALE, currentBGImage);
+			if(characterAnimationState == false) {
+				canvasPlayer(player.X, player.Y, player.SCALE);
+			}
+			else {
+				canvasPlayer2(player.X, player.Y, player.SCALE);
+			}
+
+			if(dialogueEnabled) {
+				let tempcolor = canvasGetColor();
+				canvasSetColor("#ffffff");
+				//we expect this to take less than 50ms
+				canvasBox(
+					player.X-(players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width/2*100),
+					80,
+					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100,
+					20
+				);
+				canvasSetColor(tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
+			}
+		}
+		for(let i = 0; i < npcs.length; i++) {
+			canvasNPCRemove(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE, currentBGImage);
+			//invert so looks better
+			if(characterAnimationState == true) {
+				canvasDrawNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
+			}
+			else {
+				canvasDrawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
+			}
+
+			if(dialogueEnabled) {
+				canvasSetColor("#ffffff");
+				canvasBox(
+					npcs[i].X-(characters[characterid].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width/2*100),
+					80,
+					characters[characterid].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width*100,
+					20
+				);
+			}
+		}
+		characterAnimationState = !characterAnimationState;
+	}, characterAnimationIntervalTime);
 }
+
+//These calculations calculate the top left x and y as a percentage. (only X, Y as the center point is given)
 
 function canvasPlayer(x, y, scale) {
 	//canvas space processing for x, y happens in canvasImage
@@ -66,16 +119,29 @@ function canvasPlayerRemove(x, y, scale, bgimage) {
 	player.ISON = false;
 }
 
-function NPCInfo(type, x, y, scale) {
+function canvasPlayerDisable() {
+	player.ISON = false;
+}
+
+function NPCInfo(type, x, y, scale, fn) {
 	this.X = x;
 	this.Y = y;
 	this.SCALE = scale;
 	this.TYPE = type;
+	this.BTN = internal_setButton(
+		"NPCInfo"+String(Math.trunc(Math.random()*10000)), "", "draw_input_elem_npc",
+		canvasX(x-(characters[this.TYPE].width*scale*characterSizeMultiplier/canvas.width/2*100)),
+		canvasY(y-(characters[this.TYPE].height*scale*characterSizeMultiplier/canvas.height/2*100)),
+		characters[this.TYPE].width*scale*characterSizeMultiplier,
+		characters[this.TYPE].height*scale*characterSizeMultiplier,
+		fn
+	);
 }
 
-function canvasNPC(characterid, x, y, scale) {
-	npcs.push(new NPCInfo(characterid, x, y, scale));
+function canvasNPC(characterid, x, y, scale, fn) {
+	npcs.push(new NPCInfo(characterid, x, y, scale, fn));
 	canvasDrawNPC(characterid, x, y, scale);
+	return waiterEventFromElement(npcs[npcs.length - 1].BTN, "click");
 }
 
 function canvasDrawNPC(characterid, x, y, scale) {
@@ -109,59 +175,14 @@ function canvasNPCRemove(characterid, x, y, scale, bgimage) {
 function canvasNPCDelete() {
 	for(let i = 0; i < npcs.length; i++) {
 		if(npcs[i].x == X, npcs[i].y == Y) {
+			npcs[i].BTN.remove();
 			npcs.splice(i, 1); return;
 		}
 	}
 }
 function canvasNPCClear() {
+	npcs.forEach((val) => {
+		val.BTN.remove();
+	});
 	npcs.length = 0;
-}
-
-function setCharacterInterval() {
-	characterAnimationInterval = window.setInterval(() => {
-		if(animationBlocked) return;
-
-		if(player.ISON) {
-			canvasPlayerRemove(player.X, player.Y, player.SCALE, currentBGImage);
-			if(characterAnimationState == false) {
-				canvasPlayer(player.X, player.Y, player.SCALE);
-			}
-			else {
-				canvasPlayer2(player.X, player.Y, player.SCALE);
-			}
-
-			if(dialogueEnabled) {
-				canvasSetColor("#ffffff");
-				//we expect this to take less than 50ms
-				canvasBox(
-					player.X-(players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width/2*100),
-					80,
-					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100,
-					20
-				);
-				canvasSetColor("#000000"); //for the text, if we dont manage fast enough it will redraw on next char
-			}
-		}
-		for(let i = 0; i < npcs.length; i++) {
-			canvasNPCRemove(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE, currentBGImage);
-			//invert so looks better
-			if(characterAnimationState == true) {
-				canvasDrawNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
-			}
-			else {
-				canvasDrawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
-			}
-
-			if(dialogueEnabled) {
-				canvasSetColor("#ffffff");
-				canvasBox(
-					npcs[i].X-(characters[characterid].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width/2*100),
-					80,
-					characters[characterid].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width*100,
-					20
-				);
-			}
-		}
-		characterAnimationState = !characterAnimationState;
-	}, characterAnimationIntervalTime);
 }

@@ -55,13 +55,15 @@ async function loadMusic(toload) {
 	const promise = new Promise((resolve) => {
 		for(let i = 0; i < toload.length; i++) {
 			musicArray[toload[i]] = new Audio(musicURI[toload[i]]);
-			musicArray[toload[i]].loop = true;
+
 		}
 
 		resolve();
 	});
 
-	await promise; return;
+	await promise;
+	audioVolume(settings.volume);
+	return;
 }
 async function loadSFX() {
 	const promise = new Promise((resolve) => {
@@ -92,7 +94,7 @@ async function loadSFX() {
 //[LANGNO]-[DIALOGNO].wav
 
 let voicedLines = [
-	100, 101, 102 // TEMP
+	0 // TODO: add actual lines!
 ];
 
 async function loadVoice() {
@@ -102,14 +104,14 @@ async function loadVoice() {
 		}
 	}
 
-	const promise = new Promise((resolve) => {
+	let promise = new Promise((resolve) => {
 		let allowedLoadCounter = 0;
 		for(let i = 0; i < voice.length; i++) {
 			for(let j = 0; j < voice[i].length; j++) {
 				let filename = "assets/voice/"+String(i+1)+"-"+String(j)+".wav";
 				if(j === voicedLines[allowedLoadCounter]) {
 					voice[i][j] = new Audio(filename);
-					console.log("Voice file "+filename+" loaded.");
+					console.log("Voice file "+filename+" loaded to position ", i, j);
 					allowedLoadCounter++;
 				}		
 			}
@@ -149,11 +151,12 @@ function voiceToggle(elem) {
 }
 
 function audioVolume(newvolume) {
+	console.log("Audio volume changed to ", newvolume);
 	for(let i = 0; i < musicArray.length; i++) {
-		musicArray[i].volume = newvolume;
+		musicArray[i].volume = newvolume*0.3;
 	}
 	for(let i = 0; i < sfxArray.length; i++) {
-		sfxArray[i].volume = newvolume*0.3;
+		sfxArray[i].volume = newvolume*0.1;
 	}
 	for(let i = 0; i < voice.length; i++) {
 		for(let j = 0; j < voice[i].length; j++) {
@@ -193,6 +196,20 @@ function sfxPlay(id) {
 	sfxArray[id].currentTime = 0;
 	sfxArray[id].play();
 }
+function sfxPlayQuiet(id) {
+	if(id >= sfxArray.length || id == undefined) {
+		errorHandle("SFX ID undefined or out of range.");
+	}
+	if(!settings.music_enabled) { return; };
+
+	let tempVolume = sfxArray[id].volume;
+	sfxArray[id].volume = sfxArray[id].volume*0.5;
+	sfxArray[id].currentTime = 0;
+	sfxArray[id].play();
+	sfxArray[id].addEventListener("ended", () => {
+		sfxArray[id].volume = tempVolume;
+    });
+}
 function sfxPlayLoud(id) {
 	if(id >= sfxArray.length || id == undefined) {
 		errorHandle("SFX ID undefined or out of range.");
@@ -200,7 +217,7 @@ function sfxPlayLoud(id) {
 	if(!settings.music_enabled) { return; };
 
 	let tempVolume = sfxArray[id].volume;
-	sfxArray[id].volume = 1;
+	sfxArray[id].volume = sfxArray[id].volume*1.5;
 	sfxArray[id].currentTime = 0;
 	sfxArray[id].play();
 	sfxArray[id].addEventListener("ended", () => {

@@ -13,6 +13,7 @@ function checkMoney() {
 }
 
 function renderMoney() {
+	canvasSetFontWeight("normal");
 	canvasSetColor("#ffffff");
 	canvasCircleBox(80, 0, 20, 10);
 	if(info.money < 0) {

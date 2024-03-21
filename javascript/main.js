@@ -27,12 +27,15 @@ async function canvasResizeTo(x, y) {
 	let oldscaleX = canvasGetScaleX();
 	let oldscaleY = canvasGetScaleY();
 
+
 	//change vars
+	let oldfill = ctx.fillStyle;
 	let cvselem = document.getElementById("draw");
 	cvselem.width = x;
 	cvselem.height = y;
 	ctx.width = x;
 	ctx.height = y;
+	ctx.fillStyle = oldfill;
 	
 	let cvsb = document.getElementById("draw_buffer");
 	cvsb.style.setProperty("width", x+"px");
@@ -40,8 +43,7 @@ async function canvasResizeTo(x, y) {
 
 	//resize buttons and arrows
 
-	let btns =  document.getElementById("draw_contain").querySelectorAll(".draw_input_elem, .draw_input_elem_arrow, .draw_input_elem_small, .draw_input_elem_vsmall");
-	btns.forEach((val) => {
+	getAllInput().forEach((val) => {
 		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvasGetScaleY()/oldscaleY+"px");
 		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvasGetScaleX()/oldscaleX+"px");
 		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvasGetScaleX()/oldscaleX+"px");

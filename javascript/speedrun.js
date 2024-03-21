@@ -15,10 +15,10 @@ function timerEnd() {
 function renderSpeedrunMode() {
 	if(info.speedrun) {
 		canvasSetColor("#ffffff");
-		canvasRoundedBox(0, 0, 20, 20, 10);
+		canvasRoundedBox(0, 10, 15, 20, 10);
 		canvasSetColor("#000080");
 		canvasSetSmallFont();
-		canvasTextS(getTranslation(3), 3, 7);
-		canvasTextS(timePlaying+"s", 3, 17);
+		canvasTextS(getTranslation(3), 2, 17);
+		canvasTextS(timePlaying+"s", 2, 27);
 	}
 }
