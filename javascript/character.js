@@ -106,7 +106,7 @@ function canvasPlayer2(x, y, scale) {
 }
 
 function canvasPlayerRemove(x, y, scale, bgimage) {
-	canvasImageD(
+	canvasImageEquivalent(
 		bgimage,
 		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
@@ -163,7 +163,7 @@ function canvasDrawNPC2(characterid, x, y, scale) {
 }
 
 function canvasNPCRemove(characterid, x, y, scale, bgimage) {
-	canvasImageD(
+	canvasImageEquivalent(
 		bgimage,
 		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),

@@ -19,8 +19,8 @@ function OstravaNastupiste2() {
 	canvasPlayer(90, 80, 0.5); 
 
 	return renderArrows([
-		new ArrowInfo(75, 70, arrowType.UP, () => { info.location_minor_next = 1; }),
-		new ArrowInfo(70, 90, arrowType.INFO, () => { 
+		new ArrowInfo(75, 60, arrowType.DOWN, () => { info.location_minor_next = 1; }),
+		new ArrowInfo(50, 70, arrowType.INFO, () => { 
 			clearArrows();
 			info.location_minor_next = -1;
 			info.location_major++;
@@ -55,7 +55,7 @@ async function OstravaHandler() {
 
 	showPause();
 	canvasBackground(OstravaImages[info.location_minor]);
-	canvasPlayer(50, 47, 0.5); 
+	canvasPlayer(70, 60, 2); 
 
 	//entry dialogue
 	if(!info.speedrun) {

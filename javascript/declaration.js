@@ -58,6 +58,7 @@ let pauseInterval;
 let pauseButton;
 let pauseAnimationState = false;
 let pauseEnabled = false; 
+let pauseHidden = true;
 
 // CHARACTERS  
 

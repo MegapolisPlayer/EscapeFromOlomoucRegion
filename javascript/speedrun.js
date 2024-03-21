@@ -2,7 +2,7 @@ function timerBegin() {
 	timeBegin = Date.now();
 	timePlaying = 0;
 	timerInterval = window.setInterval(() => {
-		if(info.paused) { return; }
+		if(info.paused || animationBlocked) return;
 		timePlaying = Math.trunc((Date.now() - (timeBegin))/1000);
 		renderSpeedrunMode();
 	}, 900)

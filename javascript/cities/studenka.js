@@ -103,14 +103,6 @@ async function StudenkaHandler() {
 	canvasBackground(StudenkaImages[info.location_minor]);
 	canvasPlayer(20, 70, 1); 
 
-	//entry dialogue
-	if(!info.speedrun) {
-		hidePause();
-		dialogueBegin();
-		await dialogueNext(0);
-		dialogueEnd();
-	}
-
 	let promise;
 	while(info.location_minor_next != -1) {
 		info.location_minor = info.location_minor_next;

@@ -9,9 +9,13 @@ function deletePause() {
 
 function hidePause() {
 	pauseButton.style.setProperty("display", "none");
+	pauseHidden = true;
+
+
 }
 function showPause() {
 	pauseButton.style.setProperty("display", "block");
+	pauseHidden = false;
 }
 
 function renderPause() {
@@ -52,7 +56,7 @@ async function loadPause() {
 	hidePause();
 
 	pauseInterval = window.setInterval(() => {
-		if(animationBlocked) return;
+		if(animationBlocked || pauseHidden) return;
 
 		renderPause();
 

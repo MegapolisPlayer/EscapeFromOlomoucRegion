@@ -200,20 +200,22 @@ function canvasTextBorderM(text, x, y) {
 }
 
 //typewriter function write letter by letter
+//pass promises as objects!
+//{ promise: MyPromise }
 
-async function canvasTypewriterS(text, x, y) {
+async function canvasTypewriterS(text, x, y, skip = { promise: Promise.reject() }) {
 	for(let i = 0; i < text.length; i++) {
 		if(i % 3 == 0) { sfxPlay(11); }
 		ctx.fillText(text.substring(0,i), canvasX(x), canvasY(y));
-		await new Promise((resolve) => {
+		await Promise.any([skip.promise, new Promise((resolve) => {
 			window.setTimeout(() => {
 				resolve();
 			}, 50);
-		});
+		})]);
 	}
 	sfxStop(11);
 }
-async function canvasTypewriterM(text, x, y) {
+async function canvasTypewriterM(text, x, y, skip = { promise: Promise.reject() }) {
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -224,11 +226,11 @@ async function canvasTypewriterM(text, x, y) {
 		for(let j = 0; j < lines[i].length; j++) {
 			if(j % 3 == 0) { sfxPlay(11); } //adjust volume!
 			ctx.fillText(lines[i].substring(0,j), canvasX(x),  canvasY(y) + newlineyoffset);
-			await new Promise((resolve) => {
+			await Promise.any([skip.promise, new Promise((resolve) => {
 				window.setTimeout(() => {
 					resolve();
 				}, 50);
-			});
+			})]);
 		}
 		newlineyoffset += lineheight;
 	}
@@ -260,10 +262,12 @@ function canvasBackground(image) {
 	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 	currentBGImage = image;
 }
+//just draw image
 function canvasImage(image, x, y, scale) {
 	ctx.drawImage(image, canvasX(x), canvasY(y), image.width * scale, image.height * scale);
 }
-function canvasImageD(image, x, y, sizex, sizey) {
+//draws part of image onto canvas (draws equivalent part)
+function canvasImageEquivalent(image, x, y, sizex, sizey) {
 	ctx.drawImage(
 		image,
 		image.width*x/100, image.height*y/100, image.width*sizex/100, image.height*sizey/100,
@@ -271,13 +275,15 @@ function canvasImageD(image, x, y, sizex, sizey) {
 	);
 }
 
-function canvasImagePart(image, x, y, size) {
+//draws whole image to a speicifed space on canvas
+function canvasImageDest(image, x, y, sizex, sizey) {
 	ctx.drawImage(
 		image,
-		image.width*x/100, image.height*y/100, image.width, image.height,
-		canvasX(x), canvasY(y), canvasX(size), canvasY(size)
+		0, 0, image.width, image.height,
+		canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey)
 	);
 }
+//draws square image to canvas
 function canvasImageSamesizeX(image, x, y, size) {
 	ctx.drawImage(
 		image,
@@ -285,6 +291,7 @@ function canvasImageSamesizeX(image, x, y, size) {
 		canvasX(x), canvasY(y), canvasX(size), canvasX(size)
 	);
 }
+//draws square image to canvas
 function canvasImageSamesizeY(image, x, y, size) {
 	ctx.drawImage(
 		image,

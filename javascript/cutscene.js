@@ -3,6 +3,11 @@ async function cutsceneNews() {
 
 	let bg = await loadImage("assets/cutscene/news.jpg");
 
+	let skipPromise = { promise: new Promise((resolve) => {}) };
+	addButton("skip", getTranslation(7), 80, 0, 20, 10, () => {
+		skipPromise.promise = Promise.resolve();
+	});
+
 	canvasBackground(bg);
 	canvasSetColor("#000080");
 	canvasSetAlpha(0.5);
@@ -24,19 +29,25 @@ async function cutsceneNews() {
 
 	for(let i = 0; i < 3; i++) {
 		canvasSetColor("#000080");
-		canvasImageD(steelImage, 0, 70, 100, 30);
+		canvasImageEquivalent(steelImage, 0, 70, 100, 30);
 		canvasSetColor("#ffffff");
-		await canvasTypewriterM(wrapText(getTranslationAndVoice(46+i), 80), 10, 80);
+		await canvasTypewriterM(wrapText(getTranslationAndVoice(46+i), 80), 10, 80, skipPromise);
 
-		await renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
+		console.log(skipPromise);
+		await Promise.any([waiterEventFromElement(document.getElementById("skip"), "click"), skipPromise.promise, renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}))]);
 	}
 
 	sfxStop(10);
 	animationBlocked = false;
+	clearArrows();
+	removeButton("skip");
 }
 
 async function cutsceneStudenka() {
 	animationBlocked = true;
+
+	//dialogue here
+
 	animationBlocked = false;
 }
 
