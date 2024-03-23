@@ -28,6 +28,7 @@ async function renderCredits() {
 	setCreditsStep(29, `
 		Martin/MegapolisPlayer
 		Jirka/KohoutGD
+		Petr/Vrtulka103
 		<insert more names here>
 	`);
 	setCreditsStep(30, `

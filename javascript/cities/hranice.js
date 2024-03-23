@@ -27,13 +27,19 @@ function HNMNadrazi() {
 }
 
 function HNMRestaurace() {
-	canvasPlayer(70, 90, 3); //for player
-	canvasNPC(NPC.COOK, 90, 50, 2, async() => { 
-		clearArrows();
+	canvasPlayer(70, 90, 3);
+	canvasNPC(NPC.COOK, 90, 50, 2, async (e) => {
+		hideAllInput();
 
-		//TODO: dialogue
-
+		dialogueBegin();
+		await dialogueNext(0);
+		dialogueEnd();
 		await minigameWaiter();
+
+		canvasBackground(HNMimages[info.location_minor]);
+		canvasPlayer(70, 90, 3);
+		canvasDrawNPC(NPC.COOK, 90, 50, 2);
+		showAllInput();
 	});
 	
 	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }));

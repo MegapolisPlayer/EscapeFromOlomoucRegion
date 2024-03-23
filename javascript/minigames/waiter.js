@@ -1,5 +1,6 @@
 let waiterMinigameImages = [];
 let waiterLoaded = false;
+let waiterButtons = [];
 
 async function minigameWaiterLoad() {
 	if(waiterLoaded) return;
@@ -53,18 +54,56 @@ async function minigameWaiterMenu() {
 
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
-async function minigameWaiterGame() {
+
+function renderWaiterMinigame() {
 	canvasClear("#aaaaaa");
 
-	for(let i = 1; i < Math.trunc(canvas.width/waiterMinigameImages[0].width); i++) {
-		canvasImageDest(waiterMinigameImages[0], i*10, 90, 10, 10);
+	canvasSetColor("#ffffff");
+	canvasBox(80, 0, 20, 100);
+	canvasSetColor("#000080");
+
+	canvasTextS(getTranslation(74), 83, 7);
+	canvasTextS(getTranslation(75), 83, 27);
+	canvasTextS(getTranslation(76), 83, 47);
+	canvasTextS(getTranslation(77), 83, 67);
+
+	waiterButtons.push(addSmallButton("pause", getTranslation(10), 80, 80, 20, 10, (e) => {}));
+
+	for(let i = 0; i < 8; i++) {
+		canvasImageDest(waiterMinigameImages[0], 10+i*10, 90, 10, 10);
 	}
 
 	for(let i = 0; i < 16; i++) {
 		canvasImageSamesizeY(waiterMinigameImages[1], 10+(Math.trunc(i/4)*10), 10+((i%4)*15), 10);
 	}
+}
 
-	await new Promise((resolve) => {});
+async function minigameWaiterGame() {
+	renderWaiterMinigame();
+
+	//promise
+
+	waiterButtons.push(addSmallButton("skip", getTranslation(78), 80, 90, 20, 10, (e) => {}), "click");
+
+	let endGamePromiseCompleted = false;
+	let endGamePromise = Promise.any([
+		new Promise((resolve) => {}),
+		waiterEventFromElement(waiterButtons[waiterButtons.length - 1])
+	]).then((v) => {
+		endGamePromiseCompleted = true;
+	});
+
+	//main loop
+
+	while(!endGamePromiseCompleted) {
+		await Promise.any([new Promise((resolve) => {
+			setTimeout(() => { resolve(); }, 100);
+		}), endGamePromise]);
+	}
+	
+	waiterButtons.forEach((val) => { 
+		val.remove();
+	});
 }
 async function minigameWaiterSummary() {
 	canvasClear("#aaaaaa");

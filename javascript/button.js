@@ -79,6 +79,8 @@ async function loadArrows() {
 		if(animationBlocked) return;
 
 		for(let i = 0; i < arrowList.length; i++) {
+			if(document.getElementById(arrowList[i].id).style.getPropertyValue("display") === "none") continue;
+
 			ctx.drawImage(
 				(arrowAnimationState == false) ? arrowImages2[arrowList[i].type] : arrowImages[arrowList[i].type],
 				canvasX(arrowList[i].x) - (arrowSize/2*canvasGetScaleX()),

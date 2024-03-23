@@ -19,15 +19,15 @@ function showPause() {
 }
 
 function renderPause() {
-	ctx.save();
 	canvasSetFontWeight("normal");
+	let temp = ctx.fillStyle;
 	canvasSetColor("#ffffff");
 	canvasCircleBox(0, 0, 20, 10);
 	canvasImageSamesizeY((pauseAnimationState == true) ? pause2 : pause1, 1, 0, 10);
 	canvasSetColor(pauseAnimationState ? "#00aaaa" : "#000080");
 	canvasSetSmallFont();
 	canvasTextS(getTranslation(10), 8, 7);
-	ctx.restore();
+	ctx.fillStyle = temp;
 }
 
 function pauseMenuToggle() {

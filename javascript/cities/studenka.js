@@ -58,7 +58,7 @@ function StudenkaPole() {
 function StudenkaMost() {
 	canvasPlayer(75, 70, 2); 
 	if(!info.speedrun) {
-		renderArrow(new ArrowInfo(40, 70, arrowType.INFO, async () => { 
+		renderArrow(new ArrowInfo(40, 70, arrowType.INFO, async (e) => { 
 			hideAllInput();
 			dialogueBegin();
 			await dialogueNext(0);
@@ -67,7 +67,7 @@ function StudenkaMost() {
 		}));
 	}
  
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { info.location_minor_next = 3; }));
+	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { info.location_minor_next = 3; clearArrows(); }));
 }
 
 async function StudenkaHandler() {

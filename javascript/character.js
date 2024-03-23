@@ -42,12 +42,15 @@ async function loadCharacters() {
 			if(dialogueEnabled) {
 				let tempcolor = canvasGetColor();
 				canvasSetColor("#ffffff");
+
+				let boxsize = player.Y+(players[selectedPlayer].height*player.SCALE*characterSizeMultiplier/canvas.height/2*100)-80;
+
 				//we expect this to take less than 50ms
 				canvasBox(
 					player.X-(players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width/2*100),
 					80,
-					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100,
-					20
+					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100, 80,
+					(boxsize < 0) ? 0 : boxsize //only the part which the character touches
 				);
 				canvasSetColor(tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
 			}
@@ -64,11 +67,14 @@ async function loadCharacters() {
 
 			if(dialogueEnabled) {
 				canvasSetColor("#ffffff");
+
+				let boxsize = npcs[i].Y+(characters[npcs[i].TYPE].height*characterSizeMultiplier/canvas.height*100)-80;
+
 				canvasBox(
-					npcs[i].X-(characters[characterid].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width/2*100),
+					npcs[i].X-(characters[npcs[i].TYPE].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width/2*100),
 					80,
-					characters[characterid].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width*100,
-					20
+					characters[npcs[i].TYPE].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width*100,
+					(boxsize < 0) ? 0 : boxsize //only the part which the character occupies will get redrawn
 				);
 			}
 		}

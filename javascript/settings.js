@@ -30,7 +30,7 @@ async function renderSettings() {
 	
 	//note
 	canvasSetFontWeight("normal");
-	canvasTextM(wrapText(getTranslation(60), 80), 10, 50);
+	canvasTextM(wrapText(getTranslation(61), 80), 10, 50);
 	canvasSetFontWeight("bold");
 
 	//settings buttons
