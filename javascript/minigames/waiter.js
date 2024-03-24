@@ -1,6 +1,23 @@
 let waiterMinigameImages = [];
 let waiterLoaded = false;
 let waiterButtons = [];
+let waiterTables = [];
+let waiterTablePhases = {
+	BASE: 0,
+	ORDER: 1,
+	ORDER_EXPIRE: 2,
+	WAITING: 3,
+	WAITING_EXPIRE: 4,
+	LEFT: 5,
+	GOOD: 6
+}
+
+function minigameWaiterReset() {
+	waiterMinigameImages = [];
+	waiterLoaded = false;
+	waiterButtons = [];
+	waiterTables = [];
+}
 
 async function minigameWaiterLoad() {
 	if(waiterLoaded) return;
@@ -75,33 +92,32 @@ function renderWaiterMinigame() {
 
 	for(let i = 0; i < 16; i++) {
 		canvasImageSamesizeY(waiterMinigameImages[1], 10+(Math.trunc(i/4)*10), 10+((i%4)*15), 10);
+		waiterTables.push({ id: i, phase: 0, });
 	}
 }
 
 async function minigameWaiterGame() {
 	renderWaiterMinigame();
 
-	//promise
-
-	waiterButtons.push(addSmallButton("skip", getTranslation(78), 80, 90, 20, 10, (e) => {}), "click");
-
+	//variables
 	let endGamePromiseCompleted = false;
-	let endGamePromise = Promise.any([
-		new Promise((resolve) => {}),
-		waiterEventFromElement(waiterButtons[waiterButtons.length - 1])
-	]).then((v) => {
+
+	waiterButtons.push(addSmallButton("skip", getTranslation(78), 80, 90, 20, 10, (e) => {
 		endGamePromiseCompleted = true;
-	});
+	}));
 
 	//main loop
 
 	while(!endGamePromiseCompleted) {
-		await Promise.any([new Promise((resolve) => {
+
+		//generate random numbers for table phase change
+
+		await new Promise((resolve) => {
 			setTimeout(() => { resolve(); }, 100);
-		}), endGamePromise]);
+		});
 	}
 	
-	waiterButtons.forEach((val) => { 
+	waiterButtons.forEach((val) => {
 		val.remove();
 	});
 }
@@ -120,6 +136,7 @@ async function minigameWaiterSummary() {
 async function minigameWaiter() {
 	animationBlocked = true;
 
+	minigameWaiterReset();
 	await minigameWaiterLoad();
 	await minigameWaiterMenu();
 	await minigameWaiterGame();
