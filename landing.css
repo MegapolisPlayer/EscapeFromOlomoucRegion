@@ -4,7 +4,7 @@ html, body {
 }
 
 body {
-	background-color: #009999;
+	background-color: #00aaaa;
 	color: #ffffff;
 	font-family: sans-serif;
 	font-size: 25px;
@@ -24,8 +24,13 @@ button {
 	font-weight: normal;
 	padding: 5px;
 	font-family: Arial, FreeSans;
-	background-color: white;
+	background-color: #ffffff;
     color: #000080;
+}
+
+button:hover {
+	background-color: #00aaaa;
+    color: #ffffff;
 }
 
 #draw_contain {

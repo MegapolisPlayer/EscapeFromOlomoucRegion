@@ -72,6 +72,10 @@ async function minigameWaiterMenu() {
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
 
+function renderWaiterTable(id) {
+	canvasImageSamesizeY(waiterMinigameImages[waiterTables[id].phase + 1], 10+(Math.trunc(id/4)*10), 10+((id%4)*15), 10);
+}
+
 function renderWaiterMinigame() {
 	canvasClear("#aaaaaa");
 
@@ -90,9 +94,10 @@ function renderWaiterMinigame() {
 		canvasImageDest(waiterMinigameImages[0], 10+i*10, 90, 10, 10);
 	}
 
-	for(let i = 0; i < 16; i++) {
-		canvasImageSamesizeY(waiterMinigameImages[1], 10+(Math.trunc(i/4)*10), 10+((i%4)*15), 10);
+	for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
 		waiterTables.push({ id: i, phase: 0, });
+		waiterButtons.push(internal_setButton("table"+String(i), "", "draw_input_elem_arrow", canvasX(10+(Math.trunc(i/4)*10)), canvasY(10+((i%4)*15)), canvasY(10), canvasY(10), () => {}));
+		renderWaiterTable(i);
 	}
 }
 
@@ -107,14 +112,37 @@ async function minigameWaiterGame() {
 	}));
 
 	//main loop
-
+	
 	while(!endGamePromiseCompleted) {
+		console.log("Waiter Game Tick!");
 
-		//generate random numbers for table phase change
+		//generate table IDs for table phase change (max.1 table change per tick)
+
+		//advance random phases, only every N tick
+
+		let nticks = 5;
+		if(Math.random()<=(1/nticks)) {
+			let rn = Math.trunc(Math.random()*(16 + (settings.difficulty * 4)));
+
+			//advance random phases
+			if(waiterTables[rn].phase == waiterTablePhases.BASE) {
+				waiterTables[rn].phase = waiterTablePhases.ORDER;
+				renderWaiterTable(rn);
+			}
+		}
+
+		for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
+			//advance time phases
+			
+			
+		}
+
 
 		await new Promise((resolve) => {
-			setTimeout(() => { resolve(); }, 100);
-		});
+			setTimeout(() => { 
+				resolve();
+			}, 100);
+		});  
 	}
 	
 	waiterButtons.forEach((val) => {

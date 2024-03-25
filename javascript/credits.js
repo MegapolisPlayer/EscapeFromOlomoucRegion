@@ -22,14 +22,13 @@ async function renderCredits() {
 	musicPlay(9);
 	
 	canvasSetSmallFont();
-	addSmallButton("creditsskip", "Skip credits", 80, 0, 20, 10, () => { window.location.reload(); });
+	addSmallButton("creditsskip", getTranslation(7), 80, 0, 20, 10, () => { window.location.reload(); });
 
 	setCreditsStep(1);
 	setCreditsStep(29, `
-		Martin/MegapolisPlayer
-		Jirka/KohoutGD
-		Petr/Vrtulka103
-		<insert more names here>
+		Martin/MegapolisPlayer (code and graphics)
+		Jirka/KohoutGD (idea, translations and voiceover)
+		Petr/Vrtulka103 (voiceover and testing)
 	`);
 	setCreditsStep(30, `
 		SReality, Freepik (jcomp), VlakemJednoduse.cz, Fortes Interactive, VagonWeb,
@@ -83,6 +82,9 @@ async function renderCredits() {
 		English Dialect: https://en.wiktionary.org
 		Deutscher Dialekt:  
 		Susština and Baština: custom
+	`);
+	setCreditsStep(79, `
+		<insert testers and stuff here!>
 	`);
 	setCreditsStep(36, "\n"+getTranslation(37), () => {
 		removeButton("creditsskip");
