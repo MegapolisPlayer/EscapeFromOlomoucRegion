@@ -11,6 +11,12 @@ let waiterTablePhases = {
 	LEFT: 5,
 	GOOD: 6
 }
+let waiterCounters = {
+	completed: 0,
+	undelivered: 0,
+	ignored: 0,
+	time: 1500, //2 minutes 30
+}
 
 function minigameWaiterReset() {
 	waiterMinigameImages = [];
@@ -72,8 +78,29 @@ async function minigameWaiterMenu() {
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
 
+function renderWaiterCounter(value, y) {
+	canvasSetColor("#ffffff");
+	canvasBox(83, y - 7, 20, 10);
+	canvasSetColor("#000080");
+	canvasTextS(value, 85, y);
+}
+
 function renderWaiterTable(id) {
 	canvasImageSamesizeY(waiterMinigameImages[waiterTables[id].phase + 1], 10+(Math.trunc(id/4)*10), 10+((id%4)*15), 10);
+}
+
+function waiterTableUpdate(id, newphase) {
+	waiterTables[id].phase = newphase;
+	waiterTables[id].ticks = 0;
+	renderWaiterTable(id);
+}
+
+function waiterTableButtonCallback(e) {
+	console.log("Table triggered, no ", e.target.custom_property_table_id);
+
+	//find table
+
+	//advance phases, add money
 }
 
 function renderWaiterMinigame() {
@@ -88,17 +115,22 @@ function renderWaiterMinigame() {
 	canvasTextS(getTranslation(76), 83, 47);
 	canvasTextS(getTranslation(77), 83, 67);
 
-	waiterButtons.push(addSmallButton("pause", getTranslation(10), 80, 80, 20, 10, (e) => {}));
-
 	for(let i = 0; i < 8; i++) {
 		canvasImageDest(waiterMinigameImages[0], 10+i*10, 90, 10, 10);
 	}
 
 	for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
-		waiterTables.push({ id: i, phase: 0, });
-		waiterButtons.push(internal_setButton("table"+String(i), "", "draw_input_elem_arrow", canvasX(10+(Math.trunc(i/4)*10)), canvasY(10+((i%4)*15)), canvasY(10), canvasY(10), () => {}));
+		waiterTables.push({ id: i, phase: 0, ticks: 0 });
+		waiterButtons.push(internal_setButton("table"+String(i), "", "draw_input_elem_arrow",
+			canvasX(10+(Math.trunc(i/4)*10)), canvasY(10+((i%4)*15)), canvasY(10), canvasY(10), 
+			waiterTableButtonCallback
+		));
+		waiterButtons[i].custom_property_table_id = i;
 		renderWaiterTable(i);
 	}
+
+	//add other buttons
+	waiterButtons.push(addSmallButton("pause", getTranslation(10), 80, 80, 20, 10, (e) => {}));
 }
 
 async function minigameWaiterGame() {
@@ -118,25 +150,55 @@ async function minigameWaiterGame() {
 
 		//generate table IDs for table phase change (max.1 table change per tick)
 
+		
+		//config
+		let nticks = 10;
+		let longtime = 100;
+		let shorttime = 50;
+		//end of config		
+		
 		//advance random phases, only every N tick
-
-		let nticks = 5;
 		if(Math.random()<=(1/nticks)) {
 			let rn = Math.trunc(Math.random()*(16 + (settings.difficulty * 4)));
 
 			//advance random phases
 			if(waiterTables[rn].phase == waiterTablePhases.BASE) {
-				waiterTables[rn].phase = waiterTablePhases.ORDER;
-				renderWaiterTable(rn);
+				waiterTableUpdate(rn, waiterTablePhases.ORDER);
 			}
 		}
 
 		for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
+			waiterTables[i].ticks++;
 			//advance time phases
-			
-			
+
+			if(waiterTables[i].phase == waiterTablePhases.ORDER && waiterTables[i].ticks >= longtime) {
+				waiterTableUpdate(i, waiterTablePhases.ORDER_EXPIRE);
+			}
+			if(waiterTables[i].phase == waiterTablePhases.ORDER_EXPIRE && waiterTables[i].ticks >= shorttime) {
+				waiterTableUpdate(i, waiterTablePhases.LEFT);
+			}
+
+
+
+			if(waiterTables[i].phase == waiterTablePhases.LEFT && waiterTables[i].ticks >= longtime) {
+				waiterTableUpdate(i, waiterTablePhases.BASE);
+			}
 		}
 
+		//update counters
+		waiterCounters.time--;
+
+		//rerender them
+		let minutes = Math.trunc((waiterCounters.time/10)/60);
+		let seconds = Math.trunc((waiterCounters.time/10)%60);
+		if(minutes != 0) renderWaiterCounter(String(minutes)+":"+String(seconds), 77);
+		else renderWaiterCounter(String(seconds)+"s", 77);
+
+		if(waiterCounters.time <= 0) {
+			console.log("Time limit reached!");
+			endGamePromiseCompleted = true;
+			break;
+		}
 
 		await new Promise((resolve) => {
 			setTimeout(() => { 

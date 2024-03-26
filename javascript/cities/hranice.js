@@ -35,10 +35,14 @@ function HNMRestaurace() {
 		await dialogueNext(0);
 		dialogueEnd();
 		await minigameWaiter();
-
+		
+		musicPlay(2);
 		canvasBackground(HNMimages[info.location_minor]);
 		canvasPlayer(70, 90, 3);
 		canvasDrawNPC(NPC.COOK, 90, 50, 2);
+		renderMoney();
+		renderSpeedrunMode();
+		renderPause();
 		showAllInput();
 	});
 	

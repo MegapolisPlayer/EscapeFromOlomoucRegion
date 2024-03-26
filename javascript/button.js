@@ -146,3 +146,5 @@ function showAllInput() {
 		val.style.setProperty("display", "block");
 	});
 }
+
+//TODO: add function rerenderArrows()
