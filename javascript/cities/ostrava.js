@@ -80,7 +80,7 @@ async function OstravaHandler() {
 			case(2): promise = OstravaNastupiste2(); break;
 		}
 
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

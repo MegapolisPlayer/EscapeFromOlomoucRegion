@@ -40,7 +40,7 @@ function HNMRestaurace() {
 		canvasBackground(HNMimages[info.location_minor]);
 		canvasPlayer(70, 90, 3);
 		canvasDrawNPC(NPC.COOK, 90, 50, 2);
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 		showAllInput();
@@ -138,7 +138,7 @@ async function HNMHandler() {
 			case(5): promise = HNMPropast(); break;
 			default: break;
 		}
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

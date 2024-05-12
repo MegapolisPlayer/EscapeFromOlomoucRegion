@@ -22,3 +22,4 @@ function renderSpeedrunMode() {
 		canvasTextS(timePlaying+"s", 2, 27);
 	}
 }
+

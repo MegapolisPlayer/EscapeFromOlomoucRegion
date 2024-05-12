@@ -98,7 +98,7 @@ async function NezamysliceHandler() {
 			case(3): promise = NezamyslicePodnikVnitrek(); break;
 		}
 
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

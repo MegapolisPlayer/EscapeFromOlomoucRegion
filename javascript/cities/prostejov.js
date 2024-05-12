@@ -114,7 +114,7 @@ async function ProstejovHandler() {
 			case(4): promise = ProstejovObchod(); break;
 		}
 
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

@@ -79,6 +79,7 @@ async function loadSFX() {
 		sfxArray.push(new Audio("assets/sfx/TrainBrake.mp3"));
 		sfxArray.push(new Audio("assets/sfx/News.mp3"));
 		sfxArray.push(new Audio("assets/sfx/Type.mp3"));
+		sfxArray.push(new Audio("assets/sfx/Bell.mp3"));
 
 		for(let i = 0; i < sfxArray.length; i++) {
 			sfxArray[i].volume = 0.3;

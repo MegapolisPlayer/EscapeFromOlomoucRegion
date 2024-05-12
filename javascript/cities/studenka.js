@@ -123,7 +123,7 @@ async function StudenkaHandler() {
 			case(6): promise = StudenkaMost(); break;
 		}
 
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

@@ -14,7 +14,7 @@ function renderMainMenu() {
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
 	//Date changes here!!!
-	canvasTextM("Version 2.00-build1, 26.3.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
+	canvasTextM("Version 2.00, 12.5.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
@@ -183,6 +183,7 @@ async function renderCutscene() {
 // GAME OVER SCREEN
 
 async function gameOver(text) {
+	animationBlocked = true;
 	getAllInput().forEach((val) => { val.remove(); });
 
 	musicPlay(1);

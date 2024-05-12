@@ -40,6 +40,10 @@ function canvasY(yvalue) {
 	return Math.trunc(canvas.height*(yvalue/100));
 }
 
+function canvasTransportYToX(yvalue) {
+	return canvas.height/canvas.width*yvalue;
+}
+
 function canvasGetScaleX() {
 	return canvas.width/1000;
 }
@@ -96,6 +100,12 @@ function canvasBox(x, y, sizex, sizey) {
 }
 function canvasBoxBorder(x, y, sizex, sizey) {
 	ctx.strokeRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
+}
+function canvasBoxSamesizeX(x, y, size) {
+	ctx.fillRect(canvasX(x), canvasY(y), canvasX(size), canvasX(size));
+}
+function canvasBoxSamesizeY(x, y, size) {
+	ctx.fillRect(canvasX(x), canvasY(y), canvasY(size), canvasY(size));
 }
 
 function canvasSetColor(color) {

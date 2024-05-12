@@ -128,7 +128,7 @@ async function OlomoucHandler() {
 			case(6): promise = OlomoucObchodVnitrek(); break;
 		}
 
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

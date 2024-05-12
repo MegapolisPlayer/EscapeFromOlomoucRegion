@@ -33,6 +33,11 @@ button:hover {
     color: #ffffff;
 }
 
+button:disabled {
+	background-color: #aaaaaa;
+    color: #000040;
+}
+
 #draw_contain {
 	position: relative;
 }

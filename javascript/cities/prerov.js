@@ -101,7 +101,7 @@ async function PrerovHandler() {
 			case(4): promise = PrerovAutobus(); break;
 		}
 
-		renderMoney();
+		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
 

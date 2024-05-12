@@ -83,7 +83,7 @@ async function renderCredits() {
 		Deutscher Dialekt:  
 		Susština and Baština: custom
 	`);
-	setCreditsStep(79, `
+	setCreditsStep(81, `
 		<insert testers and stuff here!>
 	`);
 	setCreditsStep(36, "\n"+getTranslation(37), () => {
