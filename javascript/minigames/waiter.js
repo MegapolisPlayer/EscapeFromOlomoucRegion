@@ -1,8 +1,15 @@
+//
+// VARIABLES
+//
+
 let waiterMinigameImages = [];
 let waiterLoaded = false;
-let waiterButtons = [];
-let waiterTables = [];
-let waiterOrders = [];
+let waiterButtons = []; //list of buttons of tables
+let waiterTables = []; //list of tables
+let waiterOrdersCooking = []; //orders still being made
+let waiterOrders = []; //completed orders, array of ints
+let waiterOrdersButtons = []; //buttons of orders
+let waiterOrderSelected = -1; //selected order
 let waiterTablePhases = {
 	BASE: 0,
 	ORDER: 1,
@@ -11,13 +18,17 @@ let waiterTablePhases = {
 	WAITING_EXPIRE: 4,
 	LEFT: 5, //ignored order
 	GOOD: 6
-}
+}; //enums
 let waiterCounters = {
 	completed: 0,
 	undelivered: 0,
 	ignored: 0,
 	time: 1500, //2 minutes 30
-}
+}; //counters
+
+//
+//LOADING
+//
 
 function minigameWaiterReset() {
 	waiterMinigameImages = [];
@@ -47,7 +58,13 @@ async function minigameWaiterLoad() {
 	waiterLoaded = true;
 }
 
+//
+// MENU
+//
+
 async function minigameWaiterMenu() {
+	pauseHidden = true;
+
 	canvasClear("#aaaaaa");
 
 	musicPlay(10);
@@ -85,6 +102,10 @@ async function minigameWaiterMenu() {
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
 
+//
+// UTILS
+//
+
 function renderWaiterCounter(value, y) {
 	canvasSetColor("#ffffff");
 	canvasBox(83, y - 7, 20, 10);
@@ -114,41 +135,84 @@ function waiterTableUpdate(id, newphase) {
 	renderWaiterTable(id);
 }
 
+function waiterTableButtonCallback(e) {
+	console.log("Table triggered, no ", e.target.custom_property_table_id);
+
+	//reset selection
+	waiterOrderSelected = -1;
+	
+	//find table
+	
+	if(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER || waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER_EXPIRE) {
+		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.WAITING);
+		addOrder(e.target.custom_property_table_id);
+	}	
+	else if(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING || waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING_EXPIRE) {
+		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.GOOD);
+		removeOrder(e.target.custom_property_table_id);
+		waiterCounters.completed++;
+		info.money += 20;
+		renderWaiterCounter(waiterCounters.completed, 17);
+	}
+	
+	//advance phases, add money
+}
+
+//
+// ORDERS
+//
+
+function addOrder(id) {
+	waiterOrders.push(id);
+	sfxPlay(12);
+	if(canvasTransposeYToX((waiterOrders.length)*20) >= 80) { return; }
+	waiterOrdersButtons.push(
+		internal_setButton(
+			"order"+id, "order", "draw_input_elem_arrow",
+			canvasX(canvasTransposeYToX((waiterOrders.length)*20)), canvasY(80),
+			canvasY(20), canvasY(20), ordersCallback
+		)
+	);
+	waiterOrdersButtons[waiterOrdersButtons.length - 1].custom_property_table_id = id;
+}
+
+function removeOrder(id) {
+	let OrderIdInArray = waiterOrders.indexOf(id);
+	document.getElementById("order"+waiterOrders[OrderIdInArray]).remove();
+	if(waiterOrders[OrderIdInArray] == waiterOrderSelected) {
+		waiterOrderSelected = -1;
+	}
+	waiterOrders.splice(OrderIdInArray, 1);
+	waiterOrdersButtons.splice(OrderIdInArray, 1);
+}
+
 function renderOrders() {
 	let ConveyorIndex = 0;
 	canvasSetColor("#000000");
 	canvasBoxSamesizeY(0, 80, 20);
+	canvasSetColor("#ffffff");  
+	canvasTextS(waiterOrders.length, canvasTransposeYToX(2), 92);
 	while(true) {
-		if(canvasX(canvasTransportYToX((ConveyorIndex+1)*20)) >= canvasX(80)) { break; }
-		canvasImageSamesizeY(waiterMinigameImages[0], canvasTransportYToX(20*(ConveyorIndex+1)), 80, 20);
+		if(canvasX(canvasTransposeYToX((ConveyorIndex+1)*20)) >= canvasX(80)) { break; }
+		canvasImageSamesizeY(waiterMinigameImages[0], canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
+		//TODO: set buttons x, y, size x, y
 		if(ConveyorIndex < waiterOrders.length) {
-			canvasImageSamesizeY(waiterMinigameImages[8], canvasTransportYToX(20*(ConveyorIndex+1)), 80, 20);
+			canvasImageSamesizeY(waiterMinigameImages[8], canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
 			canvasSetColor("#000000");
-			canvasTextS(waiterOrders[ConveyorIndex]+1, canvasTransportYToX(20*(ConveyorIndex+1))+2, 92);
+			canvasTextS(waiterOrders[ConveyorIndex]+1, canvasTransposeYToX(20*(ConveyorIndex+1))+2, 92);
 		}
 		ConveyorIndex++;
 	}
 }
 
-function waiterTableButtonCallback(e) {
-	console.log("Table triggered, no ", e.target.custom_property_table_id);
-
-	//find table
-
-	if(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER || waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER_EXPIRE) {
-		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.WAITING);
-		waiterOrders.push(e.target.custom_property_table_id);
-	}	
-	else if(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING || waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING_EXPIRE) {
-		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.GOOD);
-		waiterOrders.splice(waiterOrders.indexOf(e.target.custom_property_table_id), 1);
-		waiterCounters.completed++;
-		info.money += 20;
-		renderWaiterCounter(waiterCounters.completed, 17);
-	}
-
-	//advance phases, add money
+function ordersCallback(event) {
+	console.log(event.target.custom_property_table_id);
+	waiterOrderSelected = event.target.custom_property_table_id;
 }
+
+//
+// MAIN
+//
 
 function renderWaiterMinigame() {
 	canvasClear("#aaaaaa");
@@ -182,6 +246,7 @@ function renderWaiterMinigame() {
 	waiterButtons.push(addSmallButton("pause", getTranslation(10), 80, 80, 20, 10, (e) => {}));
 }
 
+
 async function minigameWaiterGame() {
 	renderWaiterMinigame();
 
@@ -189,7 +254,7 @@ async function minigameWaiterGame() {
 	let endGamePromiseCompleted = false;
 
 	waiterButtons.push(addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, (e) => {
-		info.money -= getEarlyLeaveTimeMoney(waiterCounters.time);
+		info.money -= getEarlyLeaveTimeMoney(waiterCounters.time/10);
 		endGamePromiseCompleted = true;
 	}));
 	document.getElementById("skip").setAttribute("disabled", "disabled");
@@ -234,6 +299,7 @@ async function minigameWaiterGame() {
 			}
 			else if(waiterTables[i].phase == waiterTablePhases.WAITING_EXPIRE && waiterTables[i].ticks >= shorttime) {
 				waiterTableUpdate(i, waiterTablePhases.LEFT);
+				removeOrder(i);
 				waiterCounters.undelivered++;
 				info.money -= Math.trunc(10*settings.diff_multiplier);
 				renderWaiterCounter(waiterCounters.undelivered, 37);
@@ -285,6 +351,11 @@ async function minigameWaiterGame() {
 		val.remove();
 	});
 }
+
+//
+// SUMMARY
+//
+
 async function minigameWaiterSummary() {
 	canvasClear("#aaaaaa");
 
@@ -302,10 +373,16 @@ async function minigameWaiterSummary() {
 	canvasTextS(getTranslation(77), 10, 30);
 
 	canvasTextS(getTranslation(78), 10, 40);
-
-
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => { musicStop(); }));
+	
+	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => { 
+		pauseHidden = false;
+		musicStop();
+	}));
 }
+
+//
+// MAIN GAME
+//
 
 async function minigameWaiter() {
 	animationBlocked = true;

@@ -40,7 +40,7 @@ function canvasY(yvalue) {
 	return Math.trunc(canvas.height*(yvalue/100));
 }
 
-function canvasTransportYToX(yvalue) {
+function canvasTransposeYToX(yvalue) {
 	return canvas.height/canvas.width*yvalue;
 }
 

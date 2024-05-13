@@ -1,1 +1,3 @@
-// think of something for Prerov Bus
+//design line 
+//time limit
+//smol simulation

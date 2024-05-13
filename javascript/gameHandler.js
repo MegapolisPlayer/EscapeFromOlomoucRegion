@@ -14,7 +14,7 @@ function renderMainMenu() {
 	canvasSetSmallFont();
 	canvasSetFontWeight("normal");
 	//Date changes here!!!
-	canvasTextM("Version 2.00, 12.5.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
+	canvasTextM("Version 2.00, 13.5.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
 
 	//render characters (all of them, for show)
 	canvasImage(players[0], 20, 50, characterSizeMultiplier);
