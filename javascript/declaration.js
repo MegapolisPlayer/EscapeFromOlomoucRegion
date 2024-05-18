@@ -103,13 +103,14 @@ let voice = [ voiceEN, voiceCZ, voiceDE, voiceSUS, voiceBA ];
 let translationEN = [];
 let translationCZ = [];
 let translationDE = [];
+let translationPL = [];
 let translationSUS = [];
 let translationBA = [];
 
 let translationSelected = 0;
 
-let translations = [ translationEN, translationCZ, translationDE, translationSUS, translationBA ];
-let translationNames = [ "English", "Čeština", "Deutsch", "Susština", "Baština" ];
+let translations = [ translationEN, translationCZ, translationDE, translationPL, translationSUS, translationBA ];
+let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Susština", "Baština" ];
 
 // DIALOGUE
 

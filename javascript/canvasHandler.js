@@ -153,6 +153,9 @@ function canvasSetFontWeight(weight) {
 	canvas_fontWeight = weight;
 	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
+function canvasSetVerySmallFont() {
+	canvasSetFontSize(fontSizeSmall/2);
+}
 function canvasSetSmallFont() {
 	canvasSetFontSize(fontSizeSmall);
 }

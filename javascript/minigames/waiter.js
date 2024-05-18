@@ -113,10 +113,15 @@ function renderWaiterCounter(value, y) {
 	canvasTextS(value, 85, y);
 }
 
-function renderWaiterTable(id) {
-	canvasSetColor("#aaaaaa");
+function renderWaiterTable(id, highlight = false) {
 	let x = 10+(Math.trunc(id/4)*10);
 	let y = 10+((id%4)*15);
+	if(highlight) {
+		canvasSetColor("#ffff00");
+	}
+	else {
+		canvasSetColor("#aaaaaa");
+	}
 	canvasBoxSamesizeY(x, y, 10);
 	canvasImageSamesizeY(waiterMinigameImages[waiterTables[id].phase + 1], x, y, 10);
 	canvasSetColor("#000080");
@@ -137,22 +142,28 @@ function waiterTableUpdate(id, newphase) {
 
 function waiterTableButtonCallback(e) {
 	console.log("Table triggered, no ", e.target.custom_property_table_id);
-
-	//reset selection
-	waiterOrderSelected = -1;
 	
 	//find table
 	
-	if(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER || waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER_EXPIRE) {
+	if(
+		waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER ||
+		waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.ORDER_EXPIRE
+	) {
 		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.WAITING);
 		addOrder(e.target.custom_property_table_id);
 	}	
-	else if(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING || waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING_EXPIRE) {
+	else if(
+		(waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING ||
+		waiterTables[e.target.custom_property_table_id].phase == waiterTablePhases.WAITING_EXPIRE) &&
+		waiterOrderSelected == e.target.custom_property_table_id
+	) {
 		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.GOOD);
 		removeOrder(e.target.custom_property_table_id);
 		waiterCounters.completed++;
 		info.money += 20;
 		renderWaiterCounter(waiterCounters.completed, 17);
+		//reset selection
+		waiterOrderSelected = -1;
 	}
 	
 	//advance phases, add money
@@ -163,18 +174,32 @@ function waiterTableButtonCallback(e) {
 //
 
 function addOrder(id) {
-	waiterOrders.push(id);
+	waiterOrdersCooking.push({id: id, tocook: Math.trunc(25+(Math.random()*50)), cookingfor: 0});
+}
+
+function cookOrder(order) {
+	if(order.cookingfor < order.tocook) {
+		order.cookingfor++;
+		return;
+	}
+	
+	waiterOrders.push(order.id);
+
 	sfxPlay(12);
-	if(canvasTransposeYToX((waiterOrders.length)*20) >= 80) { return; }
 	waiterOrdersButtons.push(
 		internal_setButton(
-			"order"+id, "order", "draw_input_elem_arrow",
+			"order"+order.id, order.id+1, "draw_input_elem_arrow",
 			canvasX(canvasTransposeYToX((waiterOrders.length)*20)), canvasY(80),
 			canvasY(20), canvasY(20), ordersCallback
 		)
 	);
-	waiterOrdersButtons[waiterOrdersButtons.length - 1].custom_property_table_id = id;
-}
+	if(canvasTransposeYToX((waiterOrders.length)*20) >= 80) { 
+		waiterOrdersButtons[waiterOrdersButtons.length - 1].style.setProperty("display", "none");
+	}
+	waiterOrdersButtons[waiterOrdersButtons.length - 1].custom_property_table_id = order.id;
+
+	waiterOrdersCooking.splice(waiterOrdersCooking.map((val) => val.id).indexOf(order.id), 1);
+} 
 
 function removeOrder(id) {
 	let OrderIdInArray = waiterOrders.indexOf(id);
@@ -190,24 +215,45 @@ function renderOrders() {
 	let ConveyorIndex = 0;
 	canvasSetColor("#000000");
 	canvasBoxSamesizeY(0, 80, 20);
+
 	canvasSetColor("#ffffff");  
-	canvasTextS(waiterOrders.length, canvasTransposeYToX(2), 92);
+	canvasSetVerySmallFont();
+
+	canvasTextS(getTranslation(85), canvasTransposeYToX(5), 86);
+	canvasTextS(getTranslation(86), canvasTransposeYToX(5), 96);
+
+	canvasSetSmallFont();
+	canvasTextS(waiterOrdersCooking.length, canvasTransposeYToX(5), 92);
+
 	while(true) {
-		if(canvasX(canvasTransposeYToX((ConveyorIndex+1)*20)) >= canvasX(80)) { break; }
 		canvasImageSamesizeY(waiterMinigameImages[0], canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
-		//TODO: set buttons x, y, size x, y
-		if(ConveyorIndex < waiterOrders.length) {
+		if(canvasX(canvasTransposeYToX((ConveyorIndex+1)*20)) >= canvasX(80)) { break; }
+
+		if(ConveyorIndex < waiterOrders.length) { 
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("display", "block");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("left", canvasX(canvasTransposeYToX((ConveyorIndex+1)*20))+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("top", canvasY(80)+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("width", canvasY(20)+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("height", canvasY(20)+"px");
+	
+			if(waiterOrderSelected == waiterOrders[ConveyorIndex]) {
+				canvasSetColor("#ffff00");
+				canvasSetAlpha(0.5);
+				canvasBoxSamesizeY(canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
+				canvasResetAlpha();
+			}
 			canvasImageSamesizeY(waiterMinigameImages[8], canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
 			canvasSetColor("#000000");
 			canvasTextS(waiterOrders[ConveyorIndex]+1, canvasTransposeYToX(20*(ConveyorIndex+1))+2, 92);
 		}
+
 		ConveyorIndex++;
 	}
 }
 
 function ordersCallback(event) {
-	console.log(event.target.custom_property_table_id);
 	waiterOrderSelected = event.target.custom_property_table_id;
+	renderWaiterTable(event.target.custom_property_table_id, true);
 }
 
 //
@@ -312,6 +358,11 @@ async function minigameWaiterGame() {
 			}
 		}
 
+		//update cooking status
+		for(let order of waiterOrdersCooking) {
+			cookOrder(order);
+		}
+
 		//render orders
 		renderOrders();
 
@@ -342,6 +393,7 @@ async function minigameWaiterGame() {
 
 		await new Promise((resolve) => {
 			setTimeout(() => { 
+				//TODO: add pause support
 				resolve();
 			}, 100);
 		});  
