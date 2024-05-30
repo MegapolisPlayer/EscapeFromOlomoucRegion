@@ -43,11 +43,11 @@ let arrowType = {
 let arrowImages = [];
 let arrowImages2 = []; //second stage of animation
 
-let arrowSize = 100;
+const arrowSize = 100;
 
 let arrowList = [];
 let arrowAnimationInterval;
-let arrowAnimationIntervalTime = 700;
+const arrowAnimationIntervalTime = 700;
 let arrowAnimationState = false; //false - default, true - animated
 
 // PAUSE
@@ -57,7 +57,6 @@ let pause2;
 let pauseInterval;
 let pauseButton;
 let pauseAnimationState = false;
-let pauseEnabled = false; 
 let pauseHidden = true;
 
 // CHARACTERS  
@@ -72,7 +71,7 @@ let NPC = {}; //set in loadCharacters function, types of NPCs
 
 let npcs = [];
 let characterAnimationInterval;
-let characterAnimationIntervalTime = 600;
+const characterAnimationIntervalTime = 600;
 let characterAnimationState = false; //works for players too
 
 //images
@@ -143,13 +142,15 @@ let info = {
 	speedrun: false,
 	currentTicketPrice: 0,
 	paused: false,
+	pausedTime: 0,
 };
 
 let achievements = {
 	propast: false,
+	speedrun: false,
 };
 
-let moneyLimit = 2500; //no minigames allowed above 2500
+const moneyLimit = 2500; //no minigames allowed above 2500
 
 // TIME
 

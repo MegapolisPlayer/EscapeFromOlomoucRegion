@@ -46,7 +46,7 @@ function OlomoucRestaurant() {
 	canvasNPC(NPC.COOK, 65, 55, 1, async() => { 
 		hideAllInput();
 		await minigameWaiter();
-		canvasBackground(OlomoucImages[info.location_minor]);
+		canvasBackground(canvas, ctx, OlomoucImages[info.location_minor]);
 		showAllInput();
 	});
 
@@ -75,7 +75,7 @@ async function OlomoucHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([6]);
 	OlomoucImages = await loadImages([
 		"assets/photo/olomouc/nastupiste.jpg",
@@ -91,14 +91,14 @@ async function OlomoucHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(5);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 	
 	musicPlay(6); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(OlomoucImages[info.location_minor]);
+	canvasBackground(canvas, ctx, OlomoucImages[info.location_minor]);
 	canvasPlayer(50, 47, 0.5); 
 
 	//entry dialogue
@@ -116,7 +116,7 @@ async function OlomoucHandler() {
 		canvasNPCClear();
 
 		console.log("OLOMOUC "+info.location_minor);
-		canvasBackground(OlomoucImages[info.location_minor]);
+		canvasBackground(canvas, ctx, OlomoucImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = OlomoucNastupiste(); break;
@@ -141,7 +141,7 @@ async function OlomoucHandler() {
 			break;
 		}
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		canvasNPCClear();
 	}
 }

@@ -37,7 +37,7 @@ function HNMRestaurace() {
 		await minigameWaiter();
 		
 		musicPlay(2);
-		canvasBackground(HNMimages[info.location_minor]);
+		canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
 		canvasPlayer(70, 90, 3);
 		canvasDrawNPC(NPC.COOK, 90, 50, 2);
 		await renderMoney();
@@ -90,7 +90,7 @@ async function HNMHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([2, 10]);
 	HNMimages = await loadImages([
 		"assets/photo/hnm/domov.png",
@@ -105,14 +105,14 @@ async function HNMHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(1);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 
 	musicPlay(2); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(HNMimages[info.location_minor]);
+	canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 	
 	//entry dialogue
@@ -127,7 +127,7 @@ async function HNMHandler() {
 		info.location_minor = info.location_minor_next;
 
 		console.log("HNM "+info.location_minor);
-		canvasBackground(HNMimages[info.location_minor]);
+		canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = HNMDomov(); break;
@@ -154,7 +154,7 @@ async function HNMHandler() {
 
 		//cleanup code, moved here so doesnt get called on first entry to location
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		//clear NPCs when switching location
 		canvasNPCClear();
 	}

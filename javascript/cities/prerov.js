@@ -52,7 +52,7 @@ async function PrerovHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([3]);
 	PrerovImages = await loadImages([
 		"assets/photo/prerov/nastupiste.jpg",
@@ -66,14 +66,14 @@ async function PrerovHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(2);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 	
 	musicPlay(3); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(PrerovImages[info.location_minor]);
+	canvasBackground(canvas, ctx, PrerovImages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 
 	//entry dialogue
@@ -91,7 +91,7 @@ async function PrerovHandler() {
 		canvasNPCClear();
 
 		console.log("PREROV "+info.location_minor);
-		canvasBackground(PrerovImages[info.location_minor]);
+		canvasBackground(canvas, ctx, PrerovImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = PrerovNastupiste(); break;
@@ -114,7 +114,7 @@ async function PrerovHandler() {
 			break;
 		}
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		canvasNPCClear();
 	}
 }

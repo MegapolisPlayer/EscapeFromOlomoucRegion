@@ -77,7 +77,7 @@ async function StudenkaHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([7]);
 	StudenkaImages = await loadImages([
 		"assets/photo/studenka/prejezd.jpg",
@@ -93,14 +93,14 @@ async function StudenkaHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(6);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 	
 	musicPlay(7); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(StudenkaImages[info.location_minor]);
+	canvasBackground(canvas, ctx, StudenkaImages[info.location_minor]);
 	canvasPlayer(20, 70, 1); 
 
 	let promise;
@@ -111,7 +111,7 @@ async function StudenkaHandler() {
 		canvasNPCClear();
 
 		console.log("STUDENKA "+info.location_minor);
-		canvasBackground(StudenkaImages[info.location_minor]);
+		canvasBackground(canvas, ctx, StudenkaImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = StudenkaPrejezd(); break;
@@ -135,7 +135,7 @@ async function StudenkaHandler() {
 			break;
 		}
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		canvasNPCClear();
 	}
 }

@@ -8,16 +8,16 @@ async function loadMaps() {
 }
 
 async function renderMap(day) {
-	canvasBackground(woodImage);
-	canvasImage(mapImages[day-1], 10, 10, (smallerWindowSize/mapImages[day-1].height)*0.8);
+	canvasBackground(canvas, ctx, woodImage);
+	canvasImage(canvas, ctx, mapImages[day-1], 10, 10, (smallerWindowSize/mapImages[day-1].height)*0.8);
 
-	canvasSetLargeFont();
-	canvasSetColor("#ffffff");
-	canvasSetFontWeight("bold");
-	canvasTextS(getTranslation(50)+" "+String(day), 80, 20);
+	canvasSetLargeFont(canvas, ctx);
+	canvasSetColor(canvas, ctx, "#ffffff");
+	canvasSetFontWeight(canvas, ctx, "bold");
+	canvasTextS(canvas, ctx, getTranslation(50)+" "+String(day), 80, 20);
 
-	canvasSetSmallFont();
-	canvasSetFontWeight("normal");
+	canvasSetSmallFont(canvas, ctx);
+	canvasSetFontWeight(canvas, ctx, "normal");
 
 	let splitstring = getTranslation(52+day-1).split(" ");
 	let string = splitstring[0]+"\n";
@@ -25,7 +25,7 @@ async function renderMap(day) {
 	for(let i = 1; i < splitstring.length; i++) {
 		string = string.concat(splitstring[i]+" ");
 	}
-	canvasTextM(string, 80, 30);
+	canvasTextM(canvas, ctx, string, 80, 30);
 
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }

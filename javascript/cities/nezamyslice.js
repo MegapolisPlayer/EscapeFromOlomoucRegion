@@ -51,7 +51,7 @@ async function NezamysliceHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([4]);
 	NezamysliceImages = await loadImages([
 		"assets/photo/nezamyslice/nastupiste.jpg",
@@ -64,14 +64,14 @@ async function NezamysliceHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(3);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 	
 	musicPlay(4); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(NezamysliceImages[info.location_minor]);
+	canvasBackground(canvas, ctx, NezamysliceImages[info.location_minor]);
 	canvasPlayer(90, 70, 0.7); 
 
 	//entry dialogue
@@ -89,7 +89,7 @@ async function NezamysliceHandler() {
 		canvasNPCClear();
 
 		console.log("NZM "+info.location_minor);
-		canvasBackground(NezamysliceImages[info.location_minor]);
+		canvasBackground(canvas, ctx, NezamysliceImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = NezamysliceNastupiste(); break;
@@ -111,7 +111,7 @@ async function NezamysliceHandler() {
 			break;
 		}
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		canvasNPCClear();
 	}
 }

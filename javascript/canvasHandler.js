@@ -4,20 +4,18 @@
 // CANVAS
 //
 
-function canvasSet() {
+function canvasSet(canvas) {
 	biggerWindowSize = ((canvas.width > canvas.height) ? canvas.width : canvas.height);
 	smallerWindowSize = ((canvas.width < canvas.height) ? canvas.width : canvas.height);	
 
 	fontSizeLarge = biggerWindowSize*0.048;
 	fontSizeSmall = biggerWindowSize*0.024;
 	characterSizeMultiplier = smallerWindowSize*0.0003;
-
-	canvasSetSmallFont();
 }
 
 function canvasInit() {
-	canvas = document.getElementById("draw");
-	ctx = canvas.getContext("2d");
+	let canvas = document.getElementById("draw");
+	let ctx = canvas.getContext("2d");
 	
 	canvas.width = 1000;
 	canvas.height = 500;
@@ -27,38 +25,41 @@ function canvasInit() {
 	ctx.strokeStyle = "#ffffff";
 	ctx.lineWidth = 1;
 	
-	canvasSet();
+	canvasSet(canvas);
 	
-	canvasSetFont("Arial, FreeSans", fontSizeLarge, "bold");
-	canvasClear("#ffffff");
+	canvasSetFont(canvas, ctx, "Arial, FreeSans", fontSizeLarge, "bold");
+	canvasClear(canvas, ctx, "#ffffff");
+	canvasSetSmallFont(canvas, ctx);
+
+	return { a: canvas, b: ctx };
 }
 
-function canvasX(xvalue) {
+function canvasX(canvas, xvalue) {
 	return Math.trunc(canvas.width*(xvalue/100));
 }
-function canvasY(yvalue) {
+function canvasY(canvas, yvalue) {
 	return Math.trunc(canvas.height*(yvalue/100));
 }
 
-function canvasTransposeYToX(yvalue) {
+function canvasTransposeYToX(canvas, yvalue) {
 	return canvas.height/canvas.width*yvalue;
 }
 
-function canvasGetScaleX() {
+function canvasGetScaleX(canvas) {
 	return canvas.width/1000;
 }
-function canvasGetScaleY() {
+function canvasGetScaleY(canvas) {
 	return canvas.height/500;
 }
 
-function canvasRoundedBox(x, y, sizex, sizey, radius) {
+function canvasRoundedBox(canvas, ctx, x, y, sizex, sizey, radius) {
 	ctx.beginPath();
-	ctx.roundRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), radius);
+	ctx.roundRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), radius);
 	ctx.fill();
 }
-function canvasRoundedBoxBorder(x, y, sizex, sizey, radius) {
+function canvasRoundedBoxBorder(canvas, ctx, x, y, sizex, sizey, radius) {
 	ctx.beginPath();
-	ctx.roundRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey), radius);
+	ctx.roundRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), radius);
 	ctx.stroke();
 }
 
@@ -67,11 +68,11 @@ function canvasRoundedBoxBorder(x, y, sizex, sizey, radius) {
 // PI - left size
 // 1.5 PI - top
 
-function canvasCircleBox(x, y, sizex, sizey) {
-	let px = canvasX(x);
-	let py = canvasY(y);
-	let psizex = canvasX(sizex);
-	let psizey = canvasY(sizey);
+function canvasCircleBox(canvas, ctx, x, y, sizex, sizey) {
+	let px = canvasX(canvas, x);
+	let py = canvasY(canvas, y);
+	let psizex = canvasX(canvas, sizex);
+	let psizey = canvasY(canvas, sizey);
 
 	ctx.fillRect(px + (psizey/2), py, psizex - psizey, psizey);
 	ctx.beginPath();
@@ -79,11 +80,11 @@ function canvasCircleBox(x, y, sizex, sizey) {
 	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
 	ctx.fill();
 }
-function canvasCircleBoxBorder(x, y, sizex, sizey) {
-	let px = canvasX(x);
-	let py = canvasY(y);
-	let psizex = canvasX(sizex);
-	let psizey = canvasY(sizey);
+function canvasCircleBoxBorder(canvas, ctx, x, y, sizex, sizey) {
+	let px = canvasX(canvas, x);
+	let py = canvasY(canvas, y);
+	let psizex = canvasX(canvas, sizex);
+	let psizey = canvasY(canvas, sizey);
 
 	ctx.beginPath();
 	ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
@@ -95,75 +96,77 @@ function canvasCircleBoxBorder(x, y, sizex, sizey) {
 	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
 	ctx.stroke();
 }
-function canvasBox(x, y, sizex, sizey) {
-	ctx.fillRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
+function canvasBox(canvas, ctx, x, y, sizex, sizey) {
+	ctx.fillRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey));
 }
-function canvasBoxBorder(x, y, sizex, sizey) {
-	ctx.strokeRect(canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey));
+function canvasBoxBorder(canvas, ctx, x, y, sizex, sizey) {
+	ctx.strokeRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey));
 }
-function canvasBoxSamesizeX(x, y, size) {
-	ctx.fillRect(canvasX(x), canvasY(y), canvasX(size), canvasX(size));
+function canvasBoxSamesizeX(canvas, ctx, x, y, size) {
+	ctx.fillRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, size), canvasX(canvas, size));
 }
-function canvasBoxSamesizeY(x, y, size) {
-	ctx.fillRect(canvasX(x), canvasY(y), canvasY(size), canvasY(size));
+function canvasBoxSamesizeY(canvas, ctx, x, y, size) {
+	ctx.fillRect(canvasX(canvas, x), canvasY(canvas, y), canvasY(canvas, size), canvasY(canvas, size));
 }
 
-function canvasSetColor(color) {
+//Canvas 
+
+function canvasSetColor(canvas, ctx, color) {
 	ctx.fillStyle = color;
 }
-function canvasGetColor() {
+function canvasGetColor(canvas, ctx) {
 	return ctx.fillStyle;
 }
-function canvasSetBorder(color) {
+function canvasSetBorder(canvas, ctx, color) {
 	ctx.strokeStyle = color;
 }
-function canvasSetBrightness(brightness) {
+function canvasSetBrightness(canvas, ctx, brightness) {
 	ctx.filter = "brightness("+brightness+"%)";
 }
-function canvasResetBrightness() {
+function canvasResetBrightness(canvas, ctx) {
 	ctx.filter = "brightness(100%)";
 }
-function canvasGetBrightness() {
+function canvasGetBrightness(canvas, ctx) {
 	let str = String(ctx.filter);
 	return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
 }
 
-function canvasSetAlpha(alpha) {
+function canvasSetAlpha(canvas, ctx, alpha) {
 	ctx.globalAlpha = alpha;
 }
-function canvasResetAlpha() {
+function canvasResetAlpha(canvas, ctx) {
 	ctx.globalAlpha = 1;
 }
 
-function canvasSetFont(font, fontsize, weight = "normal") {
+function canvasSetFont(canvas, ctx, font, fontsize, weight = "normal") {
 	canvas_fontFamily = font;
 	canvas_fontSize = String(fontsize);
 	canvas_fontWeight = weight;
 	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
-function canvasSetFontFamily(fontfamily) {
+function canvasSetFontFamily(canvas, ctx, fontfamily) {
 	canvas_fontFamily = fontfamily;
 	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
-function canvasSetFontSize(fontsize) {
+function canvasSetFontSize(canvas, ctx, fontsize) {
 	canvas_fontSize = String(fontsize);
 	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
-function canvasSetFontWeight(weight) {
+function canvasSetFontWeight(canvas, ctx, weight) {
 	canvas_fontWeight = weight;
 	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
 }
-function canvasSetVerySmallFont() {
-	canvasSetFontSize(fontSizeSmall/2);
+function canvasSetVerySmallFont(canvas, ctx) {
+	canvasSetFontSize(canvas, ctx, fontSizeSmall/2);
 }
-function canvasSetSmallFont() {
-	canvasSetFontSize(fontSizeSmall);
+function canvasSetSmallFont(canvas, ctx) {
+	canvasSetFontSize(canvas, ctx, fontSizeSmall);
 }
-function canvasSetLargeFont() {
-	canvasSetFontSize(fontSizeLarge);
+function canvasSetLargeFont(canvas, ctx) {
+	canvasSetFontSize(canvas, ctx, fontSizeLarge);
 }
 
-function canvasClear(clearcolor) {
+function canvasClear(canvas, ctx, clearcolor) {
 	let temp = ctx.fillStyle;
 	ctx.fillStyle = clearcolor;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -172,20 +175,20 @@ function canvasClear(clearcolor) {
 	npcs.length = 0;
 }
 
-function canvasTextS(text, x, y) {
-	ctx.fillText(text, canvasX(x), canvasY(y));
+function canvasTextS(canvas, ctx, text, x, y) {
+	ctx.fillText(text, canvasX(canvas, x), canvasY(canvas, y));
 }
-function canvasTextBorderS(text, x, y) {
-	ctx.strokeText(text, canvasX(x) - ctx.lineWidth, canvasY(y) - ctx.lineWidth);
+function canvasTextBorderS(canvas, ctx, text, x, y) {
+	ctx.strokeText(text, canvasX(canvas, x) - ctx.lineWidth, canvasY(canvas, y) - ctx.lineWidth);
 }
-function canvasTextAndBorderS(text, x, y) {
-	ctx.strokeText(text, canvasX(x) - ctx.lineWidth, canvasY(y) - ctx.lineWidth);
-	ctx.fillText(text, canvasX(x), canvasY(y));
+function canvasTextAndBorderS(canvas, ctx, text, x, y) {
+	ctx.strokeText(text, canvasX(canvas, x) - ctx.lineWidth, canvasY(canvas, y) - ctx.lineWidth);
+	ctx.fillText(text, canvasX(canvas, x), canvasY(canvas, y));
 }
 
-function canvasTextM(text, x, y) {
-	let px = canvasX(x);
-	let py = canvasY(y);
+function canvasTextM(canvas, ctx, text, x, y) {
+	let px = canvasX(canvas, x);
+	let py = canvasY(canvas, y);
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -197,9 +200,9 @@ function canvasTextM(text, x, y) {
 		newlineyoffset += lineheight;
 	}
 }
-function canvasTextBorderM(text, x, y) {
-	let px = canvasX(x);
-	let py = canvasY(y);
+function canvasTextBorderM(canvas, ctx, text, x, y) {
+	let px = canvasX(canvas, x);
+	let py = canvasY(canvas, y);
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -216,10 +219,10 @@ function canvasTextBorderM(text, x, y) {
 //pass promises as objects!
 //{ promise: MyPromise }
 
-async function canvasTypewriterS(text, x, y, skip = { promise: Promise.reject() }) {
+async function canvasTypewriterS(canvas, ctx, text, x, y, skip = { promise: Promise.reject() }) {
 	for(let i = 0; i < text.length; i++) {
 		if(i % 3 == 0) { sfxPlay(11); }
-		ctx.fillText(text.substring(0,i), canvasX(x), canvasY(y));
+		ctx.fillText(text.substring(0,i), canvasX(canvas, x), canvasY(canvas, y));
 		await Promise.any([skip.promise, new Promise((resolve) => {
 			window.setTimeout(() => {
 				resolve();
@@ -228,7 +231,7 @@ async function canvasTypewriterS(text, x, y, skip = { promise: Promise.reject() 
 	}
 	sfxStop(11);
 }
-async function canvasTypewriterM(text, x, y, skip = { promise: Promise.reject() }) {
+async function canvasTypewriterM(canvas, ctx, text, x, y, skip = { promise: Promise.reject() }) {
 	let lines = text.split('\n');
 	let newlineyoffset = 0;
 	let metrics = ctx.measureText(text);
@@ -238,7 +241,7 @@ async function canvasTypewriterM(text, x, y, skip = { promise: Promise.reject() 
 	for(let i = 0; i < lines.length; i++) {
 		for(let j = 0; j < lines[i].length; j++) {
 			if(j % 3 == 0) { sfxPlay(11); } //adjust volume!
-			ctx.fillText(lines[i].substring(0,j), canvasX(x),  canvasY(y) + newlineyoffset);
+			ctx.fillText(lines[i].substring(0,j), canvasX(canvas, x),  canvasY(canvas, y) + newlineyoffset);
 			await Promise.any([skip.promise, new Promise((resolve) => {
 				window.setTimeout(() => {
 					resolve();
@@ -271,78 +274,78 @@ async function loadImages(filenames_array) {
 	return temparr;
 }
 
-function canvasBackground(image) {
+function canvasBackground(canvas, ctx, image) {
 	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 	currentBGImage = image;
 }
 //just draw image
-function canvasImage(image, x, y, scale) {
-	ctx.drawImage(image, canvasX(x), canvasY(y), image.width * scale, image.height * scale);
+function canvasImage(canvas, ctx, image, x, y, scale) {
+	ctx.drawImage(image, canvasX(canvas, x), canvasY(canvas, y), image.width * scale, image.height * scale);
 }
 //draws part of image onto canvas (draws equivalent part)
-function canvasImageEquivalent(image, x, y, sizex, sizey) {
+function canvasImageEquivalent(canvas, ctx, image, x, y, sizex, sizey) {
 	ctx.drawImage(
 		image,
 		image.width*x/100, image.height*y/100, image.width*sizex/100, image.height*sizey/100,
-		canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey)
+		canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey)
 	);
 }
 
 //draws whole image to a speicifed space on canvas
-function canvasImageDest(image, x, y, sizex, sizey) {
+function canvasImageDest(canvas, ctx, image, x, y, sizex, sizey) {
 	ctx.drawImage(
 		image,
 		0, 0, image.width, image.height,
-		canvasX(x), canvasY(y), canvasX(sizex), canvasY(sizey)
+		canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey)
 	);
 }
 //draws square image to canvas
-function canvasImageSamesizeX(image, x, y, size) {
+function canvasImageSamesizeX(canvas, ctx, image, x, y, size) {
 	ctx.drawImage(
 		image,
 		0, 0, image.width, image.height,
-		canvasX(x), canvasY(y), canvasX(size), canvasX(size)
+		canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, size), canvasX(canvas, size)
 	);
 }
 //draws square image to canvas
-function canvasImageSamesizeY(image, x, y, size) {
+function canvasImageSamesizeY(canvas, ctx, image, x, y, size) {
 	ctx.drawImage(
 		image,
 		0, 0, image.width, image.height,
-		canvasX(x), canvasY(y), canvasY(size), canvasY(size)
+		canvasX(canvas, x), canvasY(canvas, y), canvasY(canvas, size), canvasY(canvas, size)
 	);
 }
 
-async function canvasFadeOut(strength = 10) {
+async function canvasFadeOut(canvas, ctx, strength = 10) {
 	animationBlocked = true;
 	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
-	while(canvasGetBrightness() > 5) {
+	while(canvasGetBrightness(canvas, ctx) > 5) {
 		await new Promise((resolve) => {
 			window.setTimeout(() => {
-				canvasSetBrightness(canvasGetBrightness() - strength);
-				canvasBackground(savedcvs);
+				canvasSetBrightness(canvas, ctx, canvasGetBrightness(canvas, ctx) - strength);
+				canvasBackground(canvas, ctx, savedcvs);
 				resolve();
 			}, 50);
 		});
 	}
-	canvasResetBrightness();
+	canvasResetBrightness(canvas, ctx);
 	animationBlocked = false;
 	return;
 }
 
 //
-// LOADING
+// LOADING SCREEN
 //
 
-function canvasLoading(messageoverride = null) {
-	canvasClear("purple");
-	canvasSetColor("#ffffff");
-	canvasSetLargeFont();
-	canvasTextS(((messageoverride == null) ? getTranslation(0) : messageoverride), 10, 10);
-	canvasSetSmallFont();
+function canvasLoading(canvas, ctx, messageoverride = null) {
+	canvasClear(canvas, ctx, "purple");
+	canvasSetColor(canvas, ctx, "#ffffff");
+	canvasSetLargeFont(canvas, ctx);
+	canvasTextS(canvas, ctx, ((messageoverride == null) ? getTranslation(0) : messageoverride), 10, 10);
+	canvasSetSmallFont(canvas, ctx);
 }
 
-function canvasLoadingDone(place) {
+function canvasLoadingDone(canvas, ctx, place) {
 	let message;
 	switch(place) {
 		case(0): message = "Translations"; break;
@@ -352,5 +355,5 @@ function canvasLoadingDone(place) {
 		case(4): message = "Characters"; break;
 	}
 
-	canvasTextS(message+" done", 10, 15 + (place * 5));
+	canvasTextS(canvas, ctx, message+" done", 10, 15 + (place * 5));
 }

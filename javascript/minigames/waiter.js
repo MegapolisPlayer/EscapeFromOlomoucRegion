@@ -65,39 +65,39 @@ async function minigameWaiterLoad() {
 async function minigameWaiterMenu() {
 	pauseHidden = true;
 
-	canvasClear("#aaaaaa");
+	canvasClear(canvas, ctx, "#aaaaaa");
 
 	musicPlay(10);
 
-	canvasSetLargeFont();
-	canvasSetColor("#000080");
-	canvasSetFontWeight("bold");
+	canvasSetLargeFont(canvas, ctx);
+	canvasSetColor(canvas, ctx, "#000080");
+	canvasSetFontWeight(canvas, ctx, "bold");
 
-	canvasTextS(getTranslation(66), 10, 10);
+	canvasTextS(canvas, ctx, getTranslation(66), 10, 10);
 
-	canvasSetSmallFont();
-	canvasSetFontWeight("normal");
+	canvasSetSmallFont(canvas, ctx);
+	canvasSetFontWeight(canvas, ctx, "normal");
 
-	canvasTextM(wrapText(getTranslation(67)+" "+String(Math.trunc(10*settings.diff_multiplier))+" "+getTranslation(68)+" "+String(20)+" "+getTranslation(69), 90), 5, 18);
+	canvasTextM(canvas, ctx, wrapText(getTranslation(67)+" "+String(Math.trunc(10*settings.diff_multiplier))+" "+getTranslation(68)+" "+String(20)+" "+getTranslation(69), 90), 5, 18);
 
-	canvasImageSamesizeY(waiterMinigameImages[1], 5, 40, 10);
-	canvasTextS(getTranslation(70), 15, 45);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[1], 5, 40, 10);
+	canvasTextS(canvas, ctx, getTranslation(70), 15, 45);
 
-	canvasImageSamesizeY(waiterMinigameImages[2], 5, 50, 10);
-	canvasTextS(getTranslation(71), 15, 55);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[2], 5, 50, 10);
+	canvasTextS(canvas, ctx, getTranslation(71), 15, 55);
 
-	canvasImageSamesizeY(waiterMinigameImages[4], 5, 60, 10);
-	canvasTextS(getTranslation(72), 15, 65);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[4], 5, 60, 10);
+	canvasTextS(canvas, ctx, getTranslation(72), 15, 65);
 
-	canvasImageSamesizeY(waiterMinigameImages[3], 5, 70, 10);
-	canvasImageSamesizeY(waiterMinigameImages[5], 12, 70, 10);
-	canvasTextS(getTranslation(73), 20, 75);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[3], 5, 70, 10);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[5], 12, 70, 10);
+	canvasTextS(canvas, ctx, getTranslation(73), 20, 75);
 
-	canvasImageSamesizeY(waiterMinigameImages[7], 5, 80, 10);
-	canvasTextS(getTranslation(74), 15, 85);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[7], 5, 80, 10);
+	canvasTextS(canvas, ctx, getTranslation(74), 15, 85);
 
-	canvasImageSamesizeY(waiterMinigameImages[6], 5, 90, 10);
-	canvasTextS(getTranslation(75), 15, 95);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[6], 5, 90, 10);
+	canvasTextS(canvas, ctx, getTranslation(75), 15, 95);
 
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
@@ -107,25 +107,25 @@ async function minigameWaiterMenu() {
 //
 
 function renderWaiterCounter(value, y) {
-	canvasSetColor("#ffffff");
-	canvasBox(83, y - 7, 20, 10);
-	canvasSetColor("#000080");
-	canvasTextS(value, 85, y);
+	canvasSetColor(canvas, ctx, "#ffffff");
+	canvasBox(canvas, ctx, 83, y - 7, 20, 10);
+	canvasSetColor(canvas, ctx, "#000080");
+	canvasTextS(canvas, ctx, value, 85, y);
 }
 
 function renderWaiterTable(id, highlight = false) {
 	let x = 10+(Math.trunc(id/4)*10);
 	let y = 10+((id%4)*15);
 	if(highlight) {
-		canvasSetColor("#ffff00");
+		canvasSetColor(canvas, ctx, "#ffff00");
 	}
 	else {
-		canvasSetColor("#aaaaaa");
+		canvasSetColor(canvas, ctx, "#aaaaaa");
 	}
-	canvasBoxSamesizeY(x, y, 10);
-	canvasImageSamesizeY(waiterMinigameImages[waiterTables[id].phase + 1], x, y, 10);
-	canvasSetColor("#000080");
-	canvasTextS(id+1, x, y);
+	canvasBoxSamesizeY(canvas, ctx, x, y, 10);
+	canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[waiterTables[id].phase + 1], x, y, 10);
+	canvasSetColor(canvas, ctx, "#000080");
+	canvasTextS(canvas, ctx, id+1, x, y);
 }
 
 function waiterTableUpdate(id, newphase) {
@@ -189,11 +189,11 @@ function cookOrder(order) {
 	waiterOrdersButtons.push(
 		internal_setButton(
 			"order"+order.id, order.id+1, "draw_input_elem_arrow",
-			canvasX(canvasTransposeYToX((waiterOrders.length)*20)), canvasY(80),
-			canvasY(20), canvasY(20), ordersCallback
+			canvasX(canvas, canvasTransposeYToX(canvas, (waiterOrders.length)*20)), canvasY(canvas, 80),
+			canvasY(canvas, 20), canvasY(canvas, 20), ordersCallback
 		)
 	);
-	if(canvasTransposeYToX((waiterOrders.length)*20) >= 80) { 
+	if(canvasTransposeYToX(canvas, (waiterOrders.length)*20) >= 80) { 
 		waiterOrdersButtons[waiterOrdersButtons.length - 1].style.setProperty("display", "none");
 	}
 	waiterOrdersButtons[waiterOrdersButtons.length - 1].custom_property_table_id = order.id;
@@ -213,38 +213,38 @@ function removeOrder(id) {
 
 function renderOrders() {
 	let ConveyorIndex = 0;
-	canvasSetColor("#000000");
-	canvasBoxSamesizeY(0, 80, 20);
+	canvasSetColor(canvas, ctx, "#000000");
+	canvasBoxSamesizeY(canvas, ctx, 0, 80, 20);
 
-	canvasSetColor("#ffffff");  
-	canvasSetVerySmallFont();
+	canvasSetColor(canvas, ctx, "#ffffff");  
+	canvasSetVerySmallFont(canvas, ctx);
 
-	canvasTextS(getTranslation(85), canvasTransposeYToX(5), 86);
-	canvasTextS(getTranslation(86), canvasTransposeYToX(5), 96);
+	canvasTextS(canvas, ctx, getTranslation(85), canvasTransposeYToX(canvas, 5), 86);
+	canvasTextS(canvas, ctx, getTranslation(86), canvasTransposeYToX(canvas, 5), 96);
 
-	canvasSetSmallFont();
-	canvasTextS(waiterOrdersCooking.length, canvasTransposeYToX(5), 92);
+	canvasSetSmallFont(canvas, ctx);
+	canvasTextS(canvas, ctx, waiterOrdersCooking.length, canvasTransposeYToX(canvas, 5), 92);
 
 	while(true) {
-		canvasImageSamesizeY(waiterMinigameImages[0], canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
-		if(canvasX(canvasTransposeYToX((ConveyorIndex+1)*20)) >= canvasX(80)) { break; }
+		canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[0], canvasTransposeYToX(canvas, 20*(ConveyorIndex+1)), 80, 20);
+		if(canvasX(canvas, canvasTransposeYToX(canvas, (ConveyorIndex+1)*20)) >= canvasX(canvas, 80)) { break; }
 
 		if(ConveyorIndex < waiterOrders.length) { 
 			waiterOrdersButtons[ConveyorIndex].style.setProperty("display", "block");
-			waiterOrdersButtons[ConveyorIndex].style.setProperty("left", canvasX(canvasTransposeYToX((ConveyorIndex+1)*20))+"px");
-			waiterOrdersButtons[ConveyorIndex].style.setProperty("top", canvasY(80)+"px");
-			waiterOrdersButtons[ConveyorIndex].style.setProperty("width", canvasY(20)+"px");
-			waiterOrdersButtons[ConveyorIndex].style.setProperty("height", canvasY(20)+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("left", canvasX(canvas, canvasTransposeYToX(canvas, (ConveyorIndex+1)*20))+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("top", canvasY(canvas, 80)+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("width", canvasY(canvas, 20)+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("height", canvasY(canvas, 20)+"px");
 	
 			if(waiterOrderSelected == waiterOrders[ConveyorIndex]) {
-				canvasSetColor("#ffff00");
-				canvasSetAlpha(0.5);
-				canvasBoxSamesizeY(canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
-				canvasResetAlpha();
+				canvasSetColor(canvas, ctx, "#ffff00");
+				canvasSetAlpha(canvas, ctx, 0.5);
+				canvasBoxSamesizeY(canvas, ctx, canvasTransposeYToX(canvas, 20*(ConveyorIndex+1)), 80, 20);
+				canvasResetAlpha(canvas, ctx);
 			}
-			canvasImageSamesizeY(waiterMinigameImages[8], canvasTransposeYToX(20*(ConveyorIndex+1)), 80, 20);
-			canvasSetColor("#000000");
-			canvasTextS(waiterOrders[ConveyorIndex]+1, canvasTransposeYToX(20*(ConveyorIndex+1))+2, 92);
+			canvasImageSamesizeY(canvas, ctx, waiterMinigameImages[8], canvasTransposeYToX(canvas, 20*(ConveyorIndex+1)), 80, 20);
+			canvasSetColor(canvas, ctx, "#000000");
+			canvasTextS(canvas, ctx, waiterOrders[ConveyorIndex]+1, canvasTransposeYToX(canvas, 20*(ConveyorIndex+1))+2, 92);
 		}
 
 		ConveyorIndex++;
@@ -261,19 +261,19 @@ function ordersCallback(event) {
 //
 
 function renderWaiterMinigame() {
-	canvasClear("#aaaaaa");
+	canvasClear(canvas, ctx, "#aaaaaa");
 
-	canvasSetColor("#ffffff");
-	canvasBox(80, 0, 20, 100);
-	canvasSetColor("#000080");
+	canvasSetColor(canvas, ctx, "#ffffff");
+	canvasBox(canvas, ctx, 80, 0, 20, 100);
+	canvasSetColor(canvas, ctx, "#000080");
 
-	canvasTextS(getTranslation(76), 83, 7);
-	canvasTextS(0, 83, 17);
-	canvasTextS(getTranslation(77), 83, 27);
-	canvasTextS(0, 83, 37);
-	canvasTextS(getTranslation(78), 83, 47);
-	canvasTextS(0, 83, 57);
-	canvasTextS(getTranslation(79), 83, 67);
+	canvasTextS(canvas, ctx, getTranslation(76), 83, 7);
+	canvasTextS(canvas, ctx, 0, 83, 17);
+	canvasTextS(canvas, ctx, getTranslation(77), 83, 27);
+	canvasTextS(canvas, ctx, 0, 83, 37);
+	canvasTextS(canvas, ctx, getTranslation(78), 83, 47);
+	canvasTextS(canvas, ctx, 0, 83, 57);
+	canvasTextS(canvas, ctx, getTranslation(79), 83, 67);
 	//time set immediately after
 
 	renderOrders(); //also renders orders' conveyor belts
@@ -281,7 +281,7 @@ function renderWaiterMinigame() {
 	for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
 		waiterTables.push({ id: i, phase: 0, ticks: 0 });
 		waiterButtons.push(internal_setButton("table"+String(i), "", "draw_input_elem_arrow",
-			canvasX(10+(Math.trunc(i/4)*10)), canvasY(10+((i%4)*15)), canvasY(10), canvasY(10), 
+			canvasX(canvas, 10+(Math.trunc(i/4)*10)), canvasY(canvas, 10+((i%4)*15)), canvasY(canvas, 10), canvasY(canvas, 10), 
 			waiterTableButtonCallback
 		));
 		waiterButtons[i].custom_property_table_id = i;
@@ -393,7 +393,7 @@ async function minigameWaiterGame() {
 
 		await new Promise((resolve) => {
 			setTimeout(() => { 
-				//TODO: add pause support
+				pauseMenuToggle();
 				resolve();
 			}, 100);
 		});  
@@ -409,26 +409,26 @@ async function minigameWaiterGame() {
 //
 
 async function minigameWaiterSummary() {
-	canvasClear("#aaaaaa");
+	canvasClear(canvas, ctx, "#aaaaaa");
 
-	canvasSetLargeFont();
-	canvasSetColor("#000080");
-	canvasSetFontWeight("bold");
+	canvasSetLargeFont(canvas, ctx);
+	canvasSetColor(canvas, ctx, "#000080");
+	canvasSetFontWeight(canvas, ctx, "bold");
 
-	canvasTextS(getTranslation(60), 10, 10);
+	canvasTextS(canvas, ctx, getTranslation(60), 10, 10);
 
-	canvasSetSmallFont();
-	canvasSetFontWeight("normal");
+	canvasSetSmallFont(canvas, ctx);
+	canvasSetFontWeight(canvas, ctx, "normal");
 
-	canvasTextS(getTranslation(76), 10, 20);
+	canvasTextS(canvas, ctx, getTranslation(76), 10, 20);
 
-	canvasTextS(getTranslation(77), 10, 30);
+	canvasTextS(canvas, ctx, getTranslation(77), 10, 30);
 
-	canvasTextS(getTranslation(78), 10, 40);
+	canvasTextS(canvas, ctx, getTranslation(78), 10, 40);
 	
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => { 
 		pauseHidden = false;
-		musicStop();
+		musicPause();
 	}));
 }
 

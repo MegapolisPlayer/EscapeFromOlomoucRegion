@@ -170,9 +170,9 @@ let musicCurrent = 0;
 
 function musicPlay(id) {
 	if(id >= musicArray.length || id == undefined) {
-		errorHandle("Music ID undefined or out of range.");
+		console.error("Music ID undefined or out of range.");
 	}
-	musicStop(musicCurrent);
+	musicPause(musicCurrent);
 	musicCurrent = id;
 	if(!settings.music_enabled) { 
 		musicArray[id].pause();	return;
@@ -180,9 +180,13 @@ function musicPlay(id) {
 	musicArray[id].currentTime = 0;
 	musicArray[id].play();
 }
-function musicStop() {
+function musicPause() {
 	if(!settings.music_enabled) { return; }
 	musicArray[musicCurrent].pause();
+}
+function musicUnpause() {
+	if(!settings.music_enabled) { return; }
+	musicArray[musicCurrent].play();
 }
 function musicRestart() {
 	if(!settings.music_enabled) { return; }
@@ -191,7 +195,7 @@ function musicRestart() {
 
 function sfxPlay(id) {
 	if(id >= sfxArray.length || id == undefined) {
-		errorHandle("SFX ID undefined or out of range.");
+		console.error("SFX ID undefined or out of range.");
 	}
 	if(!settings.music_enabled) { return; };
 	sfxArray[id].currentTime = 0;
@@ -199,7 +203,7 @@ function sfxPlay(id) {
 }
 function sfxPlayQuiet(id) {
 	if(id >= sfxArray.length || id == undefined) {
-		errorHandle("SFX ID undefined or out of range.");
+		console.error("SFX ID undefined or out of range.");
 	}
 	if(!settings.music_enabled) { return; };
 
@@ -213,7 +217,7 @@ function sfxPlayQuiet(id) {
 }
 function sfxPlayLoud(id) {
 	if(id >= sfxArray.length || id == undefined) {
-		errorHandle("SFX ID undefined or out of range.");
+		console.error("SFX ID undefined or out of range.");
 	}
 	if(!settings.music_enabled) { return; };
 
@@ -227,7 +231,7 @@ function sfxPlayLoud(id) {
 }
 function sfxStop(id) {
 	if(id >= musicArray.length || id == undefined) {
-		errorHandle("Music ID undefined or out of range.");
+		console.error("Music ID undefined or out of range.");
 	}
 	if(!settings.music_enabled) { return; }
 	sfxArray[id].pause();
@@ -235,7 +239,7 @@ function sfxStop(id) {
 
 function voicePlay(id) {
 	if(id == undefined) {
-		errorHandle("Voiceover ID undefined.");
+		console.error("Voiceover ID undefined.");
 	}
 	if(!settings.voice_enabled) { return; }
 	getVoiceTranslation(id).play();

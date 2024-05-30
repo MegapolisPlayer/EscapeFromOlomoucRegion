@@ -28,7 +28,7 @@ function ProstejovNamesti() {
 	canvasNPC(NPC.UTILITY, 60, 60, 0.7, async() => { 
 		hideAllInput();
 		await minigameBench();
-		canvasBackground(ProstejovImages[info.location_minor]);
+		canvasBackground(canvas, ctx, ProstejovImages[info.location_minor]);
 		showAllInput();
 	});
 
@@ -51,7 +51,7 @@ function ProstejovCafe() {
 	canvasNPC(NPC.COOK, 35, 55, 4, async() => { 
 		hideAllInput();
 		await minigameWaiter();
-		canvasBackground(HNMimages[info.location_minor]);
+		canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
 		showAllInput();
 	});
 
@@ -65,7 +65,7 @@ async function ProstejovHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([5]);
 	ProstejovImages = await loadImages([
 		"assets/photo/prostejov/nastupiste.jpg",
@@ -79,14 +79,14 @@ async function ProstejovHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(4);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 	
 	musicPlay(5); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(ProstejovImages[info.location_minor]);
+	canvasBackground(canvas, ctx, ProstejovImages[info.location_minor]);
 	canvasPlayer(50, 70, 2); 
 
 	//entry dialogue
@@ -104,7 +104,7 @@ async function ProstejovHandler() {
 		canvasNPCClear();
 
 		console.log("PROSTEJOV "+info.location_minor);
-		canvasBackground(ProstejovImages[info.location_minor]);
+		canvasBackground(canvas, ctx, ProstejovImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = ProstejovNastupiste(); break;
@@ -127,7 +127,7 @@ async function ProstejovHandler() {
 			break;
 		}
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		canvasNPCClear();
 	}
 }

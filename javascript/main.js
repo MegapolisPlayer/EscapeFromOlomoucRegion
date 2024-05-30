@@ -1,6 +1,8 @@
 function initWebpage() {
-	canvasInit();
-	
+	let canvasInfo = canvasInit();
+	canvas = canvasInfo.a;
+	ctx = canvasInfo.b;
+
 	document.addEventListener("fullscreenchange", () => {
 		if(document.fullscreenElement != null) {
 			console.log("fullscreen on");
@@ -24,8 +26,8 @@ async function canvasResizeTo(x, y) {
 	//save state
 	//window.open(canvas.toDataURL("image/png", 1)); //debug
 	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
-	let oldscaleX = canvasGetScaleX();
-	let oldscaleY = canvasGetScaleY();
+	let oldscaleX = canvasGetScaleX(canvas);
+	let oldscaleY = canvasGetScaleY(canvas);
 
 
 	//change vars
@@ -44,17 +46,17 @@ async function canvasResizeTo(x, y) {
 	//resize buttons and arrows
 
 	getAllInput().forEach((val) => {
-		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvasGetScaleY()/oldscaleY+"px");
-		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvasGetScaleX()/oldscaleX+"px");
-		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvasGetScaleX()/oldscaleX+"px");
-		val.style.setProperty("height", parseFloat(val.style.getPropertyValue("height"))*canvasGetScaleY()/oldscaleY+"px");
+		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvasGetScaleY(canvas)/oldscaleY+"px");
+		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvasGetScaleX(canvas)/oldscaleX+"px");
+		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvasGetScaleX(canvas)/oldscaleX+"px");
+		val.style.setProperty("height", parseFloat(val.style.getPropertyValue("height"))*canvasGetScaleY(canvas)/oldscaleY+"px");
 
-		val.style.setProperty("font-size", parseFloat(val.style.getPropertyValue("font-size"))*canvasGetScaleX()/oldscaleX+"px");
+		val.style.setProperty("font-size", parseFloat(val.style.getPropertyValue("font-size"))*canvasGetScaleX(canvas)/oldscaleX+"px");
 	});
 	
-	canvasSet();
+	canvasSet(canvas);
 
-	canvasBackground(savedcvs);
+	canvasBackground(canvas, ctx, savedcvs);
 }
 
 function canvasFullscreen() {

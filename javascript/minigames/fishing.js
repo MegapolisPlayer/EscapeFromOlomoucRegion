@@ -7,6 +7,9 @@ async function minigameFishLoad() {
 async function minigameFishMenu() {
 	
 }
+
+
+
 async function minigameFishGame() {
 	
 }

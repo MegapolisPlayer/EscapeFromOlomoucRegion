@@ -35,7 +35,7 @@ async function OstravaHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 
-	canvasLoading();
+	canvasLoading(canvas, ctx, );
 	await loadMusic([8]);
 	OstravaImages = await loadImages([
 		"assets/photo/ostrava/nastupiste.jpg",
@@ -47,14 +47,14 @@ async function OstravaHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(7);
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 	}
 	
 	musicPlay(8); //start playing AFTER loading
 	animationBlocked = false;
 
 	showPause();
-	canvasBackground(OstravaImages[info.location_minor]);
+	canvasBackground(canvas, ctx, OstravaImages[info.location_minor]);
 	canvasPlayer(70, 60, 2); 
 
 	//entry dialogue
@@ -72,7 +72,7 @@ async function OstravaHandler() {
 		canvasNPCClear();
 
 		console.log("OSTRAVA "+info.location_minor);
-		canvasBackground(OstravaImages[info.location_minor]);
+		canvasBackground(canvas, ctx, OstravaImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = OstravaNastupiste(); break;
@@ -93,7 +93,7 @@ async function OstravaHandler() {
 			break;
 		}
 
-		await canvasFadeOut();
+		await canvasFadeOut(canvas, ctx, );
 		canvasNPCClear();
 	}
 }

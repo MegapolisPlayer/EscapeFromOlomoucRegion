@@ -41,7 +41,7 @@ function wrapText(str, maxwidth) {
 	for(let i = 0; i < splitstr.length; i++) {
 		textWidth += ctx.measureText(splitstr[i] + ' ').width;
 
-		if(textWidth > canvasX(maxwidth)) {
+		if(textWidth > canvasX(canvas, maxwidth)) {
 			tempstr += ('\n' + splitstr[i] + ' '); //we still add text after newline
 			textWidth = ctx.measureText(splitstr[i] + ' ').width;
 		}

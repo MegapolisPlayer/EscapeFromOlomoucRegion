@@ -40,19 +40,19 @@ async function loadCharacters() {
 			}
 
 			if(dialogueEnabled) {
-				let tempcolor = canvasGetColor();
-				canvasSetColor("#ffffff");
+				let tempcolor = canvasGetColor(canvas, ctx);
+				canvasSetColor(canvas, ctx, "#ffffff");
 
 				let boxsize = player.Y+(players[selectedPlayer].height*player.SCALE*characterSizeMultiplier/canvas.height/2*100)-80;
 
 				//we expect this to take less than 50ms
-				canvasBox(
+				canvasBox(canvas, ctx, 
 					player.X-(players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width/2*100),
 					80,
 					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100, 80,
 					(boxsize < 0) ? 0 : boxsize //only the part which the character touches
 				);
-				canvasSetColor(tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
+				canvasSetColor(canvas, ctx, tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
 			}
 		}
 		for(let i = 0; i < npcs.length; i++) {
@@ -66,11 +66,11 @@ async function loadCharacters() {
 			}
 
 			if(dialogueEnabled) {
-				canvasSetColor("#ffffff");
+				canvasSetColor(canvas, ctx, "#ffffff");
 
 				let boxsize = npcs[i].Y+(characters[npcs[i].TYPE].height*characterSizeMultiplier/canvas.height*100)-80;
 
-				canvasBox(
+				canvasBox(canvas, ctx, 
 					npcs[i].X-(characters[npcs[i].TYPE].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width/2*100),
 					80,
 					characters[npcs[i].TYPE].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width*100,
@@ -86,7 +86,7 @@ async function loadCharacters() {
 
 function canvasPlayer(x, y, scale) {
 	//canvas space processing for x, y happens in canvasImage
-	canvasImage(
+	canvasImage(canvas, ctx, 
 		players[selectedPlayer],
 		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
@@ -99,7 +99,7 @@ function canvasPlayer(x, y, scale) {
 }
 function canvasPlayer2(x, y, scale) {
 	//canvas space processing for x, y happens in canvasImage
-	canvasImage(
+	canvasImage(canvas, ctx, 
 		players2[selectedPlayer],
 		x-(players2[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(players2[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
@@ -112,7 +112,7 @@ function canvasPlayer2(x, y, scale) {
 }
 
 function canvasPlayerRemove(x, y, scale, bgimage) {
-	canvasImageEquivalent(
+	canvasImageEquivalent(canvas, ctx, 
 		bgimage,
 		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
@@ -136,8 +136,8 @@ function NPCInfo(type, x, y, scale, fn) {
 	this.TYPE = type;
 	this.BTN = internal_setButton(
 		"NPCInfo"+String(Math.trunc(Math.random()*10000)), "", "draw_input_elem_npc",
-		canvasX(x-(characters[this.TYPE].width*scale*characterSizeMultiplier/canvas.width/2*100)),
-		canvasY(y-(characters[this.TYPE].height*scale*characterSizeMultiplier/canvas.height/2*100)),
+		canvasX(canvas, x-(characters[this.TYPE].width*scale*characterSizeMultiplier/canvas.width/2*100)),
+		canvasY(canvas, y-(characters[this.TYPE].height*scale*characterSizeMultiplier/canvas.height/2*100)),
 		characters[this.TYPE].width*scale*characterSizeMultiplier,
 		characters[this.TYPE].height*scale*characterSizeMultiplier,
 		fn
@@ -151,7 +151,7 @@ function canvasNPC(characterid, x, y, scale, fn) {
 }
 
 function canvasDrawNPC(characterid, x, y, scale) {
-	canvasImage(
+	canvasImage(canvas, ctx, 
 		characters[characterid],
 		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
@@ -160,7 +160,7 @@ function canvasDrawNPC(characterid, x, y, scale) {
 }
 
 function canvasDrawNPC2(characterid, x, y, scale) {
-	canvasImage(
+	canvasImage(canvas, ctx, 
 		characters2[characterid],
 		x-(characters2[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(characters2[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
@@ -169,7 +169,7 @@ function canvasDrawNPC2(characterid, x, y, scale) {
 }
 
 function canvasNPCRemove(characterid, x, y, scale, bgimage) {
-	canvasImageEquivalent(
+	canvasImageEquivalent(canvas, ctx, 
 		bgimage,
 		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
 		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
