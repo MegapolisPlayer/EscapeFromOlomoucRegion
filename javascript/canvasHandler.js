@@ -42,7 +42,7 @@ function canvasY(canvas, yvalue) {
 }
 
 function canvasTransposeYToX(canvas, yvalue) {
-	return canvas.height/canvas.width*yvalue;
+	return parseInt(canvas.height/canvas.width*yvalue);
 }
 
 function canvasGetScaleX(canvas) {

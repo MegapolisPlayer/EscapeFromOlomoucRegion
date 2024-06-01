@@ -289,7 +289,13 @@ function renderWaiterMinigame() {
 	}
 
 	//add other buttons
-	waiterButtons.push(addSmallButton("pause", getTranslation(10), 80, 80, 20, 10, (e) => {}));
+	waiterButtons.push(addSmallButton("pause_waiter", getTranslation(10), 80, 80, 20, 10, (e) => {
+		pauseMenuToggle();
+	}));
+
+	if(info.speedrun) {
+		document.getElementById("pause_waiter").setAttribute("disabled", "disabled");
+	}
 }
 
 
@@ -391,12 +397,12 @@ async function minigameWaiterGame() {
 			break;
 		}
 
-		await new Promise((resolve) => {
-			setTimeout(() => { 
-				pauseMenuToggle();
-				resolve();
-			}, 100);
-		});  
+		do {
+			await new Promise((resolve) => {
+				setTimeout(() => { resolve(); }, 100);
+			});  
+		}
+		while(info.paused);
 	}
 	
 	waiterButtons.forEach((val) => {

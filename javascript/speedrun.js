@@ -18,11 +18,11 @@ function timerEnd() {
 function renderSpeedrunMode() {
 	if(info.speedrun) {
 		canvasSetColor(canvas, ctx, "#ffffff");
-		canvasRoundedBox(canvas, ctx, 0, 10, 15, 20, 10);
+		canvasRoundedBox(canvas, ctx, 0, 0, 15, 20, 10);
 		canvasSetColor(canvas, ctx, "#000080");
 		canvasSetSmallFont(canvas, ctx);
-		canvasTextS(canvas, ctx, getTranslation(3), 2, 17);
-		canvasTextS(canvas, ctx, timePlaying+"s", 2, 27);
+		canvasTextS(canvas, ctx, getTranslation(3), 2, 7);
+		canvasTextS(canvas, ctx, timePlaying+"s", 2, 17);
 	}
 }
 

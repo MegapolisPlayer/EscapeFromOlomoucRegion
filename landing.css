@@ -26,6 +26,7 @@ button {
 	font-family: Arial, FreeSans;
 	background-color: #ffffff;
     color: #000080;
+	z-index: 256;
 }
 
 button:hover {

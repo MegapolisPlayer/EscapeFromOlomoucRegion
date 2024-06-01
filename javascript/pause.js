@@ -1,5 +1,6 @@
 let pauseCanvasElement = undefined;
 let pauseContext = undefined; // canvas context of pause menu canvas, avoid redrawing
+let pauseOldAnimationState = false;
 
 function makePause() {
 	pauseButton = internal_setButton("pause", "", "draw_input_elem_pause", 0, 0, canvasX(canvas, 20), canvasY(canvas, 10), () => {
@@ -20,6 +21,7 @@ function showPause() {
 }
 
 function renderPause() {
+	if(info.speedrun) { return; }
 	canvasSetFontWeight(canvas, ctx, "normal");
 	let temp = ctx.fillStyle;
 	canvasSetColor(canvas, ctx, "#ffffff");
@@ -32,35 +34,30 @@ function renderPause() {
 }
 
 function pauseMenuToggle() {
-	if(info.pause) {
-		pauseMenuOff();
+	if(info.speedrun) { return; }
+	if(info.paused) {
 		showAllInput();
 		musicUnpause();
+		console.log("Pause menu disabled!");
+		info.paused = false;
+		document.querySelectorAll(".pause_button").forEach((val) => {
+			val.style.setProperty("display", "none");
+		});
 		pauseCanvasElement.style.setProperty("display", "none");
+		animationBlocked = pauseOldAnimationState;
 	}
 	else {
-		pauseMenuOn();
 		hideAllInput();
 		musicPause();
+		console.log("Pause menu enabled!");
+		info.paused = true;
+		document.querySelectorAll(".pause_button").forEach((val) => {
+			val.style.setProperty("display", "inline");
+		});
 		pauseCanvasElement.style.setProperty("display", "inline");
+		pauseOldAnimationState = animationBlocked;
+		animationBlocked = true;
 	}
-	animationBlocked = info.pause;
-}
-
-function pauseMenuOn() {
-	console.log("Pause menu enabled!");
-	info.pause = true;
-	document.querySelectorAll(".pause_button").forEach((val) => {
-		val.style.setProperty("display", "block");
-	});
-}
-
-function pauseMenuOff() {
-	console.log("Pause menu disabled!");
-	info.pause = false;
-	document.querySelectorAll(".pause_button").forEach((val) => {
-		val.style.setProperty("display", "none");
-	});
 }
 
 async function loadPause() {
@@ -68,6 +65,8 @@ async function loadPause() {
 	pause2 = await loadImage("assets/arrow/pause2.png");
 	makePause();
 	hidePause();
+
+	//setup pause element
 
 	pauseCanvasElement = document.createElement("canvas");
 	pauseCanvasElement.id = "pause_menu";
@@ -87,23 +86,63 @@ async function loadPause() {
 	pauseContext.height = pauseCanvasElement.height;
 	pauseContext.lineWidth = 1;
 	
+	//setup bg
+
 	canvasSetAlpha(pauseCanvasElement, pauseContext, 0);
 	pauseContext.fillstyle = "#aaaaaa";
 	pauseContext.fillRect(0, 0, pauseCanvasElement.width, pauseCanvasElement.height);
 	canvasResetAlpha(pauseCanvasElement, pauseContext);
 
 	canvasSetColor(pauseCanvasElement, pauseContext, "#aaaaaa");
-	canvasRoundedBox(pauseCanvasElement, pauseContext, 5, 5, 90, 90, 40);
+	canvasRoundedBox(pauseCanvasElement, pauseContext, 0, 0, 100, 100, 40);
 	canvasSetColor(pauseCanvasElement, pauseContext, "#000080");
 
 	canvasSetLargeFont(pauseCanvasElement, pauseContext);
+	canvasSetFontWeight(pauseCanvasElement, pauseContext, "bold");
 	canvasTextS(pauseCanvasElement, pauseContext, getTranslation(10), 10, 20);
 
 	canvasSetSmallFont(pauseCanvasElement, pauseContext);
-	canvasTextS(pauseCanvasElement, pauseContext, getTranslation(28), 10, 30);
+	canvasSetFontWeight(pauseCanvasElement, pauseContext, "normal");
+	canvasTextS(pauseCanvasElement, pauseContext, getTranslation(28), 10, 27);
 
+	//add buttons
+
+	//buttons:
+	//load game, save game, toggle audio, quit game
+
+	//also add title offset
+	const CanvasOffsetX = parseInt(pauseCanvasElement.style.getPropertyValue("left"))+canvasX(pauseCanvasElement, 10);
+	const CanvasOffsetY = parseInt(pauseCanvasElement.style.getPropertyValue("top"))+canvasY(pauseCanvasElement, 30);
+
+	const ButtonSizeX = canvasX(pauseCanvasElement, 40);
+	const ButtonSizeY = canvasY(pauseCanvasElement, 30);
+
+	let Buttons = [];
+	Buttons.push(internal_setButton("pause_loadgame", "test", "pause_button draw_input_elem", 
+	CanvasOffsetX, CanvasOffsetY, ButtonSizeX, ButtonSizeY, () => {
+
+	}));
+	Buttons.push(internal_setButton("pause_savegame", "test", "pause_button draw_input_elem",
+	CanvasOffsetX+ButtonSizeX, CanvasOffsetY, ButtonSizeX, ButtonSizeY, () => {
+		
+	}));
+	Buttons.push(internal_setButton("pause_quitgame", "test", "pause_button draw_input_elem",
+	CanvasOffsetX, CanvasOffsetY+ButtonSizeY, ButtonSizeX, ButtonSizeY, () => {
+		
+	}));
+	Buttons.push(internal_setButton("pause_audio", "test", "pause_button draw_input_elem",
+	CanvasOffsetX+ButtonSizeX, CanvasOffsetY+ButtonSizeY, ButtonSizeX, ButtonSizeY, () => {
+		
+	}));
+
+	//add elements
+	
 	canvas.parentElement.appendChild(pauseCanvasElement);
-
+	for(let i = 0; i < 4; i++) {
+		Buttons[i].style.setProperty("display", "none");
+		canvas.parentElement.appendChild(Buttons[i]);
+	}
+	
 	pauseContext = pauseCanvasElement.getContext("2d");
 
 	pauseInterval = window.setInterval(() => {

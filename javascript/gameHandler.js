@@ -14,7 +14,7 @@ function renderMainMenu() {
 	canvasSetSmallFont(canvas, ctx);
 	canvasSetFontWeight(canvas, ctx, "normal");
 	//Date changes here!!!
-	canvasTextM(canvas, ctx, "Version 2.00, 28.5.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
+	canvasTextM(canvas, ctx, "Version 2.00, 2.6.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
 
 	//render characters (all of them, for show)
 	canvasImage(canvas, ctx, players[0], 20, 50, characterSizeMultiplier);
@@ -262,7 +262,6 @@ async function gameHandler() {
 
 	canvasTextS(canvas, ctx, "Loading other images...", 10, 45);
 	await loadArrows(); //arrows
-	await loadPause(); //pause menu
 	canvasTextS(canvas, ctx, "Loading other images... done", 10, 45);
 
 	document.querySelectorAll(".size_control_buttons").forEach((val) => {
@@ -273,6 +272,8 @@ async function gameHandler() {
 
 	await loadMainMenu();
 	clearMainMenu();
+
+	await loadPause(); //pause menu AFTER main menu, already when language is selected
 
 	playHandler();
 }
