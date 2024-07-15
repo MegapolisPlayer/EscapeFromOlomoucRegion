@@ -1,9 +1,11 @@
+
+
 function timerBegin() {
 	timeBegin = Date.now();
 	timePlaying = 0;
 	timeInPauseMenu = 0;
 	timerInterval = window.setInterval(() => {
-		if(info.paused || animationBlocked) {
+		if(info.paused || canvas.animationBlocked) {
 			return;
 		};
 		timePlaying = Math.trunc(((Date.now() - timeBegin) - timeInPauseMenu)/1000);
@@ -17,12 +19,12 @@ function timerEnd() {
 
 function renderSpeedrunMode() {
 	if(info.speedrun) {
-		canvasSetColor(canvas, ctx, "#ffffff");
-		canvasRoundedBox(canvas, ctx, 0, 0, 15, 20, 10);
-		canvasSetColor(canvas, ctx, "#000080");
-		canvasSetSmallFont(canvas, ctx);
-		canvasTextS(canvas, ctx, getTranslation(3), 2, 7);
-		canvasTextS(canvas, ctx, timePlaying+"s", 2, 17);
+		canvas.setColor("#ffffff");
+		canvas.drawRoundedBox( 0, 0, 15, 20, 10);
+		canvas.setColor("#000080");
+		canvas.setSmallFontSize();
+		canvas.textS(getTranslation(3), 2, 7);
+		canvas.textS(timePlaying+"s", 2, 17);
 	}
 }
 

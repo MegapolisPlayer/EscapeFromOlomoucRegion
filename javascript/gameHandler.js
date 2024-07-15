@@ -1,26 +1,26 @@
 // MAIN MENU
 
 function renderMainMenu() {
-	canvasBackground(canvas, ctx, mainMenuImage);
+	canvas.background(mainMenuImage);
 
 	//render text
-	canvasSetLargeFont(canvas, ctx);
-	canvasSetColor(canvas, ctx, "#000080");
-	canvasSetBorder(canvas, ctx, "#ffffff");
-	canvasSetFontWeight(canvas, ctx, "bold");
-	canvasTextAndBorderS(canvas, ctx, getTranslation(1), 5,  10);
+	canvas.setLargeFontSize();
+	canvas.setColor("#000080");
+	canvas.setBorder("#ffffff");
+	canvas.setFontWeight("bold");
+	canvas.textAndBorderS(getTranslation(1), 5,  10);
 
-	canvasSetColor(canvas, ctx, "#ffffff");
-	canvasSetSmallFont(canvas, ctx);
-	canvasSetFontWeight(canvas, ctx, "normal");
+	canvas.setColor("#ffffff");
+	canvas.setSmallFontSize();
+	canvas.setFontWeight("normal");
 	//Date changes here!!!
-	canvasTextM(canvas, ctx, "Version 2.00, 2.6.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
+	canvas.textM("Version 2.00, 15.7.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
 
 	//render characters (all of them, for show)
-	canvasImage(canvas, ctx, players[0], 20, 50, characterSizeMultiplier);
-	canvasImage(canvas, ctx, players[1], 30, 50, characterSizeMultiplier);
-	canvasImage(canvas, ctx, players[2], 45, 50, characterSizeMultiplier);
-	canvasImage(canvas, ctx, players[3], 55, 50, characterSizeMultiplier);
+	canvas.image(players[0], 20, 50, canvas.characterSizeMultiplier);
+	canvas.image(players[1], 30, 50, canvas.characterSizeMultiplier);
+	canvas.image(players[2], 45, 50, canvas.characterSizeMultiplier);
+	canvas.image(players[3], 55, 50, canvas.characterSizeMultiplier);
 }
 
 async function loadMainMenu() {
@@ -104,17 +104,17 @@ function clearMainMenu() {
 // CHARACTER SELECTION
 
 async function renderCharacterSelection() {
-	canvasBackground(canvas, ctx, mainMenuImage);
+	canvas.background(mainMenuImage);
 
 	//render text
-	canvasSetLargeFont(canvas, ctx);
-	canvasSetColor(canvas, ctx, "#000080");
-	canvasSetBorder(canvas, ctx, "#ffffff");
-	canvasTextAndBorderS(canvas, ctx, getTranslation(13), 5, 10);
+	canvas.setLargeFontSize();
+	canvas.setColor("#000080");
+	canvas.setBorder("#ffffff");
+	canvas.textAndBorderS(getTranslation(13), 5, 10);
 
 	if(info.speedrun === true) {
-		canvasSetFontSize(canvas, ctx, 20);
-		canvasTextAndBorderS(canvas, ctx, getTranslation(3)+" "+getTranslation(26), 10, 15);
+		canvas.setFontSize(20);
+		canvas.textAndBorderS(getTranslation(3)+" "+getTranslation(26), 10, 15);
 	}
 
 
@@ -123,7 +123,7 @@ async function renderCharacterSelection() {
 	let promises = [];
 
 	for(let i = 0; i < 4; i++) {
-		canvasImage(canvas, ctx, players[i], 5 + i * 25, 50, characterSizeMultiplier);
+		canvas.image(players[i], 5 + i * 25, 50, canvas.characterSizeMultiplier);
 		promises.push(
 			waiterEventFromElement(
 				addSmallButton(
@@ -148,20 +148,20 @@ function renderDisclaimer() {
 	console.log("disclaimer");
 
 	musicPlay(1);
-	canvasSetBrightness(canvas, ctx, 50);
-	canvasBackground(canvas, ctx, mainMenuImage);
-	canvasResetBrightness(canvas, ctx);
+	canvas.setBrightness(50);
+	canvas.background(mainMenuImage);
+	canvas.resetBrightness();
 
-	canvasSetFontWeight(canvas, ctx, "bold");
-	canvasSetLargeFont(canvas, ctx);
-	canvasSetColor(canvas, ctx, "#800000");
-	canvasSetBorder(canvas, ctx, "#ffffff");
-	canvasTextAndBorderS(canvas, ctx, getTranslation(43), 5, 10);
+	canvas.setFontWeight("bold");
+	canvas.setLargeFontSize();
+	canvas.setColor("#800000");
+	canvas.setBorder("#ffffff");
+	canvas.textAndBorderS(getTranslation(43), 5, 10);
 
-	canvasSetFontWeight(canvas, ctx, "normal");
-	canvasSetSmallFont(canvas, ctx);
-	canvasSetColor(canvas, ctx, "#ffffff");
-	canvasTextM(canvas, ctx, wrapText(getTranslation(44), 80), 10, 20);
+	canvas.setFontWeight("normal");
+	canvas.setSmallFontSize();
+	canvas.setColor("#ffffff");
+	canvas.textM(wrapText(getTranslation(44), 80), 10, 20);
 
 	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
 }
@@ -170,34 +170,34 @@ function renderDisclaimer() {
 
 async function renderCutscene() {
 	console.log("cutscene");
-	canvasSetBrightness(canvas, ctx, 75);
-	canvasBackground(canvas, ctx, mainMenuImage);
+	canvas.setBrightness(75);
+	canvas.background(mainMenuImage);
 
-	await canvasFadeOut(canvas, ctx, 5);
+	await canvas.fadeOut(5);
 	if(!info.speedrun) {
 		await cutsceneNews();
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 }
 
 // GAME OVER SCREEN
 
 async function gameOver(text) {
-	animationBlocked = true;
+	canvas.animationBlocked = true;
 	getAllInput().forEach((val) => { val.remove(); });
 
 	musicPlay(1);
-	canvasClear(canvas, ctx, "#000000");
+	canvas.clear("#000000");
 
-	canvasSetColor(canvas, ctx, "#800000");
-	canvasSetFontWeight(canvas, ctx, "bold");
-	canvasSetLargeFont(canvas, ctx);
-	canvasTextS(canvas, ctx, getTranslation(59), 10, 20);
+	canvas.setColor("#800000");
+	canvas.setFontWeight("bold");
+	canvas.setLargeFontSize();
+	canvas.textS(getTranslation(59), 10, 20);
 
-	canvasSetColor(canvas, ctx, "#ffffff");
-	canvasSetFontWeight(canvas, ctx, "normal");
-	canvasSetSmallFont(canvas, ctx);
-	canvasTextM(canvas, ctx, wrapText(text, 80), 10, 40);
+	canvas.setColor("#ffffff");
+	canvas.setFontWeight("normal");
+	canvas.setSmallFontSize();
+	canvas.textM(wrapText(text, 80), 10, 40);
 
 	await waiterEventFromElement(
 		addButton(
@@ -233,36 +233,36 @@ async function playHandler() {
 }
 
 async function gameHandler() {
-	canvasLoading(canvas, ctx, "Loading..."); //no translations yet
+	canvas.loadingScreen("Loading..."); //no translations loaded yet
 	//text only on first load
-	canvasTextS(canvas, ctx, "Translations", 10, 15);
-	canvasTextS(canvas, ctx, "Music", 10, 20);
-	canvasTextS(canvas, ctx, "SFX", 10, 25);
-	canvasTextS(canvas, ctx, "Voice", 10, 30);
-	canvasTextS(canvas, ctx, "Characters", 10, 35);
-	canvasTextS(canvas, ctx, "Maps", 10, 40);
+	canvas.textS("Translations", 10, 15);
+	canvas.textS("Music", 10, 20);
+	canvas.textS("SFX", 10, 25);
+	canvas.textS("Voice", 10, 30);
+	canvas.textS("Characters", 10, 35);
+	canvas.textS("Maps", 10, 40);
 
 	await loadMusic([0, 1]); //music
-	canvasLoadingDone(canvas, ctx, 0);
+	canvas.loadingItemDone(0);
 
 	await loadSFX(); //sfx
-	canvasLoadingDone(canvas, ctx, 1);
+	canvas.loadingItemDone(1);
 
 	await loadCharacters(); //characters
-	canvasLoadingDone(canvas, ctx, 2);
+	canvas.loadingItemDone(2);
 	
 	await loadTranslation(); //translations
-	canvasLoadingDone(canvas, ctx, 3);
+	canvas.loadingItemDone(3);
 
 	await loadVoice(); //voice
-	canvasLoadingDone(canvas, ctx, 4);
+	canvas.loadingItemDone(4);
 
 	await loadMaps();
-	canvasTextS(canvas, ctx, "Maps done", 10, 40);
+	canvas.textS("Maps done", 10, 40);
 
-	canvasTextS(canvas, ctx, "Loading other images...", 10, 45);
+	canvas.textS("Loading other images...", 10, 45);
 	await loadArrows(); //arrows
-	canvasTextS(canvas, ctx, "Loading other images... done", 10, 45);
+	canvas.textS("Loading other images... done", 10, 45);
 
 	document.querySelectorAll(".size_control_buttons").forEach((val) => {
 		val.removeAttribute("disabled");

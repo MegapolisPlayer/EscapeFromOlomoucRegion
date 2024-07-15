@@ -5,7 +5,7 @@ function ProstejovNastupiste() {
 
 	return Promise.any([
 		renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { info.location_minor_next = 1; })),
-		canvasNPC(NPC.TRAIN, 80, 55, 1.5, (e) => {
+		makeNPC(NPC.TRAIN, 80, 55, 1.5, (e) => {
 			clearArrows();
 			e.target.remove();
 			info.location_minor_next = -1;
@@ -25,10 +25,10 @@ function ProstejovNadrazi() {
 
 function ProstejovNamesti() {
 	canvasPlayer(40, 80, 1.2);
-	canvasNPC(NPC.UTILITY, 60, 60, 0.7, async() => { 
+	makeNPC(NPC.UTILITY, 60, 60, 0.7, async() => {
 		hideAllInput();
 		await minigameBench();
-		canvasBackground(canvas, ctx, ProstejovImages[info.location_minor]);
+		canvas.background(ProstejovImages[info.location_minor]);
 		showAllInput();
 	});
 
@@ -48,10 +48,10 @@ function ProstejovObchod() {
 
 function ProstejovCafe() {
 	canvasPlayer(65, 55, 4);
-	canvasNPC(NPC.COOK, 35, 55, 4, async() => { 
+	makeNPC(NPC.COOK, 35, 55, 4, async() => {
 		hideAllInput();
 		await minigameWaiter();
-		canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
+		canvas.background(HNMimages[info.location_minor]);
 		showAllInput();
 	});
 
@@ -65,7 +65,7 @@ async function ProstejovHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading(canvas, ctx, );
+	canvas.loadingScreen();
 	await loadMusic([5]);
 	ProstejovImages = await loadImages([
 		"assets/photo/prostejov/nastupiste.jpg",
@@ -79,14 +79,14 @@ async function ProstejovHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(4);
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 	
 	musicPlay(5); //start playing AFTER loading
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 
 	showPause();
-	canvasBackground(canvas, ctx, ProstejovImages[info.location_minor]);
+	canvas.background(ProstejovImages[info.location_minor]);
 	canvasPlayer(50, 70, 2); 
 
 	//entry dialogue
@@ -101,10 +101,10 @@ async function ProstejovHandler() {
 		info.location_minor = info.location_minor_next;
 
 		//clear NPCs when switching location
-		canvasNPCClear();
+		clearNPC();
 
 		console.log("PROSTEJOV "+info.location_minor);
-		canvasBackground(canvas, ctx, ProstejovImages[info.location_minor]);
+		canvas.background(ProstejovImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = ProstejovNastupiste(); break;
@@ -123,11 +123,11 @@ async function ProstejovHandler() {
 		if(info.location_major != 3) { 
 			hidePause();
 			canvasPlayerDisable(); 
-			animationBlocked = true;
+			canvas.animationBlocked = true;
 			break;
 		}
 
-		await canvasFadeOut(canvas, ctx, );
-		canvasNPCClear();
+		await canvas.fadeOut();
+		clearNPC();
 	}
 }

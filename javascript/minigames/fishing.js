@@ -18,12 +18,12 @@ async function minigameFishSummary() {
 }
 
 async function minigameFish() {
-	animationBlocked = true;
+	canvas.animationBlocked = true;
 
 	await minigameFishLoad();
 	await minigameFishMenu();
 	await minigameFishGame();
 	await minigameFishSummary();
 
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 }

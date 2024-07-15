@@ -28,10 +28,10 @@ async function loadCharacters() {
 	//Interval setup
 
 	characterAnimationInterval = window.setInterval(() => {
-		if(animationBlocked) return;
+		if(canvas.animationBlocked) return;
 
 		if(player.ISON) {
-			canvasPlayerRemove(player.X, player.Y, player.SCALE, currentBGImage);
+			canvasPlayerRemove(player.X, player.Y, player.SCALE, canvas.currentBGImage);
 			if(characterAnimationState == false) {
 				canvasPlayer(player.X, player.Y, player.SCALE);
 			}
@@ -40,40 +40,40 @@ async function loadCharacters() {
 			}
 
 			if(dialogueEnabled) {
-				let tempcolor = canvasGetColor(canvas, ctx);
-				canvasSetColor(canvas, ctx, "#ffffff");
+				let tempcolor = canvas.getColor();
+				canvas.setColor("#ffffff");
 
-				let boxsize = player.Y+(players[selectedPlayer].height*player.SCALE*characterSizeMultiplier/canvas.height/2*100)-80;
+				let boxsize = player.Y+(players[selectedPlayer].height*player.SCALE*canvas.characterSizeMultiplier/canvas.canvas.height/2*100)-80;
 
 				//we expect this to take less than 50ms
-				canvasBox(canvas, ctx, 
-					player.X-(players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width/2*100),
+				canvas.drawBox(
+					player.X-(players[selectedPlayer].width*player.SCALE*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
 					80,
-					players[selectedPlayer].width*player.SCALE*characterSizeMultiplier/canvas.width*100, 80,
+					players[selectedPlayer].width*player.SCALE*canvas.characterSizeMultiplier/canvas.canvas.width*100, 80,
 					(boxsize < 0) ? 0 : boxsize //only the part which the character touches
 				);
-				canvasSetColor(canvas, ctx, tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
+				canvas.setColor(tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
 			}
 		}
 		for(let i = 0; i < npcs.length; i++) {
-			canvasNPCRemove(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE, currentBGImage);
+			hideNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE, canvas.currentBGImage);
 			//invert so looks better
 			if(characterAnimationState == true) {
-				canvasDrawNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
+				drawNPC(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
 			}
 			else {
-				canvasDrawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
+				drawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
 			}
 
 			if(dialogueEnabled) {
-				canvasSetColor(canvas, ctx, "#ffffff");
+				canvas.setColor("#ffffff");
 
-				let boxsize = npcs[i].Y+(characters[npcs[i].TYPE].height*characterSizeMultiplier/canvas.height*100)-80;
+				let boxsize = npcs[i].Y+(characters[npcs[i].TYPE].height*canvas.characterSizeMultiplier/canvas.height*100)-80;
 
-				canvasBox(canvas, ctx, 
-					npcs[i].X-(characters[npcs[i].TYPE].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width/2*100),
+				canvas.drawBox(
+					npcs[i].X-(characters[npcs[i].TYPE].width*npcs[i].SCALE*canvas.characterSizeMultiplier/canvas.width/2*100),
 					80,
-					characters[npcs[i].TYPE].width*npcs[i].SCALE*characterSizeMultiplier/canvas.width*100,
+					characters[npcs[i].TYPE].width*npcs[i].SCALE*canvas.characterSizeMultiplier/canvas.width*100,
 					(boxsize < 0) ? 0 : boxsize //only the part which the character occupies will get redrawn
 				);
 			}
@@ -86,11 +86,11 @@ async function loadCharacters() {
 
 function canvasPlayer(x, y, scale) {
 	//canvas space processing for x, y happens in canvasImage
-	canvasImage(canvas, ctx, 
+	canvas.image(
 		players[selectedPlayer],
-		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
+		x-(players[selectedPlayer].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
+		y-(players[selectedPlayer].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100),
+		scale*canvas.characterSizeMultiplier
 	);
 	player.X = x;
 	player.Y = y;
@@ -99,11 +99,11 @@ function canvasPlayer(x, y, scale) {
 }
 function canvasPlayer2(x, y, scale) {
 	//canvas space processing for x, y happens in canvasImage
-	canvasImage(canvas, ctx, 
+	canvas.image(
 		players2[selectedPlayer],
-		x-(players2[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players2[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
+		x-(players2[selectedPlayer].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
+		y-(players2[selectedPlayer].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100),
+		scale*canvas.characterSizeMultiplier
 	);
 	player.X = x;
 	player.Y = y;
@@ -112,12 +112,12 @@ function canvasPlayer2(x, y, scale) {
 }
 
 function canvasPlayerRemove(x, y, scale, bgimage) {
-	canvasImageEquivalent(canvas, ctx, 
+	canvas.imageEquivalent(
 		bgimage,
-		x-(players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		players[selectedPlayer].width*scale*characterSizeMultiplier/canvas.width*100,
-		players[selectedPlayer].height*scale*characterSizeMultiplier/canvas.height*100
+		x-(players[selectedPlayer].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
+		y-(players[selectedPlayer].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100),
+		players[selectedPlayer].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width*100,
+		players[selectedPlayer].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height*100
 	);
 	player.X = x;
 	player.Y = y;
@@ -136,49 +136,49 @@ function NPCInfo(type, x, y, scale, fn) {
 	this.TYPE = type;
 	this.BTN = internal_setButton(
 		"NPCInfo"+String(Math.trunc(Math.random()*10000)), "", "draw_input_elem_npc",
-		canvasX(canvas, x-(characters[this.TYPE].width*scale*characterSizeMultiplier/canvas.width/2*100)),
-		canvasY(canvas, y-(characters[this.TYPE].height*scale*characterSizeMultiplier/canvas.height/2*100)),
-		characters[this.TYPE].width*scale*characterSizeMultiplier,
-		characters[this.TYPE].height*scale*characterSizeMultiplier,
+		canvas.getX(x-(characters[this.TYPE].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100)),
+		canvas.getY(y-(characters[this.TYPE].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100)),
+		characters[this.TYPE].width*scale*canvas.characterSizeMultiplier,
+		characters[this.TYPE].height*scale*canvas.characterSizeMultiplier,
 		fn
 	);
 }
 
-function canvasNPC(characterid, x, y, scale, fn) {
+function makeNPC(characterid, x, y, scale, fn) {
 	npcs.push(new NPCInfo(characterid, x, y, scale, fn));
-	canvasDrawNPC(characterid, x, y, scale);
+	drawNPC(characterid, x, y, scale);
 	return waiterEventFromElement(npcs[npcs.length - 1].BTN, "click");
 }
 
-function canvasDrawNPC(characterid, x, y, scale) {
-	canvasImage(canvas, ctx, 
+function drawNPC(characterid, x, y, scale) {
+	canvas.image(
 		characters[characterid],
-		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
+		x-(characters[characterid].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
+		y-(characters[characterid].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100),
+		scale*canvas.characterSizeMultiplier
 	);
 }
 
-function canvasDrawNPC2(characterid, x, y, scale) {
-	canvasImage(canvas, ctx, 
+function drawNPC2(characterid, x, y, scale) {
+	canvas.image(
 		characters2[characterid],
-		x-(characters2[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters2[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		scale*characterSizeMultiplier
+		x-(characters2[characterid].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
+		y-(characters2[characterid].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100),
+		scale*canvas.characterSizeMultiplier
 	);
 }
 
-function canvasNPCRemove(characterid, x, y, scale, bgimage) {
-	canvasImageEquivalent(canvas, ctx, 
+function hideNPC(characterid, x, y, scale, bgimage) {
+	canvas.imageEquivalent(
 		bgimage,
-		x-(characters[characterid].width*scale*characterSizeMultiplier/canvas.width/2*100),
-		y-(characters[characterid].height*scale*characterSizeMultiplier/canvas.height/2*100),
-		characters[characterid].width*scale*characterSizeMultiplier/canvas.width*100,
-		characters[characterid].height*scale*characterSizeMultiplier/canvas.height*100
+		x-(characters[characterid].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
+		y-(characters[characterid].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100),
+		characters[characterid].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width*100,
+		characters[characterid].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height*100
 	);
 }
 
-function canvasNPCDelete() {
+function deleteNPC() {
 	for(let i = 0; i < npcs.length; i++) {
 		if(npcs[i].x == X, npcs[i].y == Y) {
 			npcs[i].BTN.remove();
@@ -186,7 +186,7 @@ function canvasNPCDelete() {
 		}
 	}
 }
-function canvasNPCClear() {
+function clearNPC() {
 	npcs.forEach((val) => {
 		val.BTN.remove();
 	});

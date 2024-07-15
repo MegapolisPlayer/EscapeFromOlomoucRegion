@@ -5,7 +5,7 @@ function PrerovNastupiste() {
 
 	return Promise.any([
 		renderArrow(new ArrowInfo(90, 80, arrowType.DOWN, async () => { info.location_minor_next = 1; })),
-		canvasNPC(NPC.TRAIN, 30, 60, 2.5, (e) => {
+		makeNPC(NPC.TRAIN, 30, 60, 2.5, (e) => {
 			clearArrows();
 			e.target.remove();
 			info.location_minor_next = -1;
@@ -52,7 +52,7 @@ async function PrerovHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading(canvas, ctx, );
+	canvas.loadingScreen();
 	await loadMusic([3]);
 	PrerovImages = await loadImages([
 		"assets/photo/prerov/nastupiste.jpg",
@@ -66,14 +66,14 @@ async function PrerovHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(2);
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 	
 	musicPlay(3); //start playing AFTER loading
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 
 	showPause();
-	canvasBackground(canvas, ctx, PrerovImages[info.location_minor]);
+	canvas.background(PrerovImages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 
 	//entry dialogue
@@ -88,10 +88,10 @@ async function PrerovHandler() {
 		info.location_minor = info.location_minor_next;
 
 		//clear NPCs when switching location
-		canvasNPCClear();
+		clearNPC();
 
 		console.log("PREROV "+info.location_minor);
-		canvasBackground(canvas, ctx, PrerovImages[info.location_minor]);
+		canvas.background(PrerovImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = PrerovNastupiste(); break;
@@ -110,11 +110,11 @@ async function PrerovHandler() {
 		if(info.location_major != 1) { 
 			hidePause();
 			canvasPlayerDisable(); 
-			animationBlocked = true;
+			canvas.animationBlocked = true;
 			break;
 		}
 
-		await canvasFadeOut(canvas, ctx, );
-		canvasNPCClear();
+		await canvas.fadeOut();
+		clearNPC();
 	}
 }

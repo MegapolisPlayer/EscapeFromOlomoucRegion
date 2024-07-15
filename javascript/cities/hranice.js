@@ -28,7 +28,7 @@ function HNMNadrazi() {
 
 function HNMRestaurace() {
 	canvasPlayer(70, 90, 3);
-	canvasNPC(NPC.COOK, 90, 50, 2, async (e) => {
+	makeNPC(NPC.COOK, 90, 50, 2, async (e) => {
 		hideAllInput();
 
 		dialogueBegin();
@@ -37,9 +37,9 @@ function HNMRestaurace() {
 		await minigameWaiter();
 		
 		musicPlay(2);
-		canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
+		canvas.background(HNMimages[info.location_minor]);
 		canvasPlayer(70, 90, 3);
-		canvasDrawNPC(NPC.COOK, 90, 50, 2);
+		drawNPC(NPC.COOK, 90, 50, 2);
 		await renderMoney();
 		renderSpeedrunMode();
 		renderPause();
@@ -54,7 +54,7 @@ function HNMNastupiste() {
 
 	return Promise.any([
 	renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { info.location_minor_next = 2; })),
-	canvasNPC(NPC.TRAIN, 40, 70, 1.3, (e) => {
+	makeNPC(NPC.TRAIN, 40, 70, 1.3, (e) => {
 		clearArrows();
 		e.target.remove();
 		info.location_minor_next = -1;
@@ -90,7 +90,7 @@ async function HNMHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading(canvas, ctx, );
+	canvas.loadingScreen();
 	await loadMusic([2, 10]);
 	HNMimages = await loadImages([
 		"assets/photo/hnm/domov.png",
@@ -105,14 +105,14 @@ async function HNMHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(1);
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 
 	musicPlay(2); //start playing AFTER loading
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 
 	showPause();
-	canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
+	canvas.background(HNMimages[info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 	
 	//entry dialogue
@@ -127,7 +127,7 @@ async function HNMHandler() {
 		info.location_minor = info.location_minor_next;
 
 		console.log("HNM "+info.location_minor);
-		canvasBackground(canvas, ctx, HNMimages[info.location_minor]);
+		canvas.background(HNMimages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = HNMDomov(); break;
@@ -148,14 +148,14 @@ async function HNMHandler() {
 		if(info.location_major != 0) { 
 			hidePause();
 			canvasPlayerDisable();
-			animationBlocked = true;
+			canvas.animationBlocked = true;
 			break;
 		}
 
 		//cleanup code, moved here so doesnt get called on first entry to location
 
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 		//clear NPCs when switching location
-		canvasNPCClear();
+		clearNPC();
 	}
 }

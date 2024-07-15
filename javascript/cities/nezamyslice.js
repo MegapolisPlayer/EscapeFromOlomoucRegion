@@ -5,7 +5,7 @@ function NezamysliceNastupiste() {
 
 	return Promise.any([
 		renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { info.location_minor_next = 1; })),
-		canvasNPC(NPC.TRAIN, 80, 70, 0.7, (e) => {
+		makeNPC(NPC.TRAIN, 80, 70, 0.7, (e) => {
 			clearArrows();
 			e.target.remove();
 			info.location_minor_next = -1;
@@ -16,7 +16,7 @@ function NezamysliceNastupiste() {
 
 function NezamysliceNadrazi() {
 	canvasPlayer(70, 60, 2.5);
-	canvasNPC(NPC.STATION, 30, 60, 2.5, (e) => {
+	makeNPC(NPC.STATION, 30, 60, 2.5, (e) => {
 			
 	});
 
@@ -37,7 +37,7 @@ function NezamyslicePodnikVenek() {
 
 function NezamyslicePodnikVnitrek() {
 	canvasPlayer(80, 55, 3);
-	canvasNPC(NPC.TRANSLATOR, 30, 55, 3, (e) => {
+	makeNPC(NPC.TRANSLATOR, 30, 55, 3, (e) => {
 		
 	});
 
@@ -51,7 +51,7 @@ async function NezamysliceHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 	
-	canvasLoading(canvas, ctx, );
+	canvas.loadingScreen();
 	await loadMusic([4]);
 	NezamysliceImages = await loadImages([
 		"assets/photo/nezamyslice/nastupiste.jpg",
@@ -64,14 +64,14 @@ async function NezamysliceHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(3);
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 	
 	musicPlay(4); //start playing AFTER loading
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 
 	showPause();
-	canvasBackground(canvas, ctx, NezamysliceImages[info.location_minor]);
+	canvas.background(NezamysliceImages[info.location_minor]);
 	canvasPlayer(90, 70, 0.7); 
 
 	//entry dialogue
@@ -86,10 +86,10 @@ async function NezamysliceHandler() {
 		info.location_minor = info.location_minor_next;
 
 		//clear NPCs when switching location
-		canvasNPCClear();
+		clearNPC();
 
 		console.log("NZM "+info.location_minor);
-		canvasBackground(canvas, ctx, NezamysliceImages[info.location_minor]);
+		canvas.background(NezamysliceImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = NezamysliceNastupiste(); break;
@@ -107,11 +107,11 @@ async function NezamysliceHandler() {
 		if(info.location_major != 2) { 
 			hidePause();
 			canvasPlayerDisable(); 
-			animationBlocked = true;
+			canvas.animationBlocked = true;
 			break;
 		}
 
-		await canvasFadeOut(canvas, ctx, );
-		canvasNPCClear();
+		await canvas.fadeOut();
+		clearNPC();
 	}
 }

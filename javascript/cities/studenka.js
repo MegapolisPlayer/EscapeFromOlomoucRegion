@@ -11,7 +11,7 @@ function StudenkaNastupiste() {
 
 	return Promise.any([
 		renderArrow(new ArrowInfo(20, 70, arrowType.LEFT, async () => { info.location_minor_next = 3; })),
-		canvasNPC(NPC.TRAIN, 60, 78, 1, (e) => {
+		makeNPC(NPC.TRAIN, 60, 78, 1, (e) => {
 			clearArrows();
 			e.target.remove();
 			info.location_minor_next = -1;
@@ -77,7 +77,7 @@ async function StudenkaHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 
-	canvasLoading(canvas, ctx, );
+	canvas.loadingScreen();
 	await loadMusic([7]);
 	StudenkaImages = await loadImages([
 		"assets/photo/studenka/prejezd.jpg",
@@ -93,14 +93,14 @@ async function StudenkaHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(6);
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 	
 	musicPlay(7); //start playing AFTER loading
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 
 	showPause();
-	canvasBackground(canvas, ctx, StudenkaImages[info.location_minor]);
+	canvas.background(StudenkaImages[info.location_minor]);
 	canvasPlayer(20, 70, 1); 
 
 	let promise;
@@ -108,10 +108,10 @@ async function StudenkaHandler() {
 		info.location_minor = info.location_minor_next;
 
 		//clear NPCs when switching location
-		canvasNPCClear();
+		clearNPC();
 
 		console.log("STUDENKA "+info.location_minor);
-		canvasBackground(canvas, ctx, StudenkaImages[info.location_minor]);
+		canvas.background(StudenkaImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = StudenkaPrejezd(); break;
@@ -131,11 +131,11 @@ async function StudenkaHandler() {
 
 		if(info.location_major != 5) { 
 			canvasPlayerDisable(); 
-			animationBlocked = true;
+			canvas.animationBlocked = true;
 			break;
 		}
 
-		await canvasFadeOut(canvas, ctx, );
-		canvasNPCClear();
+		await canvas.fadeOut();
+		clearNPC();
 	}
 }

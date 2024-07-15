@@ -4,26 +4,10 @@
 
 // DECLARATIONS
 
-// CANVAS, calc in canvas init and resize functions
+// CANVAS, calc in canvas constructor
 
 let canvas;
-let ctx;
-let canvas_fontSize = 0;
-let canvas_fontFamily  = "";
-let canvas_fontWeight = "";
-
-let biggerWindowSize = 0;
-let smallerWindowSize = 0;
-
-let fontSizeLarge = 0;
-let fontSizeSmall = 0;
-let characterSizeMultiplier = 0;
-
-let currentBGImage;
-
 let mainMenuImage;
-
-let animationBlocked = true;
 
 // MAPS
 

@@ -15,20 +15,20 @@ async function checkMoney() {
 async function renderMoney() {
 	await checkMoney(); //async: if fails check (game over) - stop the rendering cycle
 
-	canvasSetFontWeight(canvas, ctx, "normal");
-	canvasSetColor(canvas, ctx, "#ffffff");
-	canvasCircleBox(canvas, ctx, 80, 0, 20, 10);
+	canvas.setFontWeight("normal");
+	canvas.setColor("#ffffff");
+	canvas.drawCircleBox(80, 0, 20, 10);
 	if(info.money < 0) {
-		canvasSetColor(canvas, ctx, "#800000");
+		canvas.setColor("#800000");
 	}
 	else if(info.money > info.currentTicketPrice) {
-		canvasSetColor(canvas, ctx, "#008000");
+		canvas.setColor("#008000");
 	}
 	else {
-		canvasSetColor(canvas, ctx, "#000080");
+		canvas.setColor("#000080");
 	}
-	canvasSetSmallFont(canvas, ctx);
-	canvasTextS(canvas, ctx, getTranslation(51)+": "+String(info.money), 83, 7);
+	canvas.setSmallFontSize();
+	canvas.textS(getTranslation(51)+": "+String(info.money), 83, 7);
 }
 
 function getEarlyLeaveTimeMoney(time) {

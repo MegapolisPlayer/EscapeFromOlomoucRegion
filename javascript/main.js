@@ -1,16 +1,14 @@
 function initWebpage() {
-	let canvasInfo = canvasInit();
-	canvas = canvasInfo.a;
-	ctx = canvasInfo.b;
+	canvas = new CanvasImplementation();
 
 	document.addEventListener("fullscreenchange", () => {
 		if(document.fullscreenElement != null) {
 			console.log("fullscreen on");
-			canvasResizeTo(window.screen.width, window.screen.height);
+			canvas.resize(window.screen.width, window.screen.height);
 		}
 		else {
 			console.log("fullscreen off");
-			canvasResizeTo(1000, 500);
+			cavnas.resize(1000, 500);
 		}
 	});
 
@@ -24,20 +22,20 @@ async function canvasResizeTo(x, y) {
 	console.log("resize to", x, y);
 
 	//save state
-	//window.open(canvas.toDataURL("image/png", 1)); //debug
-	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
-	let oldscaleX = canvasGetScaleX(canvas);
-	let oldscaleY = canvasGetScaleY(canvas);
+	//window.open(canvas.canvas.toDataURL("image/png", 1)); //debug
+	let savedcvs = await loadImage(canvas.canvas.canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
+	let oldscaleX = canvas.getScaleX();
+	let oldscaleY = canvas.getScaleY();
 
 
 	//change vars
-	let oldfill = ctx.fillStyle;
+	let oldfill = canvas.canvas.ctx.fillStyle;
 	let cvselem = document.getElementById("draw");
 	cvselem.width = x;
 	cvselem.height = y;
-	ctx.width = x;
-	ctx.height = y;
-	ctx.fillStyle = oldfill;
+	canvas.canvas.ctx.width = x;
+	canvas.canvas.ctx.height = y;
+	canvas.canvas.ctx.fillStyle = oldfill;
 	
 	let cvsb = document.getElementById("draw_buffer");
 	cvsb.style.setProperty("width", x+"px");
@@ -46,17 +44,17 @@ async function canvasResizeTo(x, y) {
 	//resize buttons and arrows
 
 	getAllInput().forEach((val) => {
-		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvasGetScaleY(canvas)/oldscaleY+"px");
-		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvasGetScaleX(canvas)/oldscaleX+"px");
-		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvasGetScaleX(canvas)/oldscaleX+"px");
-		val.style.setProperty("height", parseFloat(val.style.getPropertyValue("height"))*canvasGetScaleY(canvas)/oldscaleY+"px");
+		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvas.getScaleX()/oldscaleY+"px");
+		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvas.getScaleX()/oldscaleX+"px");
+		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvas.getScaleX()/oldscaleX+"px");
+		val.style.setProperty("height", parseFloat(val.style.getPropertyValue("height"))*canvas.getScaleY()/oldscaleY+"px");
 
-		val.style.setProperty("font-size", parseFloat(val.style.getPropertyValue("font-size"))*canvasGetScaleX(canvas)/oldscaleX+"px");
+		val.style.setProperty("font-size", parseFloat(val.style.getPropertyValue("font-size"))*canvas.getScaleX(canvas)/oldscaleX+"px");
 	});
 	
-	canvasSet(canvas);
+	canvas.updateValues();
 
-	canvasBackground(canvas, ctx, savedcvs);
+	canvas.background(savedcvs);
 }
 
 function canvasFullscreen() {

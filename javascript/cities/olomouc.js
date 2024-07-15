@@ -5,7 +5,7 @@ function OlomoucNastupiste() {
 
 	return Promise.any([
 		renderArrow(new ArrowInfo(10, 90, arrowType.LEFT, async () => { info.location_minor_next = 1; })),
-		canvasNPC(NPC.TRAIN, 55, 47, 0.5, (e) => {
+		makeNPC(NPC.TRAIN, 55, 47, 0.5, (e) => {
 			clearArrows();
 			e.target.remove();
 			info.location_minor_next = -1;
@@ -43,10 +43,10 @@ function OlomoucSyrarna() {
 function OlomoucRestaurant() {
 	canvasPlayer(50, 65, 2);
 
-	canvasNPC(NPC.COOK, 65, 55, 1, async() => { 
+	makeNPC(NPC.COOK, 65, 55, 1, async() => {
 		hideAllInput();
 		await minigameWaiter();
-		canvasBackground(canvas, ctx, OlomoucImages[info.location_minor]);
+		canvas.background(OlomoucImages[info.location_minor]);
 		showAllInput();
 	});
 
@@ -75,7 +75,7 @@ async function OlomoucHandler() {
 	info.location_minor = 0;
 	info.location_minor_next = 0;
 
-	canvasLoading(canvas, ctx, );
+	canvas.loadingScreen();
 	await loadMusic([6]);
 	OlomoucImages = await loadImages([
 		"assets/photo/olomouc/nastupiste.jpg",
@@ -91,14 +91,14 @@ async function OlomoucHandler() {
 	if(!info.speedrun) {
 		musicPlay(1);
 		await renderMap(5);
-		await canvasFadeOut(canvas, ctx, );
+		await canvas.fadeOut();
 	}
 	
 	musicPlay(6); //start playing AFTER loading
-	animationBlocked = false;
+	canvas.animationBlocked = false;
 
 	showPause();
-	canvasBackground(canvas, ctx, OlomoucImages[info.location_minor]);
+	canvas.background(OlomoucImages[info.location_minor]);
 	canvasPlayer(50, 47, 0.5); 
 
 	//entry dialogue
@@ -113,10 +113,10 @@ async function OlomoucHandler() {
 		info.location_minor = info.location_minor_next;
 
 		//clear NPCs when switching location
-		canvasNPCClear();
+		clearNPC();
 
 		console.log("OLOMOUC "+info.location_minor);
-		canvasBackground(canvas, ctx, OlomoucImages[info.location_minor]);
+		canvas.background(OlomoucImages[info.location_minor]);
 
 		switch(info.location_minor) {
 			case(0): promise = OlomoucNastupiste(); break;
@@ -137,11 +137,11 @@ async function OlomoucHandler() {
 		if(info.location_major != 4) { 
 			hidePause();
 			canvasPlayerDisable(); 
-			animationBlocked = true;
+			canvas.animationBlocked = true;
 			break;
 		}
 
-		await canvasFadeOut(canvas, ctx, );
-		canvasNPCClear();
+		await canvas.fadeOut();
+		clearNPC();
 	}
 }

@@ -1,37 +1,37 @@
 async function renderSettings() {
-	canvasBackground(canvas, ctx, mainMenuImage);
-	canvasSetColor(canvas, ctx, "#aaaaaa");
-	canvasBox(canvas, ctx, 5, 10, 90, 85);
-	canvasSetLargeFont(canvas, ctx);
-	canvasSetColor(canvas, ctx, "#000080");
-	canvasSetBorder(canvas, ctx, "#ffffff");
-	canvasTextAndBorderS(canvas, ctx, getTranslation(5), 5, 10);
+	canvas.background(mainMenuImage);
+	canvas.setColor("#aaaaaa");
+	canvas.drawBox( 5, 10, 90, 85);
+	canvas.setLargeFontSize();
+	canvas.setColor("#000080");
+	canvas.setBorder("#ffffff");
+	canvas.textAndBorderS(getTranslation(5), 5, 10);
 
-	canvasSetSmallFont(canvas, ctx);
-	canvasSetFontWeight(canvas, ctx, "bold");
+	canvas.setSmallFontSize();
+	canvas.setFontWeight("bold");
 
 	//value text
-	canvasTextS(canvas, ctx, getTranslation(19), 53, 20);
-	canvasTextS(canvas, ctx, getTranslation(20), 53, 30);
-	canvasTextS(canvas, ctx, getTranslation(21), 53, 40);
+	canvas.textS(getTranslation(19), 53, 20);
+	canvas.textS(getTranslation(20), 53, 30);
+	canvas.textS(getTranslation(21), 53, 40);
 
 	//values
-	canvasTextS(canvas, ctx, String(settings.random_loss_chance), 83, 20);
-	canvasTextS(canvas, ctx, String(settings.diff_multiplier), 83, 30);
-	canvasTextS(canvas, ctx, String(settings.debt_limit), 83, 40);
+	canvas.textS(String(settings.random_loss_chance), 83, 20);
+	canvas.textS(String(settings.diff_multiplier), 83, 30);
+	canvas.textS(String(settings.debt_limit), 83, 40);
 
 	//settings text
-	canvasTextS(canvas, ctx, getTranslation(15), 10, 20);
-	canvasTextS(canvas, ctx, getTranslation(22), 10, 30);
-	canvasTextS(canvas, ctx, getTranslation(23), 10, 40);
+	canvas.textS(getTranslation(15), 10, 20);
+	canvas.textS(getTranslation(22), 10, 30);
+	canvas.textS(getTranslation(23), 10, 40);
 
-	canvasTextS(canvas, ctx, getTranslation(24), 10, 80);
-	canvasTextS(canvas, ctx, getTranslation(25), 10, 90);
+	canvas.textS(getTranslation(24), 10, 80);
+	canvas.textS(getTranslation(25), 10, 90);
 	
 	//note
-	canvasSetFontWeight(canvas, ctx, "normal");
-	canvasTextM(canvas, ctx, wrapText(getTranslation(61), 80), 10, 50);
-	canvasSetFontWeight(canvas, ctx, "bold");
+	canvas.setFontWeight("normal");
+	canvas.textM(wrapText(getTranslation(61), 80), 10, 50);
+	canvas.setFontWeight("bold");
 
 	//settings buttons
 	addVerySmallButton("diff", getTranslation(17), 30, 15, 10, 5, () => {
@@ -61,12 +61,12 @@ async function renderSettings() {
 				break;
 		}
 
-		canvasSetColor(canvas, ctx, "#aaaaaa");
-		canvasBox(canvas, ctx, 83, 10, 12, 35);
-		canvasSetColor(canvas, ctx, "#000080");
-		canvasTextS(canvas, ctx, String(settings.random_loss_chance), 83, 20);
-		canvasTextS(canvas, ctx, String(settings.diff_multiplier), 83, 30);
-		canvasTextS(canvas, ctx, String(settings.debt_limit), 83, 40);
+		canvas.setColor("#aaaaaa");
+		canvas.drawBox( 83, 10, 12, 35);
+		canvas.setColor("#000080");
+		canvas.textS(String(settings.random_loss_chance), 83, 20);
+		canvas.textS(String(settings.diff_multiplier), 83, 30);
+		canvas.textS(String(settings.debt_limit), 83, 40);
 	});
 	addVerySmallButton("lang", translationNames[translationSelected], 30, 25, 10, 5, () => {
 		translationSelected++;

@@ -1,3 +1,7 @@
+class ArrowHandler {
+
+}
+
 function waiterEventFromElement(element, event) {
 	//in promise: first arg resolve, then reject
 	return new Promise((resolve) => {
@@ -27,13 +31,13 @@ function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 
 //returns said button
 function addButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem", canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), fn);
+	return internal_setButton(id, text, "draw_input_elem", canvas.getX(x), canvas.getY(y), canvas.getX(sizex), canvas.getY(sizey), fn);
 }
 function addSmallButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem_small", canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), fn);
+	return internal_setButton(id, text, "draw_input_elem_small", canvas.getX(x), canvas.getY(y), canvas.getX(sizex), canvas.getY(sizey), fn);
 }
 function addVerySmallButton(id, text, x, y, sizex, sizey, fn) {
-	return internal_setButton(id, text, "draw_input_elem_vsmall", canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), fn);
+	return internal_setButton(id, text, "draw_input_elem_vsmall", canvas.getX(x), canvas.getY(y), canvas.getX(sizex), canvas.getY(sizey), fn);
 }
 function removeButton(id) {
 	document.getElementById(id).remove();
@@ -76,16 +80,16 @@ async function loadArrows() {
 	arrowImages2.push(await loadImage("assets/arrow/info2.png"));
 
 	arrowAnimationInterval = window.setInterval(() => {
-		if(animationBlocked) return;
+		if(canvas.animationBlocked) return;
 
 		for(let i = 0; i < arrowList.length; i++) {
 			if(document.getElementById(arrowList[i].id).style.getPropertyValue("display") === "none") continue;
 
-			ctx.drawImage(
+			canvas.ctx.drawImage(
 				(arrowAnimationState == false) ? arrowImages2[arrowList[i].type] : arrowImages[arrowList[i].type],
-				canvasX(canvas, arrowList[i].x) - (arrowSize/2*canvasGetScaleX(canvas)),
-				canvasY(canvas, arrowList[i].y) - (arrowSize/2*canvasGetScaleY(canvas)), 
-				arrowSize*canvasGetScaleX(canvas), arrowSize*canvasGetScaleX(canvas)
+				canvas.getX(arrowList[i].x) - (arrowSize/2*canvas.getScaleX(canvas)),
+				canvas.getY(arrowList[i].y) - (arrowSize/2*canvas.getScaleY(canvas)),
+				arrowSize*canvas.getScaleX(canvas), arrowSize*canvas.getScaleX(canvas)
 			);
 		}
 		arrowAnimationState = !arrowAnimationState;
@@ -93,11 +97,11 @@ async function loadArrows() {
 }
 
 function addArrow(id, x, y, type, fn) {
-	ctx.drawImage(arrowImages[type], canvasX(canvas, x) - (arrowSize/2*canvasGetScaleX(canvas)), canvasY(canvas, y) - (arrowSize/2*canvasGetScaleY(canvas)), arrowSize*canvasGetScaleX(canvas), arrowSize*canvasGetScaleX(canvas));
+	canvas.ctx.drawImage(arrowImages[type], canvas.getX(x) - (arrowSize/2*canvas.getScaleX(canvas)), canvas.getY(y) - (arrowSize/2*canvas.getScaleY(canvas)), arrowSize*canvas.getScaleX(canvas), arrowSize*canvas.getScaleX(canvas));
 	arrowList.push(new SavedArrowInfo(id, x, y, type, fn));
 	return internal_setButton(
-		id, "", "draw_input_elem_arrow", canvasX(canvas, x) - (arrowSize/2*canvasGetScaleX(canvas)), canvasY(canvas, y) - (arrowSize/2*canvasGetScaleY(canvas)),
-		arrowSize*canvasGetScaleX(canvas), arrowSize*canvasGetScaleX(canvas), fn
+		id, "", "draw_input_elem_arrow", canvas.getX(x) - (arrowSize/2*canvas.getScaleX(canvas)), canvas.getY(y) - (arrowSize/2*canvas.getScaleY(canvas)),
+		arrowSize*canvas.getScaleX(canvas), arrowSize*canvas.getScaleX(canvas), fn
 	);
 }
 function removeArrow(id) {

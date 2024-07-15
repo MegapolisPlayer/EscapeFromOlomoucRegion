@@ -1,256 +1,405 @@
+//TODO: finish refactor
+
 //CANVAS, BUTTONS AND CHARACTERS
 
 //
 // CANVAS
 //
 
-function canvasSet(canvas) {
-	biggerWindowSize = ((canvas.width > canvas.height) ? canvas.width : canvas.height);
-	smallerWindowSize = ((canvas.width < canvas.height) ? canvas.width : canvas.height);	
+//non-getters have daisy-chained methods
+class CanvasImplementation {
+	canvas;
+	ctx;
+	biggerWindowSize;
+	smallerWindowSize;
+	fontSize;
+	fontSizeSmall;
+	fontSizeLarge;
+	characterSizeMultiplier;
+	fontFamily;
+	fontWeight;
+	currentBGImage;
+	animationBlocked = true;
 
-	fontSizeLarge = biggerWindowSize*0.048;
-	fontSizeSmall = biggerWindowSize*0.024;
-	characterSizeMultiplier = smallerWindowSize*0.0003;
-}
+	constructor(madecanvas_override, madectx_override) {
+		if(madecanvas_override != undefined) {
+			this.canvas = madecanvas_override;
+		}
+		else {
+			this.canvas = document.getElementById("draw");
+			this.canvas.width = 1000;
+			this.canvas.height = 500;
+		}
 
-function canvasInit() {
-	let canvas = document.getElementById("draw");
-	let ctx = canvas.getContext("2d");
-	
-	canvas.width = 1000;
-	canvas.height = 500;
-	ctx.width = 1000;
-	ctx.height = 500;
-	ctx.fillStyle = "#ffffff";
-	ctx.strokeStyle = "#ffffff";
-	ctx.lineWidth = 1;
-	
-	canvasSet(canvas);
-	
-	canvasSetFont(canvas, ctx, "Arial, FreeSans", fontSizeLarge, "bold");
-	canvasClear(canvas, ctx, "#ffffff");
-	canvasSetSmallFont(canvas, ctx);
+		if(madectx_override != undefined) {
+			this.ctx = madectx_override;
+		}
+		else {
+			this.ctx = this.canvas.getContext("2d");
+			this.ctx.width = 1000;
+			this.ctx.height = 500;
+			this.ctx.fillStyle = "#ffffff";
+			this.ctx.strokeStyle = "#ffffff";
+			this.ctx.lineWidth = 1;
+		}
 
-	return { a: canvas, b: ctx };
-}
+		this.biggerWindowSize = ((this.canvas.width > this.canvas.height) ? this.canvas.width : this.canvas.height);
+		this.smallerWindowSize = ((this.canvas.width < this.canvas.height) ? this.canvas.width : this.canvas.height);
 
-function canvasX(canvas, xvalue) {
-	return Math.trunc(canvas.width*(xvalue/100));
-}
-function canvasY(canvas, yvalue) {
-	return Math.trunc(canvas.height*(yvalue/100));
-}
+		this.fontSizeSmall = this.biggerWindowSize*0.024;
+		this.fontSizeLarge = this.biggerWindowSize*0.048;
+		this.characterSizeMultiplier = this.smallerWindowSize*0.0003;
 
-function canvasTransposeYToX(canvas, yvalue) {
-	return parseInt(canvas.height/canvas.width*yvalue);
-}
+		this.setFont("Arial, FreeSans", this.fontSizeLarge, "bold");
 
-function canvasGetScaleX(canvas) {
-	return canvas.width/1000;
-}
-function canvasGetScaleY(canvas) {
-	return canvas.height/500;
-}
-
-function canvasRoundedBox(canvas, ctx, x, y, sizex, sizey, radius) {
-	ctx.beginPath();
-	ctx.roundRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), radius);
-	ctx.fill();
-}
-function canvasRoundedBoxBorder(canvas, ctx, x, y, sizex, sizey, radius) {
-	ctx.beginPath();
-	ctx.roundRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey), radius);
-	ctx.stroke();
-}
-
-// 0 - right side
-// 0.5 PI - bottom
-// PI - left size
-// 1.5 PI - top
-
-function canvasCircleBox(canvas, ctx, x, y, sizex, sizey) {
-	let px = canvasX(canvas, x);
-	let py = canvasY(canvas, y);
-	let psizex = canvasX(canvas, sizex);
-	let psizey = canvasY(canvas, sizey);
-
-	ctx.fillRect(px + (psizey/2), py, psizex - psizey, psizey);
-	ctx.beginPath();
-	ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
-	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
-	ctx.fill();
-}
-function canvasCircleBoxBorder(canvas, ctx, x, y, sizex, sizey) {
-	let px = canvasX(canvas, x);
-	let py = canvasY(canvas, y);
-	let psizex = canvasX(canvas, sizex);
-	let psizey = canvasY(canvas, sizey);
-
-	ctx.beginPath();
-	ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
-	ctx.moveTo(px + (psizey/2), py);
-	ctx.lineTo(px + psizex - (psizey/2), py);
-	ctx.moveTo(px + (psizey/2), py + psizey);
-	ctx.lineTo(px + psizex - (psizey/2), py + psizey);
-	ctx.moveTo(px + psizex, py); //moves to beginning of circle drawing
-	ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
-	ctx.stroke();
-}
-function canvasBox(canvas, ctx, x, y, sizex, sizey) {
-	ctx.fillRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey));
-}
-function canvasBoxBorder(canvas, ctx, x, y, sizex, sizey) {
-	ctx.strokeRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey));
-}
-function canvasBoxSamesizeX(canvas, ctx, x, y, size) {
-	ctx.fillRect(canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, size), canvasX(canvas, size));
-}
-function canvasBoxSamesizeY(canvas, ctx, x, y, size) {
-	ctx.fillRect(canvasX(canvas, x), canvasY(canvas, y), canvasY(canvas, size), canvasY(canvas, size));
-}
-
-//Canvas 
-
-function canvasSetColor(canvas, ctx, color) {
-	ctx.fillStyle = color;
-}
-function canvasGetColor(canvas, ctx) {
-	return ctx.fillStyle;
-}
-function canvasSetBorder(canvas, ctx, color) {
-	ctx.strokeStyle = color;
-}
-function canvasSetBrightness(canvas, ctx, brightness) {
-	ctx.filter = "brightness("+brightness+"%)";
-}
-function canvasResetBrightness(canvas, ctx) {
-	ctx.filter = "brightness(100%)";
-}
-function canvasGetBrightness(canvas, ctx) {
-	let str = String(ctx.filter);
-	return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
-}
-
-function canvasSetAlpha(canvas, ctx, alpha) {
-	ctx.globalAlpha = alpha;
-}
-function canvasResetAlpha(canvas, ctx) {
-	ctx.globalAlpha = 1;
-}
-
-function canvasSetFont(canvas, ctx, font, fontsize, weight = "normal") {
-	canvas_fontFamily = font;
-	canvas_fontSize = String(fontsize);
-	canvas_fontWeight = weight;
-	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
-}
-function canvasSetFontFamily(canvas, ctx, fontfamily) {
-	canvas_fontFamily = fontfamily;
-	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
-}
-function canvasSetFontSize(canvas, ctx, fontsize) {
-	canvas_fontSize = String(fontsize);
-	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
-}
-function canvasSetFontWeight(canvas, ctx, weight) {
-	canvas_fontWeight = weight;
-	ctx.font = canvas_fontWeight+" "+canvas_fontSize+"px "+canvas_fontFamily;
-}
-function canvasSetVerySmallFont(canvas, ctx) {
-	canvasSetFontSize(canvas, ctx, fontSizeSmall/2);
-}
-function canvasSetSmallFont(canvas, ctx) {
-	canvasSetFontSize(canvas, ctx, fontSizeSmall);
-}
-function canvasSetLargeFont(canvas, ctx) {
-	canvasSetFontSize(canvas, ctx, fontSizeLarge);
-}
-
-function canvasClear(canvas, ctx, clearcolor) {
-	let temp = ctx.fillStyle;
-	ctx.fillStyle = clearcolor;
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = temp;
-
-	npcs.length = 0;
-}
-
-function canvasTextS(canvas, ctx, text, x, y) {
-	ctx.fillText(text, canvasX(canvas, x), canvasY(canvas, y));
-}
-function canvasTextBorderS(canvas, ctx, text, x, y) {
-	ctx.strokeText(text, canvasX(canvas, x) - ctx.lineWidth, canvasY(canvas, y) - ctx.lineWidth);
-}
-function canvasTextAndBorderS(canvas, ctx, text, x, y) {
-	ctx.strokeText(text, canvasX(canvas, x) - ctx.lineWidth, canvasY(canvas, y) - ctx.lineWidth);
-	ctx.fillText(text, canvasX(canvas, x), canvasY(canvas, y));
-}
-
-function canvasTextM(canvas, ctx, text, x, y) {
-	let px = canvasX(canvas, x);
-	let py = canvasY(canvas, y);
-	let lines = text.split('\n');
-	let newlineyoffset = 0;
-	let metrics = ctx.measureText(text);
-	//lowest point from line + highest point from line
-	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-	lineheight *= 1.5;
-	for(let i = 0; i < lines.length; i++) {
-		ctx.fillText(lines[i], px, py + newlineyoffset);
-		newlineyoffset += lineheight;
+		this.clear("#ffffff");
+		this.setSmallFontSize();
 	}
-}
-function canvasTextBorderM(canvas, ctx, text, x, y) {
-	let px = canvasX(canvas, x);
-	let py = canvasY(canvas, y);
-	let lines = text.split('\n');
-	let newlineyoffset = 0;
-	let metrics = ctx.measureText(text);
-	//lowest point from line + highest point from line
-	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-	lineheight *= 1.5;
-	for(let i = 0; i < lines.length; i++) {
-		ctx.strokeText(lines[i], px, py + newlineyoffset);
-		newlineyoffset += lineheight;
+
+	updateValues() {
+		this.biggerWindowSize = ((this.canvas.width > this.canvas.height) ? this.canvas.width : this.canvas.height);
+		this.smallerWindowSize = ((this.canvas.width < this.canvas.height) ? this.canvas.width : this.canvas.height);
+
+		this.fontSizeSmall = this.biggerWindowSize*0.024;
+		this.fontSizeLarge = this.biggerWindowSize*0.048;
+		this.characterSizeMultiplier = this.smallerWindowSize*0.0003;
 	}
-}
 
-//typewriter function write letter by letter
-//pass promises as objects!
-//{ promise: MyPromise }
-
-async function canvasTypewriterS(canvas, ctx, text, x, y, skip = { promise: Promise.reject() }) {
-	for(let i = 0; i < text.length; i++) {
-		if(i % 3 == 0) { sfxPlay(11); }
-		ctx.fillText(text.substring(0,i), canvasX(canvas, x), canvasY(canvas, y));
-		await Promise.any([skip.promise, new Promise((resolve) => {
-			window.setTimeout(() => {
-				resolve();
-			}, 50);
-		})]);
+	getX(xvalue) {
+		return Math.trunc(this.canvas.width*(xvalue/100));
 	}
-	sfxStop(11);
-}
-async function canvasTypewriterM(canvas, ctx, text, x, y, skip = { promise: Promise.reject() }) {
-	let lines = text.split('\n');
-	let newlineyoffset = 0;
-	let metrics = ctx.measureText(text);
-	let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-	lineheight *= 1.5;
+	getY(yvalue) {
+		return Math.trunc(this.canvas.height*(yvalue/100));
+	}
 
-	for(let i = 0; i < lines.length; i++) {
-		for(let j = 0; j < lines[i].length; j++) {
-			if(j % 3 == 0) { sfxPlay(11); } //adjust volume!
-			ctx.fillText(lines[i].substring(0,j), canvasX(canvas, x),  canvasY(canvas, y) + newlineyoffset);
+	convertXtoY(yvalue) {
+		return parseInt(this.canvas.height/this.canvas.width*yvalue);
+	}
+
+	getScaleX() {
+		return this.canvas.width/1000;
+	}
+	getScaleY() {
+		return this.canvas.height/500;
+	}
+
+	drawRoundedBox(x, y, sizex, sizey, radius) {
+		this.ctx.beginPath();
+		this.ctx.roundRect(this.getX(x), this.getY(y), this.getX(sizex), this.getY(sizey), radius);
+		this.ctx.fill();
+		return this;
+	}
+	drawRoundedBoxBorder(x, y, sizex, sizey, radius) {
+		this.ctx.beginPath();
+		this.ctx.roundRect(canvasX(x), canvasY(y), this.getX(sizex), this.getY(sizey), radius);
+		this.ctx.stroke();
+		return this;
+	}
+
+	// 0 - right side
+	// 0.5 PI - bottom
+	// PI - left size
+	// 1.5 PI - top
+
+	drawCircleBox(x, y, sizex, sizey) {
+		let px = this.getX(x);
+		let py = this.getY(y);
+		let psizex = this.getX(sizex);
+		let psizey = this.getY(sizey);
+
+		this.ctx.fillRect(px + (psizey/2), py, psizex - psizey, psizey);
+		this.ctx.beginPath();
+		this.ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
+		this.ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
+		this.ctx.fill();
+
+		return this;
+	}
+	drawCircleBoxBorder(x, y, sizex, sizey) {
+		let px = this.getX(this.canvas, x);
+		let py = this.getY(this.canvas, y);
+		let psizex = this.getX(this.canvas, sizex);
+		let psizey = this.getY(this.canvas, sizey);
+
+		this.ctx.beginPath();
+		this.ctx.arc(px + (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5, true);
+		this.ctx.moveTo(px + (psizey/2), py);
+		this.ctx.lineTo(px + psizex - (psizey/2), py);
+		this.ctx.moveTo(px + (psizey/2), py + psizey);
+		this.ctx.lineTo(px + psizex - (psizey/2), py + psizey);
+		this.ctx.moveTo(px + psizex, py); //moves to beginning of circle drawing
+		this.ctx.arc(px + psizex - (psizey/2), py + (psizey/2), psizey/2, Math.PI * 1.5, Math.PI * 0.5);
+		this.ctx.stroke();
+
+		return this;
+	}
+
+	drawBox(x, y, sizex, sizey) {
+		this.ctx.fillRect(this.getX(x), this.getY(y), this.getX(sizex), this.getY(sizey));
+		return this;
+	}
+	drawBoxBorder(x, y, sizex, sizey) {
+		this.ctx.strokeRect(this.getX(x), this.getY(y), this.getX(sizex), this.getY(sizey));
+		return this;
+	}
+
+	drawBoxSamesizeX(x, y, size) {
+		this.ctx.fillRect(this.getX(x), this.getY(y), this.getX(size), this.getX(size));
+		return this;
+	}
+	drawBoxSamesizeY(x, y, size) {
+		this.ctx.fillRect(this.getX(x), this.getY(y), this.getY(size), this.getY(size));
+		return this;
+	}
+
+	setColor(color) {
+		this.ctx.fillStyle = color;
+		return this;
+	}
+	getColor() {
+		return this.ctx.fillStyle;
+	}
+
+	setBorder(color) {
+		this.ctx.strokeStyle = color;
+		return this;
+	}
+	setBrightness(brightness) {
+		this.ctx.filter = "brightness("+brightness+"%)";
+		return this;
+	}
+	resetBrightness() {
+		this.ctx.filter = "brightness(100%)";
+		return this;
+	}
+	getBrightness() {
+		let str = String(this.ctx.filter);
+		return Number(str.substring(str.indexOf('(') + 1, str.indexOf(')', str.indexOf('(')) - 1));
+	}
+
+	setAlpha(alpha) {
+		this.ctx.globalAlpha = alpha;
+		return this;
+	}
+	resetAlpha() {
+		this.ctx.globalAlpha = 1;
+		return this;
+	}
+
+	setFont(font, fontsize, weight = "normal") {
+		this.fontFamily = font;
+		this.fontSize = String(fontsize);
+		this.fontWeight = weight;
+		this.ctx.font = this.fontWeight+" "+this.fontSize+"px "+this.fontFamily;
+		return this;
+	}
+	setFontFamily() {
+		this.fontFamily = font;
+		this.ctx.font = this.fontWeight+" "+this.fontSize+"px "+this.fontFamily;
+		return this;
+	}
+	setFontSize(fontsize) {
+		this.fontSize = String(fontsize);
+		this.ctx.font = this.fontWeight+" "+this.fontSize+"px "+this.fontFamily;
+		return this;
+	}
+	setFontWeight(weight) {
+		this.fontWeight = weight;
+		this.ctx.font = this.fontWeight+" "+this.fontSize+"px "+this.fontFamily;
+		return this;
+	}
+	setVerySmallFontSize() {
+		this.setFontSize(this.fontSizeSmall/2);
+		return this;
+	}
+	setSmallFontSize() {
+		this.setFontSize(this.fontSizeSmall);
+		return this;
+	}
+	setLargeFontSize() {
+		this.setFontSize(this.fontSizeLarge);
+		return this;
+	}
+
+	clear(clearcolor) {
+		let temp = this.ctx.fillStyle;
+		this.ctx.fillStyle = clearcolor;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.fillStyle = temp;
+
+		return this;
+	}
+
+	textS(text, x, y) {
+		this.ctx.fillText(text, this.getX(x), this.getY(y));
+		return this;
+	}
+	textBorderS(text, x, y) {
+		this.ctx.strokeText(text, this.getX(x) - this.ctx.lineWidth, this.getY(y) - this.ctx.lineWidth);
+		return this;
+	}
+	textAndBorderS(text, x, y) {
+		this.ctx.strokeText(text, this.getX(x) - this.ctx.lineWidth, this.getY(y) - this.ctx.lineWidth);
+		this.ctx.fillText(text, this.getX(x), this.getY(y));
+		return this;
+	}
+
+	textM(text, x, y) {
+		let px = this.getX(x);
+		let py = this.getY(y);
+		let lines = text.split('\n');
+		let newlineyoffset = 0;
+		let metrics = this.ctx.measureText(text);
+		//lowest point from line + highest point from line
+		let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+		lineheight *= 1.5;
+		for(let i = 0; i < lines.length; i++) {
+			this.ctx.fillText(lines[i], px, py + newlineyoffset);
+			newlineyoffset += lineheight;
+		}
+		return this;
+	}
+	textBorderM(text, x, y) {
+		let px = this.getX(x);
+		let py = this.getY(y);
+		let lines = text.split('\n');
+		let newlineyoffset = 0;
+		let metrics = this.ctx.measureText(text);
+		//lowest point from line + highest point from line
+		let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+		lineheight *= 1.5;
+		for(let i = 0; i < lines.length; i++) {
+			this.ctx.strokeText(lines[i], px, py + newlineyoffset);
+			newlineyoffset += lineheight;
+		}
+		return this;
+	}
+
+	//typewriter function write letter by letter
+	//pass promises as objects! (work kinda like C++ references)
+	//{ promise: MyPromise }
+
+	async typewriterS(text, x, y, skip = { promise: Promise.reject() }) {
+		for(let i = 0; i < text.length; i++) {
+			if(i % 3 == 0) { sfxPlay(11); }
+			this.ctx.fillText(text.substring(0,i), canvas.getX(x), canvas.getY(y));
 			await Promise.any([skip.promise, new Promise((resolve) => {
 				window.setTimeout(() => {
 					resolve();
 				}, 50);
 			})]);
 		}
-		newlineyoffset += lineheight;
+		sfxStop(11);
+		return this;
 	}
-	sfxStop(11);
+	async typewriterM(text, x, y, skip = { promise: Promise.reject() }) {
+		let lines = text.split('\n');
+		let newlineyoffset = 0;
+		let metrics = this.ctx.measureText(text);
+		let lineheight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+		lineheight *= 1.5;
+
+		for(let i = 0; i < lines.length; i++) {
+			for(let j = 0; j < lines[i].length; j++) {
+				if(j % 3 == 0) { sfxPlay(11); } //adjust volume!
+				this.ctx.fillText(lines[i].substring(0,j), canvas.getX(x),  canvas.getY(y) + newlineyoffset);
+				await Promise.any([skip.promise, new Promise((resolve) => {
+					window.setTimeout(() => {
+						resolve();
+					}, 50);
+				})]);
+			}
+			newlineyoffset += lineheight;
+		}
+		sfxStop(11);
+		return this;
+	}
+
+	background(image) {
+		this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
+		this.currentBGImage = image;
+		return this;
+	}
+
+	image(image, x, y, scale) {
+		this.ctx.drawImage(image, this.getX(x), this.getY(y), image.width * scale, image.height * scale);
+		return this;
+	}
+	//draws part of image onto canvas (draws equivalent part)
+	imageEquivalent(image, x, y, sizex, sizey) {
+		this.ctx.drawImage(
+			image,
+			image.width*x/100, image.height*y/100, image.width*sizex/100, image.height*sizey/100,
+			this.getX(x), this.getY(y), this.getX(sizex),  this.getY(sizey)
+		);
+		return this;
+	}
+	//draws whole image to a speicifed space on canvas
+	imageDest(image, x, y, sizex, sizey) {
+		this.ctx.drawImage(
+			image,
+			0, 0, image.width, image.height,
+			this.getX(x), this.getY(y), this.getX(sizex), this.getY(sizey)
+		);
+		return this;
+	}
+	//draws square image to canvas
+	imageSamesizeX(image, x, y, size) {
+		this.ctx.drawImage(
+			image,
+			0, 0, image.width, image.height,
+			this.getX(x), this.getY(y), this.getX(size), this.getX(size)
+		);
+		return this;
+	}
+	//draws square image to canvas
+	imageSamesizeY(image, x, y, size) {
+		this.ctx.drawImage(
+			image,
+			0, 0, image.width, image.height,
+			this.getX(x), this.getY(y), this.getY(size), this.getY(size)
+		);
+		return this;
+	}
+
+	async fadeOut(strength = 10) {
+		this.animationBlocked = true;
+		let savedcvs = await loadImage(canvas.canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
+		while(this.getBrightness() > 5) {
+			await new Promise((resolve) => {
+				window.setTimeout(() => {
+					this.setBrightness(this.getBrightness() - strength);
+					this.background(savedcvs);
+					resolve();
+				}, 50);
+			});
+		}
+		this.resetBrightness();
+		this.animationBlocked = false;
+		return this;
+	}
+
+	loadingScreen(messageoverride) {
+		this.clear("purple");
+		this.setColor("#ffffff");
+		this.setLargeFontSize();
+		this.textS(((messageoverride == null) ? getTranslation(0) : messageoverride), 10, 10);
+		this.setSmallFontSize();
+		return this;
+	}
+	loadingItemDone(place) {
+		let message;
+		switch(place) {
+			case(0): message = "Translations"; break;
+			case(1): message = "Music"; break;
+			case(2): message = "SFX"; break;
+			case(3): message = "Voice"; break;
+			case(4): message = "Characters"; break;
+		}
+
+		this.textS(message+" done", 10, 15 + (place * 5));
+		return this;
+	}
 }
 
 //returns image
@@ -272,88 +421,4 @@ async function loadImages(filenames_array) {
 		temparr.push(await loadImage(filenames_array[i]));
 	}
 	return temparr;
-}
-
-function canvasBackground(canvas, ctx, image) {
-	ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-	currentBGImage = image;
-}
-//just draw image
-function canvasImage(canvas, ctx, image, x, y, scale) {
-	ctx.drawImage(image, canvasX(canvas, x), canvasY(canvas, y), image.width * scale, image.height * scale);
-}
-//draws part of image onto canvas (draws equivalent part)
-function canvasImageEquivalent(canvas, ctx, image, x, y, sizex, sizey) {
-	ctx.drawImage(
-		image,
-		image.width*x/100, image.height*y/100, image.width*sizex/100, image.height*sizey/100,
-		canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey)
-	);
-}
-
-//draws whole image to a speicifed space on canvas
-function canvasImageDest(canvas, ctx, image, x, y, sizex, sizey) {
-	ctx.drawImage(
-		image,
-		0, 0, image.width, image.height,
-		canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, sizex), canvasY(canvas, sizey)
-	);
-}
-//draws square image to canvas
-function canvasImageSamesizeX(canvas, ctx, image, x, y, size) {
-	ctx.drawImage(
-		image,
-		0, 0, image.width, image.height,
-		canvasX(canvas, x), canvasY(canvas, y), canvasX(canvas, size), canvasX(canvas, size)
-	);
-}
-//draws square image to canvas
-function canvasImageSamesizeY(canvas, ctx, image, x, y, size) {
-	ctx.drawImage(
-		image,
-		0, 0, image.width, image.height,
-		canvasX(canvas, x), canvasY(canvas, y), canvasY(canvas, size), canvasY(canvas, size)
-	);
-}
-
-async function canvasFadeOut(canvas, ctx, strength = 10) {
-	animationBlocked = true;
-	let savedcvs = await loadImage(canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
-	while(canvasGetBrightness(canvas, ctx) > 5) {
-		await new Promise((resolve) => {
-			window.setTimeout(() => {
-				canvasSetBrightness(canvas, ctx, canvasGetBrightness(canvas, ctx) - strength);
-				canvasBackground(canvas, ctx, savedcvs);
-				resolve();
-			}, 50);
-		});
-	}
-	canvasResetBrightness(canvas, ctx);
-	animationBlocked = false;
-	return;
-}
-
-//
-// LOADING SCREEN
-//
-
-function canvasLoading(canvas, ctx, messageoverride = null) {
-	canvasClear(canvas, ctx, "purple");
-	canvasSetColor(canvas, ctx, "#ffffff");
-	canvasSetLargeFont(canvas, ctx);
-	canvasTextS(canvas, ctx, ((messageoverride == null) ? getTranslation(0) : messageoverride), 10, 10);
-	canvasSetSmallFont(canvas, ctx);
-}
-
-function canvasLoadingDone(canvas, ctx, place) {
-	let message;
-	switch(place) {
-		case(0): message = "Translations"; break;
-		case(1): message = "Music"; break;
-		case(2): message = "SFX"; break;
-		case(3): message = "Voice"; break;
-		case(4): message = "Characters"; break;
-	}
-
-	canvasTextS(canvas, ctx, message+" done", 10, 15 + (place * 5));
 }

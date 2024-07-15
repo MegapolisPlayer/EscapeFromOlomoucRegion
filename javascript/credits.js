@@ -5,12 +5,12 @@ let creditsImg;
 function setCreditsStep(titleid, text = "", fn = undefined) {
 	setTimeout(() => {
 		console.log("setCreditsStep callback: Next credits step!");
-		canvasSetColor(canvas, ctx, "#ffffff");
-		canvasBackground(canvas, ctx, creditsImg);
-		canvasSetFontWeight(canvas, ctx, "bold");
-		canvasTextS(canvas, ctx, getTranslation(titleid), 5, 35);
-		canvasSetFontWeight(canvas, ctx, "normal");
-		canvasTextM(canvas, ctx, text, 10, 35);
+		canvas.setColor("#ffffff");
+		canvas.background(creditsImg);
+		canvas.setFontWeight("bold");
+		canvas.textS(getTranslation(titleid), 5, 35);
+		canvas.setFontWeight("normal");
+		canvas.textM(text, 10, 35);
 		if(fn != undefined) { fn.call() };
 	}, creditsDelay * creditsCounter);
 	creditsCounter++;
@@ -21,7 +21,7 @@ async function renderCredits() {
 	loadMusic([9]);
 	musicPlay(9);
 	
-	canvasSetSmallFont(canvas, ctx);
+	canvas.setSmallFontSize();
 	addSmallButton("creditsskip", getTranslation(7), 80, 0, 20, 10, () => { window.location.reload(); });
 
 	setCreditsStep(1);
