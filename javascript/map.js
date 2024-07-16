@@ -1,3 +1,7 @@
+let woodImage;
+let steelImage;
+let mapImages = [];
+
 async function loadMaps() {
 	woodImage = await loadImage("assets/map/woodbg.png");
 	steelImage = await loadImage("assets/map/steelbg.png");
@@ -8,6 +12,8 @@ async function loadMaps() {
 }
 
 async function renderMap(day) {
+	ui.animationBlocked = true;
+
 	canvas.background(woodImage);
 	canvas.image(mapImages[day-1], 10, 10, (canvas.smallerWindowSize/mapImages[day-1].height)*0.8);
 
@@ -27,5 +33,6 @@ async function renderMap(day) {
 	}
 	canvas.textM(string, 80, 30);
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
+	await renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
+	ui.animationBlocked = false;
 }

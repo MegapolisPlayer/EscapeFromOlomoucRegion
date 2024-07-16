@@ -2,13 +2,38 @@ class ArrowHandler {
 
 }
 
-function waiterEventFromElement(element, event) {
+let arrowType = {
+	LEFT: 0,
+	RIGHT: 1,
+	UP: 2,
+	DOWN: 3,
+	INFO: 4
+};
+let arrowImages = [];
+let arrowImages2 = []; //second stage of animation
+
+const arrowSize = 100;
+
+let arrowList = [];
+let arrowAnimationInterval;
+const arrowAnimationIntervalTime = 700;
+let arrowAnimationState = false; //false - default, true - animated
+
+function waiterEventFromElement(element, event, resolvevalue = undefined) {
 	//in promise: first arg resolve, then reject
 	return new Promise((resolve) => {
-	  const listener = () => {
-		element.removeEventListener(event, listener); resolve();
-	  }
-	  element.addEventListener(event, listener);
+		let listener;
+		if(resolvevalue === undefined) {
+			listener = () => {
+				element.removeEventListener(event, listener); resolve();
+			}
+		}
+		else {
+			listener = () => {
+				element.removeEventListener(event, listener); resolve(resolvevalue);
+			}
+		}
+		element.addEventListener(event, listener);
 	})
 }
 
@@ -23,7 +48,7 @@ function internal_setButton(id, text, classname, x, y, sizex, sizey, fn) {
 	btn.style.setProperty("top", y+"px");
 	btn.addEventListener("click", fn);
 	btn.addEventListener("click", () => { 
-		if(settings.music_enabled) { sfxPlay(0); }
+		if(ui.settings.music_enabled) { sfxPlay(0); }
 	})
 	document.getElementById("draw_contain").appendChild(btn);
 	return btn;
@@ -41,6 +66,11 @@ function addVerySmallButton(id, text, x, y, sizex, sizey, fn) {
 }
 function removeButton(id) {
 	document.getElementById(id).remove();
+}
+function removeButtons(idarray) {
+	idarray.forEach((val) => {
+		document.getElementById(val).remove();
+	})
 }
 
 function showButton(id) {
@@ -80,7 +110,7 @@ async function loadArrows() {
 	arrowImages2.push(await loadImage("assets/arrow/info2.png"));
 
 	arrowAnimationInterval = window.setInterval(() => {
-		if(canvas.animationBlocked) return;
+		if(ui.animationBlocked) return;
 
 		for(let i = 0; i < arrowList.length; i++) {
 			if(document.getElementById(arrowList[i].id).style.getPropertyValue("display") === "none") continue;

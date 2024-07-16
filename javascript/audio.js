@@ -1,3 +1,6 @@
+let musicArray = [];
+let sfxArray = [];
+
 //audio crediting system
 let musicNames = [
 	//0, Main menu
@@ -62,7 +65,7 @@ async function loadMusic(toload) {
 	});
 
 	await promise;
-	audioVolume(settings.volume);
+	audioVolume(ui.settings.volume);
 	return;
 }
 async function loadSFX() {
@@ -125,28 +128,28 @@ async function loadVoice() {
 
 function audioToggle(elem) {
 	musicToggle();
-	if(elem != undefined) { elem.innerHTML = getTranslation(settings.music_enabled ? 9 : 8); }
-	settings.voice_enabled = settings.music_enabled;
+	if(elem != undefined) { elem.innerHTML = getTranslation(ui.settings.music_enabled ? 9 : 8); }
+	ui.settings.voice_enabled = ui.settings.music_enabled;
 }
 
 function musicToggle(elem) {
-	if(settings.music_enabled) {
+	if(ui.settings.music_enabled) {
 		musicArray[musicCurrent].pause();
-		settings.music_enabled = false;
+		ui.settings.music_enabled = false;
 		if(elem != undefined) { elem.innerHTML = getTranslation(27); }
 	}
 	else {
-		settings.music_enabled = true;
+		ui.settings.music_enabled = true;
 		if(elem != undefined) { elem.innerHTML = getTranslation(26); }
 	}
 }
 function voiceToggle(elem) {
-	if(settings.voice_enabled) {
-		settings.voice_enabled = false;
+	if(ui.settings.voice_enabled) {
+		ui.settings.voice_enabled = false;
 		elem.innerHTML = getTranslation(27);
 	}
 	else {
-		settings.voice_enabled = true;
+		ui.settings.voice_enabled = true;
 		elem.innerHTML = getTranslation(26);
 	}
 }
@@ -174,22 +177,22 @@ function musicPlay(id) {
 	}
 	musicPause(musicCurrent);
 	musicCurrent = id;
-	if(!settings.music_enabled) { 
+	if(!ui.settings.music_enabled) {
 		musicArray[id].pause();	return;
 	}
 	musicArray[id].currentTime = 0;
 	musicArray[id].play();
 }
 function musicPause() {
-	if(!settings.music_enabled) { return; }
+	if(!ui.settings.music_enabled) { return; }
 	musicArray[musicCurrent].pause();
 }
 function musicUnpause() {
-	if(!settings.music_enabled) { return; }
+	if(!ui.settings.music_enabled) { return; }
 	musicArray[musicCurrent].play();
 }
 function musicRestart() {
-	if(!settings.music_enabled) { return; }
+	if(!ui.settings.music_enabled) { return; }
 	musicArray[musicCurrent].currentTime = 0;
 }
 
@@ -197,7 +200,7 @@ function sfxPlay(id) {
 	if(id >= sfxArray.length || id == undefined) {
 		console.error("SFX ID undefined or out of range.");
 	}
-	if(!settings.music_enabled) { return; };
+	if(!ui.settings.music_enabled) { return; };
 	sfxArray[id].currentTime = 0;
 	sfxArray[id].play();
 }
@@ -205,7 +208,7 @@ function sfxPlayQuiet(id) {
 	if(id >= sfxArray.length || id == undefined) {
 		console.error("SFX ID undefined or out of range.");
 	}
-	if(!settings.music_enabled) { return; };
+	if(!ui.settings.music_enabled) { return; };
 
 	let tempVolume = sfxArray[id].volume;
 	sfxArray[id].volume = sfxArray[id].volume*0.5;
@@ -219,7 +222,7 @@ function sfxPlayLoud(id) {
 	if(id >= sfxArray.length || id == undefined) {
 		console.error("SFX ID undefined or out of range.");
 	}
-	if(!settings.music_enabled) { return; };
+	if(!ui.settings.music_enabled) { return; };
 
 	let tempVolume = sfxArray[id].volume;
 	sfxArray[id].volume = sfxArray[id].volume*1.5;
@@ -233,7 +236,7 @@ function sfxStop(id) {
 	if(id >= musicArray.length || id == undefined) {
 		console.error("Music ID undefined or out of range.");
 	}
-	if(!settings.music_enabled) { return; }
+	if(!ui.settings.music_enabled) { return; }
 	sfxArray[id].pause();
 }
 
@@ -241,7 +244,7 @@ function voicePlay(id) {
 	if(id == undefined) {
 		console.error("Voiceover ID undefined.");
 	}
-	if(!settings.voice_enabled) { return; }
+	if(!ui.settings.voice_enabled) { return; }
 	getVoiceTranslation(id).play();
 }
 

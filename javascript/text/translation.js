@@ -1,3 +1,23 @@
+let translationEN = [];
+let translationCZ = [];
+let translationDE = [];
+let translationPL = [];
+let translationSUS = [];
+let translationBA = [];
+
+let translationSelected = 0;
+
+let translations = [ translationEN, translationCZ, translationDE, translationPL, translationSUS, translationBA ];
+let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Susština", "Baština" ];
+
+let voiceEN = [];
+let voiceCZ = [];
+let voiceDE = [];
+let voiceSUS = [];
+let voiceBA = [];
+
+let voice = [ voiceEN, voiceCZ, voiceDE, voiceSUS, voiceBA ];
+
 async function loadTranslation() {
 	const promise = new Promise((resolve) => {
 		const xhr = new XMLHttpRequest();

@@ -1,14 +1,14 @@
 function initWebpage() {
-	canvas = new CanvasImplementation();
-
 	document.addEventListener("fullscreenchange", () => {
 		if(document.fullscreenElement != null) {
 			console.log("fullscreen on");
 			canvas.resize(window.screen.width, window.screen.height);
+			ui.canvas.resize(window.screen.width, window.screen.height);
 		}
 		else {
 			console.log("fullscreen off");
 			cavnas.resize(1000, 500);
+			ui.canvas.resize(1000, 500);
 		}
 	});
 
@@ -26,7 +26,6 @@ async function canvasResizeTo(x, y) {
 	let savedcvs = await loadImage(canvas.canvas.canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
 	let oldscaleX = canvas.getScaleX();
 	let oldscaleY = canvas.getScaleY();
-
 
 	//change vars
 	let oldfill = canvas.canvas.ctx.fillStyle;

@@ -1,5 +1,5 @@
 async function cutsceneNews() {
-	canvas.animationBlocked = true;
+	ui.animationBlocked = true;
 
 	let bg = await loadImage("assets/cutscene/news.jpg");
 
@@ -38,20 +38,20 @@ async function cutsceneNews() {
 	}
 
 	sfxStop(10);
-	canvas.animationBlocked = false;
+	//ui.animationBlocked = false;
 	clearArrows();
 	removeButton("skip");
 }
 
 async function cutsceneStudenka() {
-	canvas.animationBlocked = true;
+	ui.animationBlocked = true;
 
 	//dialogue here
 
-	canvas.animationBlocked = false;
+	ui.animationBlocked = false;
 }
 
 async function cutscenePoland() {
-	canvas.animationBlocked = true;
-	canvas.animationBlocked = false;
+	ui.animationBlocked = true;
+	ui.animationBlocked = false;
 }

@@ -1,3 +1,26 @@
+// CHARACTERS
+
+let player = {
+	X: 0,
+	Y: 0,
+	SCALE: 1,
+	ISON: false,
+};
+let NPC = {}; //set in loadCharacters function, types of NPCs
+
+let npcs = [];
+let characterAnimationInterval;
+const characterAnimationIntervalTime = 600;
+let characterAnimationState = false; //works for players too
+
+//images
+let players = [];
+let players2 = []; //second stage of animation
+let selectedPlayer = 0;
+
+let characters = [];
+let characters2 = []; //second stage of animation
+
 async function loadCharacters() {
 	let charactersToLoad = ["default", "winter", "girl", "girl_2"];
 	for(let i = 0; i < charactersToLoad.length; i++) {
@@ -28,7 +51,7 @@ async function loadCharacters() {
 	//Interval setup
 
 	characterAnimationInterval = window.setInterval(() => {
-		if(canvas.animationBlocked) return;
+		if(ui.animationBlocked) return;
 
 		if(player.ISON) {
 			canvasPlayerRemove(player.X, player.Y, player.SCALE, canvas.currentBGImage);
@@ -37,22 +60,6 @@ async function loadCharacters() {
 			}
 			else {
 				canvasPlayer2(player.X, player.Y, player.SCALE);
-			}
-
-			if(dialogueEnabled) {
-				let tempcolor = canvas.getColor();
-				canvas.setColor("#ffffff");
-
-				let boxsize = player.Y+(players[selectedPlayer].height*player.SCALE*canvas.characterSizeMultiplier/canvas.canvas.height/2*100)-80;
-
-				//we expect this to take less than 50ms
-				canvas.drawBox(
-					player.X-(players[selectedPlayer].width*player.SCALE*canvas.characterSizeMultiplier/canvas.canvas.width/2*100),
-					80,
-					players[selectedPlayer].width*player.SCALE*canvas.characterSizeMultiplier/canvas.canvas.width*100, 80,
-					(boxsize < 0) ? 0 : boxsize //only the part which the character touches
-				);
-				canvas.setColor(tempcolor); //for the text, if we dont manage fast enough it will redraw on next char
 			}
 		}
 		for(let i = 0; i < npcs.length; i++) {
@@ -63,19 +70,6 @@ async function loadCharacters() {
 			}
 			else {
 				drawNPC2(npcs[i].TYPE, npcs[i].X, npcs[i].Y, npcs[i].SCALE);
-			}
-
-			if(dialogueEnabled) {
-				canvas.setColor("#ffffff");
-
-				let boxsize = npcs[i].Y+(characters[npcs[i].TYPE].height*canvas.characterSizeMultiplier/canvas.height*100)-80;
-
-				canvas.drawBox(
-					npcs[i].X-(characters[npcs[i].TYPE].width*npcs[i].SCALE*canvas.characterSizeMultiplier/canvas.width/2*100),
-					80,
-					characters[npcs[i].TYPE].width*npcs[i].SCALE*canvas.characterSizeMultiplier/canvas.width*100,
-					(boxsize < 0) ? 0 : boxsize //only the part which the character occupies will get redrawn
-				);
 			}
 		}
 		characterAnimationState = !characterAnimationState;

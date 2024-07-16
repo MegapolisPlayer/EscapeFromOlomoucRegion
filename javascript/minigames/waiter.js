@@ -74,7 +74,7 @@ async function minigameWaiterMenu() {
 
 	canvas.setSmallFontSize().setFontWeight("normal");
 
-	canvas.textM(wrapText(getTranslation(67)+" "+String(Math.trunc(10*settings.diff_multiplier))+" "+getTranslation(68)+" "+String(20)+" "+getTranslation(69), 90), 5, 18);
+	canvas.textM(wrapText(getTranslation(67)+" "+String(Math.trunc(10*ui.settings.diff_multiplier))+" "+getTranslation(68)+" "+String(20)+" "+getTranslation(69), 90), 5, 18);
 
 	canvas.imageSamesizeY(waiterMinigameImages[1], 5, 40, 10);
 	canvas.textS(getTranslation(70), 15, 45);
@@ -156,7 +156,7 @@ function waiterTableButtonCallback(e) {
 		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.GOOD);
 		removeOrder(e.target.custom_property_table_id);
 		waiterCounters.completed++;
-		info.money += 20;
+		ui.info.money += 20;
 		renderWaiterCounter(waiterCounters.completed, 17);
 		//reset selection
 		waiterOrderSelected = -1;
@@ -274,7 +274,7 @@ function renderWaiterMinigame() {
 
 	renderOrders(); //also renders orders' conveyor belts
 
-	for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
+	for(let i = 0; i < 16 + (ui.settings.difficulty * 4); i++) {
 		waiterTables.push({ id: i, phase: 0, ticks: 0 });
 		waiterButtons.push(internal_setButton("table"+String(i), "", "draw_input_elem_arrow",
 			canvas.getX(10+(Math.trunc(i/4)*10)), canvas.getY(10+((i%4)*15)), canvas.getY(10), canvas.getY(10),
@@ -286,10 +286,10 @@ function renderWaiterMinigame() {
 
 	//add other buttons
 	waiterButtons.push(addSmallButton("pause_waiter", getTranslation(10), 80, 80, 20, 10, (e) => {
-		pauseMenuToggle();
+		ui.pauseMenuToggle();
 	}));
 
-	if(info.speedrun) {
+	if(ui.info.speedrun) {
 		document.getElementById("pause_waiter").setAttribute("disabled", "disabled");
 	}
 }
@@ -302,7 +302,7 @@ async function minigameWaiterGame() {
 	let endGamePromiseCompleted = false;
 
 	waiterButtons.push(addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, (e) => {
-		info.money -= getEarlyLeaveTimeMoney(waiterCounters.time/10);
+		ui.info.money -= getEarlyLeaveTimeMoney(waiterCounters.time/10);
 		endGamePromiseCompleted = true;
 	}));
 	document.getElementById("skip").setAttribute("disabled", "disabled");
@@ -322,7 +322,7 @@ async function minigameWaiterGame() {
 		
 		//advance random phases, only every N tick
 		if(Math.random()<=(1/nticks)) {
-			let rn = Math.trunc(Math.random()*(16 + (settings.difficulty * 4)));
+			let rn = Math.trunc(Math.random()*(16 + (ui.settings.difficulty * 4)));
 
 			//advance random phases
 			if(waiterTables[rn].phase == waiterTablePhases.BASE) {
@@ -330,7 +330,7 @@ async function minigameWaiterGame() {
 			}
 		}
 
-		for(let i = 0; i < 16 + (settings.difficulty * 4); i++) {
+		for(let i = 0; i < 16 + (ui.settings.difficulty * 4); i++) {
 			waiterTables[i].ticks++;
 			//advance time phases
 
@@ -349,7 +349,7 @@ async function minigameWaiterGame() {
 				waiterTableUpdate(i, waiterTablePhases.LEFT);
 				removeOrder(i);
 				waiterCounters.undelivered++;
-				info.money -= Math.trunc(10*settings.diff_multiplier);
+				ui.info.money -= Math.trunc(10*ui.settings.diff_multiplier);
 				renderWaiterCounter(waiterCounters.undelivered, 37);
 			}
 			else if(waiterTables[i].phase == waiterTablePhases.LEFT && waiterTables[i].ticks >= shorttime) {
@@ -378,13 +378,13 @@ async function minigameWaiterGame() {
 		else renderWaiterCounter(String(seconds)+"s", 77);
 
 		let MoneyAmount = getEarlyLeaveTimeMoney(waiterCounters.time/10);
-		if(info.money>=MoneyAmount) {
+		if(ui.info.money>=MoneyAmount) {
 			document.getElementById("skip").removeAttribute("disabled");
 			document.getElementById("skip").innerHTML = getTranslation(80)+" "+MoneyAmount;
 		}
 		else {
 			document.getElementById("skip").setAttribute("disabled", "disabled");
-			document.getElementById("skip").innerHTML = getTranslation(82)+"<br>"+MoneyAmount+" "+getTranslation(83)+", "+getTranslation(84)+" "+info.money;
+			document.getElementById("skip").innerHTML = getTranslation(82)+"<br>"+MoneyAmount+" "+getTranslation(83)+", "+getTranslation(84)+" "+ui.info.money;
 		}
 
 		if(waiterCounters.time <= 0) {
@@ -398,7 +398,7 @@ async function minigameWaiterGame() {
 				setTimeout(() => { resolve(); }, 100);
 			});  
 		}
-		while(info.paused);
+		while(ui.info.paused);
 	}
 	
 	waiterButtons.forEach((val) => {
@@ -439,7 +439,7 @@ async function minigameWaiterSummary() {
 //
 
 async function minigameWaiter() {
-	canvas.animationBlocked = true;
+	ui.animationBlocked = true;
 
 	minigameWaiterReset();
 	await minigameWaiterLoad();
@@ -447,5 +447,5 @@ async function minigameWaiter() {
 	await minigameWaiterGame();
 	await minigameWaiterSummary();
 
-	canvas.animationBlocked = false;
+	ui.animationBlocked = false;
 }

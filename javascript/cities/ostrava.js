@@ -3,15 +3,15 @@ let OstravaImages = [];
 function OstravaNastupiste() {
 	canvasPlayer(70, 60, 2); 
 
-	return renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, async () => { info.location_minor_next = 1; }));
+	return renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, async () => { ui.info.location_minor_next = 1; }));
 }
 
 function OstravaNadrazi() {
 	canvasPlayer(70, 72, 0.25); 
 
 	return renderArrows([
-		new ArrowInfo(45, 75, arrowType.UP, () => { info.location_minor_next = 2; }),
-		new ArrowInfo(10, 80, arrowType.LEFT, () => { info.location_minor_next = 0; }),
+		new ArrowInfo(45, 75, arrowType.UP, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(10, 80, arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
 	]);
 }
 
@@ -19,11 +19,11 @@ function OstravaNastupiste2() {
 	canvasPlayer(90, 80, 0.5); 
 
 	return renderArrows([
-		new ArrowInfo(75, 60, arrowType.DOWN, () => { info.location_minor_next = 1; }),
+		new ArrowInfo(75, 60, arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
 		new ArrowInfo(50, 70, arrowType.INFO, () => { 
 			clearArrows();
-			info.location_minor_next = -1;
-			info.location_major++;
+			ui.info.location_minor_next = -1;
+			ui.info.location_major++;
 		})
 	]);
 }
@@ -31,9 +31,9 @@ function OstravaNastupiste2() {
 async function OstravaHandler() {
 	console.log("OSTRAVA");
 
-	info.location_major = 6;
-	info.location_minor = 0;
-	info.location_minor_next = 0;
+	ui.info.location_major = 6;
+	ui.info.location_minor = 0;
+	ui.info.location_minor_next = 0;
 
 	canvas.loadingScreen();
 	await loadMusic([8]);
@@ -44,56 +44,54 @@ async function OstravaHandler() {
 	]);
 
 	//map
-	if(!info.speedrun) {
+	if(!ui.info.speedrun) {
 		musicPlay(1);
 		await renderMap(7);
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 	}
 	
 	musicPlay(8); //start playing AFTER loading
-	canvas.animationBlocked = false;
+	ui.animationBlocked = false;
 
-	showPause();
-	canvas.background(OstravaImages[info.location_minor]);
+	ui.enablePauseButton();
+	canvas.background(OstravaImages[ui.info.location_minor]);
 	canvasPlayer(70, 60, 2); 
 
 	//entry dialogue
-	if(!info.speedrun) {
+	if(!ui.info.speedrun) {
 		dialogueBegin();
 		await dialogueNext(0);
 		dialogueEnd();
 	}
 
 	let promise;
-	while(info.location_minor_next != -1) {
-		info.location_minor = info.location_minor_next;
+	while(ui.info.location_minor_next != -1) {
+		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
 		clearNPC();
 
-		console.log("OSTRAVA "+info.location_minor);
-		canvas.background(OstravaImages[info.location_minor]);
+		console.log("OSTRAVA "+ui.info.location_minor);
+		canvas.background(OstravaImages[ui.info.location_minor]);
 
-		switch(info.location_minor) {
+		switch(ui.info.location_minor) {
 			case(0): promise = OstravaNastupiste(); break;
 			case(1): promise = OstravaNadrazi(); break;
 			case(2): promise = OstravaNastupiste2(); break;
 		}
 
-		await renderMoney();
-		renderSpeedrunMode();
-		renderPause();
+		await ui.renderWidgets();
 
 		await promise;
 
-		if(info.location_major != 6) { 
-			hidePause();
+		if(ui.info.location_major != 6) {
+			ui.disablePauseButton();
 			canvasPlayerDisable(); 
-			canvas.animationBlocked = true;
+			ui.animationBlocked = true;
 			break;
 		}
 
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 		clearNPC();
 	}
 }

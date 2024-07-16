@@ -1,3 +1,7 @@
+var canvas; //we do actually need var here
+var ui; //we do actually need var here
+let mainMenuImage;
+
 // MAIN MENU
 
 function renderMainMenu() {
@@ -33,7 +37,7 @@ async function loadMainMenu() {
 		(e) => { console.log("MM btn Load Game pressed"); loadGame(); }
 	);
 	addButton(
-		"settings", getTranslation(5), 65, 45, 30, 10,
+		"ui.settings", getTranslation(5), 65, 45, 30, 10,
 		async (e) => { 
 			console.log("MM btn Settings pressed");
 			hideMainMenu();
@@ -42,9 +46,9 @@ async function loadMainMenu() {
 			document.getElementById("play").innerHTML = getTranslation(2);
 			document.getElementById("speedrun").innerHTML = getTranslation(3);
 			document.getElementById("load").innerHTML = getTranslation(4);
-			document.getElementById("settings").innerHTML = getTranslation(5);
+			document.getElementById("ui.settings").innerHTML = getTranslation(5);
 			document.getElementById("credits").innerHTML = getTranslation(6);
-			document.getElementById("audio").innerHTML = ((settings.music_enabled == true) ? getTranslation(9) : getTranslation(8));
+			document.getElementById("audio").innerHTML = ((ui.settings.music_enabled == true) ? getTranslation(9) : getTranslation(8));
 			
 			renderMainMenu();
 			showMainMenu();
@@ -66,12 +70,12 @@ async function loadMainMenu() {
 	promises.push(waiterEventFromElement(
 		addButton(
 		"play", getTranslation(2), 65, 15, 30, 10,
-		(e) => { info.speedrun = false; console.log("MM btn Play pressed"); }
+		(e) => { ui.info.speedrun = false; console.log("MM btn Play pressed"); }
 	), "click"));
 	promises.push(waiterEventFromElement(
 		addButton(
 		"speedrun", getTranslation(3), 65, 25, 30, 10,
-		(e) => { info.speedrun = true; console.log("MM btn Speedrun pressed"); } 
+		(e) => { ui.info.speedrun = true; console.log("MM btn Speedrun pressed"); }
 	), "click"));
 
 	await Promise.any(promises);
@@ -80,7 +84,7 @@ function showMainMenu() {
 	showButton("play");
 	showButton("speedrun");
 	showButton("load");
-	showButton("settings");
+	showButton("ui.settings");
 	showButton("credits");
 	showButton("audio");
 }
@@ -88,7 +92,7 @@ function hideMainMenu() {
 	hideButton("play");
 	hideButton("speedrun");
 	hideButton("load");
-	hideButton("settings");
+	hideButton("ui.settings");
 	hideButton("credits");
 	hideButton("audio");
 }
@@ -96,7 +100,7 @@ function clearMainMenu() {
 	removeButton("play");
 	removeButton("speedrun");
 	removeButton("load");
-	removeButton("settings");
+	removeButton("ui.settings");
 	removeButton("credits");
 	removeButton("audio");
 }
@@ -112,7 +116,7 @@ async function renderCharacterSelection() {
 	canvas.setBorder("#ffffff");
 	canvas.textAndBorderS(getTranslation(13), 5, 10);
 
-	if(info.speedrun === true) {
+	if(ui.info.speedrun === true) {
 		canvas.setFontSize(20);
 		canvas.textAndBorderS(getTranslation(3)+" "+getTranslation(26), 10, 15);
 	}
@@ -173,17 +177,17 @@ async function renderCutscene() {
 	canvas.setBrightness(75);
 	canvas.background(mainMenuImage);
 
-	await canvas.fadeOut(5);
-	if(!info.speedrun) {
+	await canvas.fadeOut({ref:ui});
+	if(!ui.info.speedrun) {
 		await cutsceneNews();
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 	}
 }
 
 // GAME OVER SCREEN
 
 async function gameOver(text) {
-	canvas.animationBlocked = true;
+	ui.animationBlocked = true;
 	getAllInput().forEach((val) => { val.remove(); });
 
 	musicPlay(1);
@@ -217,7 +221,7 @@ async function playHandler() {
 	await renderDisclaimer();
 	await renderCutscene();
 
-	timerBegin();
+	ui.beginTimer();
 
 	await HNMHandler();
 	await PrerovHandler();
@@ -227,12 +231,15 @@ async function playHandler() {
 	await cutsceneStudenka();
 	await StudenkaHandler();
 	await OstravaHandler();
-	timerEnd();
+	ui.endTimer();
 	await cutscenePoland();
 	await renderCredits();
 }
 
 async function gameHandler() {
+	canvas = new CanvasImplementation();
+	ui = new UIImplementation();
+
 	canvas.loadingScreen("Loading..."); //no translations loaded yet
 	//text only on first load
 	canvas.textS("Translations", 10, 15);
@@ -262,6 +269,7 @@ async function gameHandler() {
 
 	canvas.textS("Loading other images...", 10, 45);
 	await loadArrows(); //arrows
+	await loadDialogue(); //dialogue stuff
 	canvas.textS("Loading other images... done", 10, 45);
 
 	document.querySelectorAll(".size_control_buttons").forEach((val) => {
@@ -273,7 +281,7 @@ async function gameHandler() {
 	await loadMainMenu();
 	clearMainMenu();
 
-	await loadPause(); //pause menu AFTER main menu, already when language is selected
+	ui.load(); //pause menu AFTER main menu, already when language is selected
 
-	playHandler();
+	await playHandler();
 }

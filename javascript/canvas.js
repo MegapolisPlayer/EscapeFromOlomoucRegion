@@ -1,11 +1,3 @@
-//TODO: finish refactor
-
-//CANVAS, BUTTONS AND CHARACTERS
-
-//
-// CANVAS
-//
-
 //non-getters have daisy-chained methods
 class CanvasImplementation {
 	canvas;
@@ -19,7 +11,6 @@ class CanvasImplementation {
 	fontFamily;
 	fontWeight;
 	currentBGImage;
-	animationBlocked = true;
 
 	constructor(madecanvas_override, madectx_override) {
 		if(madecanvas_override != undefined) {
@@ -27,21 +18,21 @@ class CanvasImplementation {
 		}
 		else {
 			this.canvas = document.getElementById("draw");
-			this.canvas.width = 1000;
-			this.canvas.height = 500;
 		}
+		this.canvas.width = 1000;
+		this.canvas.height = 500;
 
 		if(madectx_override != undefined) {
 			this.ctx = madectx_override;
 		}
 		else {
 			this.ctx = this.canvas.getContext("2d");
-			this.ctx.width = 1000;
-			this.ctx.height = 500;
-			this.ctx.fillStyle = "#ffffff";
-			this.ctx.strokeStyle = "#ffffff";
-			this.ctx.lineWidth = 1;
 		}
+		this.ctx.width = 1000;
+		this.ctx.height = 500;
+		this.ctx.fillStyle = "#ffffff";
+		this.ctx.strokeStyle = "#ffffff";
+		this.ctx.lineWidth = 1;
 
 		this.biggerWindowSize = ((this.canvas.width > this.canvas.height) ? this.canvas.width : this.canvas.height);
 		this.smallerWindowSize = ((this.canvas.width < this.canvas.height) ? this.canvas.width : this.canvas.height);
@@ -52,7 +43,9 @@ class CanvasImplementation {
 
 		this.setFont("Arial, FreeSans", this.fontSizeLarge, "bold");
 
-		this.clear("#ffffff");
+		if(madecanvas_override == undefined && madectx_override == undefined) {
+			this.clear("#ffffff");
+		}
 		this.setSmallFontSize();
 	}
 
@@ -362,20 +355,28 @@ class CanvasImplementation {
 		return this;
 	}
 
-	async fadeOut(strength = 10) {
-		this.animationBlocked = true;
+	//pass UI as object with parameter ref
+	//{ref:ui}
+	async fadeOut(uiproxy) {
+		uiproxy.ref.animationBlocked = true;
 		let savedcvs = await loadImage(canvas.canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
 		while(this.getBrightness() > 5) {
 			await new Promise((resolve) => {
 				window.setTimeout(() => {
-					this.setBrightness(this.getBrightness() - strength);
+					this.setBrightness(this.getBrightness() - 10);
 					this.background(savedcvs);
+					document.querySelectorAll(".overlay").forEach((val) => {
+						val.style.filter = "brightness("+(this.getBrightness() - 5)+"%)";
+					});
 					resolve();
 				}, 50);
 			});
 		}
 		this.resetBrightness();
-		this.animationBlocked = false;
+		document.querySelectorAll(".overlay").forEach((val) => {
+			val.style.filter = "";
+		});
+		uiproxy.ref.animationBlocked = false;
 		return this;
 	}
 

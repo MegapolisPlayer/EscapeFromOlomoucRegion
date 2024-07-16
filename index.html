@@ -20,27 +20,21 @@
 		<link rel="stylesheet" href="./landing.css">
 		<link rel="icon" type="image/x-icon" href="web/icon.png">
 
-		<!-- basic -->
-		<script src="./javascript/declaration.js"></script>
-		
-		<!-- audiovisual stuff -->
-		<script src="./javascript/audioHandler.js"></script>
-		<script src="./javascript/canvasHandler.js"></script>
-		<script src="./javascript/button.js"></script>
-		<script src="./javascript/character.js"></script>
 		<script src="./javascript/text/translation.js"></script>
-		<script src="./javascript/map.js"></script>
-		<script src="./javascript/cutscene.js"></script>
-
-		<!-- systems -->
-		<script src="./javascript/money.js"></script>
 		<script src="./javascript/saveload.js"></script>
-		<script src="./javascript/speedrun.js"></script>
-		<script src="./javascript/dialogue.js"></script>
+
+		<script src="./javascript/audio.js"></script>
+		<script src="./javascript/canvas.js"></script>
+		<script src="./javascript/ui.js"></script>
+
+		<script src="./javascript/button.js"></script>
+
+		<script src="./javascript/cutscene.js"></script>
+		<script src="./javascript/character.js"></script>
+		<script src="./javascript/map.js"></script>
 		
-		<!-- special windows -->
-		<script src="./javascript/pause.js"></script>
-		<script src="./javascript/settings.js"></script>
+		<!-- temp -->
+		<script src="./javascript/dialogue.js"></script>
 
 		<!-- minigames -->
 		<script src="./javascript/minigames/waiter.js"></script>
@@ -70,7 +64,8 @@
 		<script src="./javascript/summary.js"></script>
 		<script src="./javascript/credits.js"></script>
 
-		<script src="./javascript/gameHandler.js"></script>
+		<!-- miscellaneous files -->
+		<script src="./javascript/game.js"></script>
 		<script src="./javascript/main.js"></script>
 	</head>
 	<body onload="initWebpage()">
@@ -82,7 +77,9 @@
 		</p>
 
 		<div id="draw_contain">
-		<canvas id="draw">This game is not playable without support for the HTML canvas.</canvas>
+		<canvas class="drawable" id="draw">This game is not playable without support for the HTML canvas.</canvas>
+		<canvas class="drawable overlay" id="pausecanvas">Pause canvas</canvas>
+		<canvas class="drawable overlay" id="uicanvas">UI canvas</canvas>
 		<div id="draw_buffer" style="width: 1000px; height: 500px;"></div>
 		</div>
 		<button class="size_control_buttons" onclick="canvasFullscreen()" disabled>Fullscreen/Na Plnou Obrazovku</button>
@@ -96,7 +93,6 @@
 		<p>
 			<ul>
 				<li></li>
-
 			</ul>
 		</p>
 		<h>Settings</h>

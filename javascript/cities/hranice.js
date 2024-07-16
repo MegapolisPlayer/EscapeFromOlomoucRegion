@@ -3,16 +3,16 @@ let HNMimages = [];
 function HNMDomov() {
 	canvasPlayer(70, 60, 2.5);
 
-	return renderArrow(new ArrowInfo(90, 80, arrowType.RIGHT, async () => { info.location_minor_next = 1; }));
+	return renderArrow(new ArrowInfo(90, 80, arrowType.RIGHT, async () => { ui.info.location_minor_next = 1; }));
 }
 
 function HNMNamesti() {
 	canvasPlayer(50, 60, 1);
 	
 	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { info.location_minor_next = 0; }),
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { info.location_minor_next = 2; }),
-		new ArrowInfo(45, 90, arrowType.DOWN, () => { info.location_minor_next = 5; })
+		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
+		new ArrowInfo(90, 90, arrowType.RIGHT, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(45, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 5; })
 	]);
 }
 
@@ -20,9 +20,9 @@ function HNMNadrazi() {
 	canvasPlayer(35, 60, 1.7);
 
 	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { info.location_minor_next = 1; }),
-		new ArrowInfo(95, 75, arrowType.UP, () => { info.location_minor_next = 3; }),
-		new ArrowInfo(85, 85, arrowType.DOWN, () => { info.location_minor_next = 4; })
+		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 1; }),
+		new ArrowInfo(95, 75, arrowType.UP, () => { ui.info.location_minor_next = 3; }),
+		new ArrowInfo(85, 85, arrowType.DOWN, () => { ui.info.location_minor_next = 4; })
 	]);
 }
 
@@ -33,32 +33,33 @@ function HNMRestaurace() {
 
 		dialogueBegin();
 		await dialogueNext(0);
+		if(await dialogueChoice()) {
+			dialogueEnd();
+			await minigameWaiter();
+		}
 		dialogueEnd();
-		await minigameWaiter();
-		
 		musicPlay(2);
-		canvas.background(HNMimages[info.location_minor]);
+		canvas.background(HNMimages[ui.info.location_minor]);
 		canvasPlayer(70, 90, 3);
 		drawNPC(NPC.COOK, 90, 50, 2);
-		await renderMoney();
-		renderSpeedrunMode();
-		renderPause();
+		await ui.renderWidgets();
+
 		showAllInput();
 	});
 	
-	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, () => { info.location_minor_next = 2; }));
+	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 2; }));
 }
 
 function HNMNastupiste() {
 	canvasPlayer(65, 70, 1.3);
 
 	return Promise.any([
-	renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { info.location_minor_next = 2; })),
+	renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 2; })),
 	makeNPC(NPC.TRAIN, 40, 70, 1.3, (e) => {
 		clearArrows();
 		e.target.remove();
-		info.location_minor_next = -1;
-		info.location_major++;
+		ui.info.location_minor_next = -1;
+		ui.info.location_major++;
 	})]);
 }
 
@@ -70,7 +71,7 @@ function HNMPropast() {
 	HNMVisitedPropast = true;
 	HNMPropastEndingTimer = Date.now();
 
-	return renderArrow(new ArrowInfo(40, 90, arrowType.DOWN, () => { info.location_minor_next = 1; }));
+	return renderArrow(new ArrowInfo(40, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 1; }));
 }
 
 async function HNMHandler() {
@@ -86,9 +87,9 @@ async function HNMHandler() {
 	
 	console.log("HNM");
 
-	info.location_major = 0;
-	info.location_minor = 0;
-	info.location_minor_next = 0;
+	ui.info.location_major = 0;
+	ui.info.location_minor = 0;
+	ui.info.location_minor_next = 0;
 	
 	canvas.loadingScreen();
 	await loadMusic([2, 10]);
@@ -102,34 +103,34 @@ async function HNMHandler() {
 	]);
 	
 	//map
-	if(!info.speedrun) {
+	if(!ui.info.speedrun) {
 		musicPlay(1);
 		await renderMap(1);
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 	}
 
 	musicPlay(2); //start playing AFTER loading
-	canvas.animationBlocked = false;
+	ui.animationBlocked = false;
 
-	showPause();
-	canvas.background(HNMimages[info.location_minor]);
+	ui.enablePauseButton();
+	canvas.background(HNMimages[ui.info.location_minor]);
 	canvasPlayer(70, 60, 2.5);
 	
 	//entry dialogue
-	if(!info.speedrun) {
+	if(!ui.info.speedrun) {
 		dialogueBegin();
 		await dialogueNext(0);
 		dialogueEnd();
 	}
 
 	let promise;
-	while(info.location_minor_next != -1) {
-		info.location_minor = info.location_minor_next;
+	while(ui.info.location_minor_next != -1) {
+		ui.info.location_minor = ui.info.location_minor_next;
 
-		console.log("HNM "+info.location_minor);
-		canvas.background(HNMimages[info.location_minor]);
+		console.log("HNM "+ui.info.location_minor);
+		canvas.background(HNMimages[ui.info.location_minor]);
 
-		switch(info.location_minor) {
+		switch(ui.info.location_minor) {
 			case(0): promise = HNMDomov(); break;
 			case(1): promise = HNMNamesti(); break;
 			case(2): promise = HNMNadrazi(); break;
@@ -138,23 +139,21 @@ async function HNMHandler() {
 			case(5): promise = HNMPropast(); break;
 			default: break;
 		}
-		await renderMoney();
-		renderSpeedrunMode();
-		renderPause();
+		await ui.renderWidgets();
 
 		//we wait until any promise met, then loop again
 		await promise;
 
-		if(info.location_major != 0) { 
-			hidePause();
+		if(ui.info.location_major != 0) {
+			ui.disablePauseButton();
 			canvasPlayerDisable();
-			canvas.animationBlocked = true;
+			ui.animationBlocked = true;
 			break;
 		}
 
 		//cleanup code, moved here so doesnt get called on first entry to location
 
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 		//clear NPCs when switching location
 		clearNPC();
 	}

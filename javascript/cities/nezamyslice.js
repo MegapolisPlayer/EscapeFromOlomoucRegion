@@ -4,12 +4,12 @@ function NezamysliceNastupiste() {
 	canvasPlayer(90, 70, 0.7); 
 
 	return Promise.any([
-		renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { info.location_minor_next = 1; })),
+		renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
 		makeNPC(NPC.TRAIN, 80, 70, 0.7, (e) => {
 			clearArrows();
 			e.target.remove();
-			info.location_minor_next = -1;
-			info.location_major++;
+			ui.info.location_minor_next = -1;
+			ui.info.location_major++;
 		})
 	]);
 }
@@ -21,8 +21,8 @@ function NezamysliceNadrazi() {
 	});
 
 	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { info.location_minor_next = 2; }),
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { info.location_minor_next = 0; })
+		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(90, 90, arrowType.RIGHT, () => { ui.info.location_minor_next = 0; })
 	]);
 }
 
@@ -30,8 +30,8 @@ function NezamyslicePodnikVenek() {
 	canvasPlayer(70, 90, 1); 
 
 	return renderArrows([
-		new ArrowInfo(70, 70, arrowType.LEFT, () => { info.location_minor_next = 3; }),
-		new ArrowInfo(90, 90, arrowType.DOWN, () => { info.location_minor_next = 1; })
+		new ArrowInfo(70, 70, arrowType.LEFT, () => { ui.info.location_minor_next = 3; }),
+		new ArrowInfo(90, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 1; })
 	]);
 }
 
@@ -41,15 +41,15 @@ function NezamyslicePodnikVnitrek() {
 		
 	});
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { info.location_minor_next = 2; }));
+	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { ui.info.location_minor_next = 2; }));
 }
 
 async function NezamysliceHandler() {
 	console.log("NEZAMYSLICE");
 
-	info.location_major = 2;
-	info.location_minor = 0;
-	info.location_minor_next = 0;
+	ui.info.location_major = 2;
+	ui.info.location_minor = 0;
+	ui.info.location_minor_next = 0;
 	
 	canvas.loadingScreen();
 	await loadMusic([4]);
@@ -61,57 +61,55 @@ async function NezamysliceHandler() {
 	]);
 
 	//map
-	if(!info.speedrun) {
+	if(!ui.info.speedrun) {
 		musicPlay(1);
 		await renderMap(3);
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 	}
 	
 	musicPlay(4); //start playing AFTER loading
-	canvas.animationBlocked = false;
+	ui.animationBlocked = false;
 
-	showPause();
-	canvas.background(NezamysliceImages[info.location_minor]);
+	ui.enablePauseButton();
+	canvas.background(NezamysliceImages[ui.info.location_minor]);
 	canvasPlayer(90, 70, 0.7); 
 
 	//entry dialogue
-	if(!info.speedrun) {
+	if(!ui.info.speedrun) {
 		dialogueBegin();
 		await dialogueNext(0);
 		dialogueEnd();
 	}
 
 	let promise;
-	while(info.location_minor_next != -1) {
-		info.location_minor = info.location_minor_next;
+	while(ui.info.location_minor_next != -1) {
+		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
 		clearNPC();
 
-		console.log("NZM "+info.location_minor);
-		canvas.background(NezamysliceImages[info.location_minor]);
+		console.log("NZM "+ui.info.location_minor);
+		canvas.background(NezamysliceImages[ui.info.location_minor]);
 
-		switch(info.location_minor) {
+		switch(ui.info.location_minor) {
 			case(0): promise = NezamysliceNastupiste(); break;
 			case(1): promise = NezamysliceNadrazi(); break;
 			case(2): promise = NezamyslicePodnikVenek(); break;
 			case(3): promise = NezamyslicePodnikVnitrek(); break;
 		}
 
-		await renderMoney();
-		renderSpeedrunMode();
-		renderPause();
+		await ui.renderWidgets();
 
 		await promise;
 
-		if(info.location_major != 2) { 
-			hidePause();
+		if(ui.info.location_major != 2) {
+			ui.disablePauseButton();
 			canvasPlayerDisable(); 
-			canvas.animationBlocked = true;
+			ui.animationBlocked = true;
 			break;
 		}
 
-		await canvas.fadeOut();
+		await canvas.fadeOut({ref:ui});
 		clearNPC();
 	}
 }

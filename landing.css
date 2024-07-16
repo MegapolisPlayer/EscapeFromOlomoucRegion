@@ -43,7 +43,7 @@ button:disabled {
 	position: relative;
 }
 
-#draw {
+.drawable {
    position: absolute;
    z-index: -1;
 }
