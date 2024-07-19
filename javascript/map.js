@@ -33,6 +33,7 @@ async function renderMap(day) {
 	}
 	canvas.textM(string, 80, 30);
 
-	await renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
+	await ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}));
+	ui.clearArrows();
 	ui.animationBlocked = false;
 }

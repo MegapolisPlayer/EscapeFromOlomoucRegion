@@ -3,16 +3,16 @@ let StudenkaImages = [];
 function StudenkaPrejezd() {
 	canvasPlayer(20, 70, 1); 
 
-	return renderArrow(new ArrowInfo(10, 90, arrowType.LEFT, async () => { ui.info.location_minor_next = 3; }));
+	return ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.LEFT, async () => { ui.info.location_minor_next = 3; }));
 }
 
 function StudenkaNastupiste() {
 	canvasPlayer(75, 78, 1); 
 
 	return Promise.any([
-		renderArrow(new ArrowInfo(20, 70, arrowType.LEFT, async () => { ui.info.location_minor_next = 3; })),
+		ui.makeArrow(new ArrowInfo(20, 70, ui.arrowType.LEFT, async () => { ui.info.location_minor_next = 3; })),
 		makeNPC(NPC.TRAIN, 60, 78, 1, (e) => {
-			clearArrows();
+			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
 			ui.info.location_major++;
@@ -23,51 +23,50 @@ function StudenkaNastupiste() {
 function StudenkaNadrazi() {
 	canvasPlayer(45, 65, 2); 
 
-	return renderArrows([
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { ui.info.location_minor_next = 1; }),
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 3; })
+	return ui.makeArrows([
+		new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 1; }),
+		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 3; })
 	]);
 }
 
 function StudenkaPredNadrazi() {
 	canvasPlayer(75, 70, 2); 
 
-	return renderArrows([
-		new ArrowInfo(90, 50, arrowType.RIGHT, () => { ui.info.location_minor_next = 0; }),
-		new ArrowInfo(60, 50, arrowType.LEFT, () => { ui.info.location_minor_next = 2; }),
-		new ArrowInfo(10, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 4; }),
-		new ArrowInfo(10, 70, arrowType.LEFT, () => { ui.info.location_minor_next = 6; })
+	return ui.makeArrows([
+		new ArrowInfo(90, 50, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 0; }),
+		new ArrowInfo(60, 50, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(10, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 4; }),
+		new ArrowInfo(10, 70, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 6; })
 	]);
 }
 
 function StudenkaNamesti() {
 	canvasPlayer(75, 70, 2); 
 
-	return renderArrows([
-		new ArrowInfo(45, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 3; }),
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 5; }),
+	return ui.makeArrows([
+		new ArrowInfo(45, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 3; }),
+		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 5; }),
 	]);
 }
 
 function StudenkaPole() {
 	canvasPlayer(75, 70, 1); 
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { ui.info.location_minor_next = 4; }));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 4; }));
 }
 
 function StudenkaMost() {
 	canvasPlayer(75, 70, 2); 
 	if(!ui.info.speedrun) {
-		renderArrow(new ArrowInfo(40, 70, arrowType.INFO, async (e) => { 
-			hideAllInput();
-			dialogueBegin();
-			await dialogueNext(0);
-			dialogueEnd();
-			showAllInput();
+		ui.makeArrow(new ArrowInfo(40, 70, ui.arrowType.INFO, async (e) => {
+			ui.hideAllInput();
+			await ui.dialogueLine(0);
+
+			ui.showAllInput();
 		}));
 	}
  
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { ui.info.location_minor_next = 3; clearArrows(); }));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 3; ui.clearArrows(); }));
 }
 
 async function StudenkaHandler() {
@@ -122,10 +121,10 @@ async function StudenkaHandler() {
 			case(5): promise = StudenkaPole(); break;
 			case(6): promise = StudenkaMost(); break;
 		}
-
 		await ui.renderWidgets();
 
 		await promise;
+		ui.clearArrows();
 
 		if(ui.info.location_major != 5) {
 			canvasPlayerDisable(); 

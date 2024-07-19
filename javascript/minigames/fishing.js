@@ -19,6 +19,7 @@ async function minigameFishSummary() {
 
 async function minigameFish() {
 	ui.animationBlocked = true;
+	ui.disableWidgets();
 
 	await minigameFishLoad();
 	await minigameFishMenu();
@@ -26,4 +27,5 @@ async function minigameFish() {
 	await minigameFishSummary();
 
 	ui.animationBlocked = false;
+	ui.enableWidgets();
 }

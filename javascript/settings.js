@@ -34,7 +34,7 @@ async function renderSettings() {
 	canvas.setFontWeight("bold");
 
 	//ui.settings buttons
-	addVerySmallButton("diff", getTranslation(17), 30, 15, 10, 5, () => {
+	ui.addVerySmallButton("diff", getTranslation(17), 30, 15, 10, 5, () => {
 		ui.settings.difficulty++;
 		if(ui.settings.difficulty == 3) {
 			ui.settings.difficulty = 0;
@@ -68,53 +68,53 @@ async function renderSettings() {
 		canvas.textS(String(ui.settings.diff_multiplier), 83, 30);
 		canvas.textS(String(ui.settings.debt_limit), 83, 40);
 	});
-	addVerySmallButton("lang", translationNames[translationSelected], 30, 25, 10, 5, () => {
+	ui.addVerySmallButton("lang", translationNames[translationSelected], 30, 25, 10, 5, () => {
 		translationSelected++;
 		if(translationSelected == translationNames.length) {
 			translationSelected = 0;
 		}
 		document.getElementById("lang").innerHTML = translationNames[translationSelected];
 	});
-	addVerySmallButton("volup", "+", 30, 35, 5, 5, () => {
+	ui.addVerySmallButton("volup", "+", 30, 35, 5, 5, () => {
 		if(ui.settings.volume >= 0.95) { return; }
 		ui.settings.volume += 0.1;
 		ui.settings.volume = Number(Number(ui.settings.volume).toFixed(1));
 		audioVolume(ui.settings.volume);
 		document.getElementById("vol").innerHTML = ui.settings.volume;
 	});
-	addVerySmallButton("vol", String(ui.settings.volume), 35, 35, 10, 5, () => {
+	ui.addVerySmallButton("vol", String(ui.settings.volume), 35, 35, 10, 5, () => {
 		ui.settings.volume = 0.7;
 		ui.settings.volume = Number(Number(ui.settings.volume).toFixed(1));
 		audioVolume(ui.settings.volume);
 		document.getElementById("vol").innerHTML = ui.settings.volume;
 	});
-	addVerySmallButton("voldn", "-", 45, 35, 5, 5, () => {
+	ui.addVerySmallButton("voldn", "-", 45, 35, 5, 5, () => {
 		if(ui.settings.volume <= 0.05) { return; }
 		ui.settings.volume -= 0.1;
 		ui.settings.volume = Number(Number(ui.settings.volume).toFixed(1));
 		audioVolume(ui.settings.volume);
 		document.getElementById("vol").innerHTML = ui.settings.volume;
 	});
-	addVerySmallButton("msfx", ui.settings.music_enabled == true ? getTranslation(26) : getTranslation(27), 30, 75, 10, 5, () => {
+	ui.addVerySmallButton("msfx", ui.settings.music_enabled == true ? getTranslation(26) : getTranslation(27), 30, 75, 10, 5, () => {
 		musicToggle(document.getElementById("msfx"));
 		musicPlay(0);
 	});
-	addVerySmallButton("voice", ui.settings.voice_enabled == true ? getTranslation(26) : getTranslation(27), 30, 85, 10, 5, () => {
+	ui.addVerySmallButton("voice", ui.settings.voice_enabled == true ? getTranslation(26) : getTranslation(27), 30, 85, 10, 5, () => {
 		voiceToggle(document.getElementById("voice"));
 	});
 
 	return waiterEventFromElement(
-		addButton(
+		ui.addButton(
 		"back", getTranslation(38), 65, 85, 30, 10,
 		(e) => { 
-			removeButton("diff");
-			removeButton("lang");
-			removeButton("volup");
-			removeButton("vol");
-			removeButton("voldn");
-			removeButton("msfx");
-			removeButton("voice");
-			removeButton("back");
+			ui.removeButton("diff");
+			ui.removeButton("lang");
+			ui.removeButton("volup");
+			ui.removeButton("vol");
+			ui.removeButton("voldn");
+			ui.removeButton("msfx");
+			ui.removeButton("voice");
+			ui.removeButton("back");
 		}
 	), "click");
 }

@@ -22,7 +22,7 @@ async function renderCredits() {
 	musicPlay(9);
 	
 	canvas.setSmallFontSize();
-	addSmallButton("creditsskip", getTranslation(7), 80, 0, 20, 10, () => { window.location.reload(); });
+	ui.addSmallButton("creditsskip", getTranslation(7), 80, 0, 20, 10, () => { window.location.reload(); });
 
 	setCreditsStep(1);
 	setCreditsStep(29, `
@@ -87,7 +87,7 @@ async function renderCredits() {
 		<insert testers and stuff here!>
 	`);
 	setCreditsStep(36, "\n"+getTranslation(37), () => {
-		removeButton("creditsskip");
+		ui.removeButton("creditsskip");
 		window.addEventListener("click", () => {
 			window.location.reload();	
 		});

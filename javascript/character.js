@@ -128,7 +128,7 @@ function NPCInfo(type, x, y, scale, fn) {
 	this.Y = y;
 	this.SCALE = scale;
 	this.TYPE = type;
-	this.BTN = internal_setButton(
+	this.BTN = ui.makeButton(
 		"NPCInfo"+String(Math.trunc(Math.random()*10000)), "", "draw_input_elem_npc",
 		canvas.getX(x-(characters[this.TYPE].width*scale*canvas.characterSizeMultiplier/canvas.canvas.width/2*100)),
 		canvas.getY(y-(characters[this.TYPE].height*scale*canvas.characterSizeMultiplier/canvas.canvas.height/2*100)),

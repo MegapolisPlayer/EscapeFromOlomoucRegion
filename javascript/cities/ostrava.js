@@ -3,25 +3,25 @@ let OstravaImages = [];
 function OstravaNastupiste() {
 	canvasPlayer(70, 60, 2); 
 
-	return renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, async () => { ui.info.location_minor_next = 1; }));
+	return ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; }));
 }
 
 function OstravaNadrazi() {
 	canvasPlayer(70, 72, 0.25); 
 
-	return renderArrows([
-		new ArrowInfo(45, 75, arrowType.UP, () => { ui.info.location_minor_next = 2; }),
-		new ArrowInfo(10, 80, arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
+	return ui.makeArrows([
+		new ArrowInfo(45, 75, ui.arrowType.UP, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(10, 80, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
 	]);
 }
 
 function OstravaNastupiste2() {
 	canvasPlayer(90, 80, 0.5); 
 
-	return renderArrows([
-		new ArrowInfo(75, 60, arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
-		new ArrowInfo(50, 70, arrowType.INFO, () => { 
-			clearArrows();
+	return ui.makeArrows([
+		new ArrowInfo(75, 60, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
+		new ArrowInfo(50, 70, ui.arrowType.INFO, () => {
+			ui.clearArrows();
 			ui.info.location_minor_next = -1;
 			ui.info.location_major++;
 		})
@@ -59,9 +59,8 @@ async function OstravaHandler() {
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
-		dialogueBegin();
-		await dialogueNext(0);
-		dialogueEnd();
+		await ui.dialogueLine(0);
+
 	}
 
 	let promise;
@@ -79,10 +78,10 @@ async function OstravaHandler() {
 			case(1): promise = OstravaNadrazi(); break;
 			case(2): promise = OstravaNastupiste2(); break;
 		}
-
 		await ui.renderWidgets();
 
 		await promise;
+		ui.clearArrows();
 
 		if(ui.info.location_major != 6) {
 			ui.disablePauseButton();

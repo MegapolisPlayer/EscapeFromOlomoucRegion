@@ -4,9 +4,9 @@ function NezamysliceNastupiste() {
 	canvasPlayer(90, 70, 0.7); 
 
 	return Promise.any([
-		renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
+		ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
 		makeNPC(NPC.TRAIN, 80, 70, 0.7, (e) => {
-			clearArrows();
+			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
 			ui.info.location_major++;
@@ -20,18 +20,18 @@ function NezamysliceNadrazi() {
 			
 	});
 
-	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 2; }),
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { ui.info.location_minor_next = 0; })
+	return ui.makeArrows([
+		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 0; })
 	]);
 }
 
 function NezamyslicePodnikVenek() {
 	canvasPlayer(70, 90, 1); 
 
-	return renderArrows([
-		new ArrowInfo(70, 70, arrowType.LEFT, () => { ui.info.location_minor_next = 3; }),
-		new ArrowInfo(90, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 1; })
+	return ui.makeArrows([
+		new ArrowInfo(70, 70, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 3; }),
+		new ArrowInfo(90, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 1; })
 	]);
 }
 
@@ -41,7 +41,7 @@ function NezamyslicePodnikVnitrek() {
 		
 	});
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { ui.info.location_minor_next = 2; }));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 2; }));
 }
 
 async function NezamysliceHandler() {
@@ -76,9 +76,9 @@ async function NezamysliceHandler() {
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
-		dialogueBegin();
-		await dialogueNext(0);
-		dialogueEnd();
+
+		await ui.dialogueLine(0);
+
 	}
 
 	let promise;
@@ -101,6 +101,7 @@ async function NezamysliceHandler() {
 		await ui.renderWidgets();
 
 		await promise;
+		ui.clearArrows();
 
 		if(ui.info.location_major != 2) {
 			ui.disablePauseButton();

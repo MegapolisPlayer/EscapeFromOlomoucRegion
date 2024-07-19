@@ -95,7 +95,7 @@ async function minigameWaiterMenu() {
 	canvas.imageSamesizeY(waiterMinigameImages[6], 5, 90, 10);
 	canvas.textS(getTranslation(75), 15, 95);
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => {}));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}));
 }
 
 //
@@ -183,13 +183,13 @@ function cookOrder(order) {
 
 	sfxPlay(12);
 	waiterOrdersButtons.push(
-		internal_setButton(
+		ui.makeButton(
 			"order"+order.id, order.id+1, "draw_input_elem_arrow",
-			canvas.getX(canvas.convertXtoY((waiterOrders.length)*20)), canvas.getY(80),
+			canvas.getX(canvas.convertYtoX((waiterOrders.length)*20)), canvas.getY(80),
 			canvas.getY(20), canvas.getY(20), ordersCallback
 		)
 	);
-	if(canvas.convertXtoY((waiterOrders.length)*20) >= 80) {
+	if(canvas.convertYtoX((waiterOrders.length)*20) >= 80) {
 		waiterOrdersButtons[waiterOrdersButtons.length - 1].style.setProperty("display", "none");
 	}
 	waiterOrdersButtons[waiterOrdersButtons.length - 1].custom_property_table_id = order.id;
@@ -215,19 +215,19 @@ function renderOrders() {
 	canvas.setColor("#ffffff");
 	canvas.setVerySmallFontSize();
 
-	canvas.textS(getTranslation(85), canvas.convertXtoY(5), 86);
-	canvas.textS(getTranslation(86), canvas.convertXtoY(5), 96);
+	canvas.textS(getTranslation(85), canvas.convertYtoX(5), 86);
+	canvas.textS(getTranslation(86), canvas.convertYtoX(5), 96);
 
 	canvas.setSmallFontSize();
-	canvas.textS(waiterOrdersCooking.length, canvas.convertXtoY(5), 92);
+	canvas.textS(waiterOrdersCooking.length, canvas.convertYtoX(5), 92);
 
 	while(true) {
-		canvas.imageSamesizeY(waiterMinigameImages[0], canvas.convertXtoY(20*(ConveyorIndex+1)), 80, 20);
-		if(canvas.getX(canvas.convertXtoY((ConveyorIndex+1)*20)) >= canvas.getX(80)) { break; }
+		canvas.imageSamesizeY(waiterMinigameImages[0], canvas.convertYtoX(20*(ConveyorIndex+1)), 80, 20);
+		if(canvas.getX(canvas.convertYtoX((ConveyorIndex+1)*20)) >= canvas.getX(80)) { break; }
 
 		if(ConveyorIndex < waiterOrders.length) { 
 			waiterOrdersButtons[ConveyorIndex].style.setProperty("display", "block");
-			waiterOrdersButtons[ConveyorIndex].style.setProperty("left", canvas.getX(canvas.convertXtoY((ConveyorIndex+1)*20))+"px");
+			waiterOrdersButtons[ConveyorIndex].style.setProperty("left", canvas.getX(canvas.convertYtoX((ConveyorIndex+1)*20))+"px");
 			waiterOrdersButtons[ConveyorIndex].style.setProperty("top", canvas.getY(80)+"px");
 			waiterOrdersButtons[ConveyorIndex].style.setProperty("width", canvas.getY(20)+"px");
 			waiterOrdersButtons[ConveyorIndex].style.setProperty("height", canvas.getY(20)+"px");
@@ -235,12 +235,12 @@ function renderOrders() {
 			if(waiterOrderSelected == waiterOrders[ConveyorIndex]) {
 				canvas.setColor("#ffff00");
 				canvas.setAlpha(0.5);
-				canvas.drawBoxSamesizeY(canvas.convertXtoY(20*(ConveyorIndex+1)), 80, 20);
+				canvas.drawBoxSamesizeY(canvas.convertYtoX(20*(ConveyorIndex+1)), 80, 20);
 				canvas.resetAlpha();
 			}
-			canvas.imageSamesizeY(waiterMinigameImages[8], canvas.convertXtoY(20*(ConveyorIndex+1)), 80, 20);
+			canvas.imageSamesizeY(waiterMinigameImages[8], canvas.convertYtoX(20*(ConveyorIndex+1)), 80, 20);
 			canvas.setColor("#000000");
-			canvas.textS(waiterOrders[ConveyorIndex]+1, canvas.convertXtoY(20*(ConveyorIndex+1))+2, 92);
+			canvas.textS(waiterOrders[ConveyorIndex]+1, canvas.convertYtoX(20*(ConveyorIndex+1))+2, 92);
 		}
 
 		ConveyorIndex++;
@@ -276,7 +276,7 @@ function renderWaiterMinigame() {
 
 	for(let i = 0; i < 16 + (ui.settings.difficulty * 4); i++) {
 		waiterTables.push({ id: i, phase: 0, ticks: 0 });
-		waiterButtons.push(internal_setButton("table"+String(i), "", "draw_input_elem_arrow",
+		waiterButtons.push(ui.makeButton("table"+String(i), "", "draw_input_elem_arrow",
 			canvas.getX(10+(Math.trunc(i/4)*10)), canvas.getY(10+((i%4)*15)), canvas.getY(10), canvas.getY(10),
 			waiterTableButtonCallback
 		));
@@ -285,7 +285,7 @@ function renderWaiterMinigame() {
 	}
 
 	//add other buttons
-	waiterButtons.push(addSmallButton("pause_waiter", getTranslation(10), 80, 80, 20, 10, (e) => {
+	waiterButtons.push(ui.addSmallButton("pause_waiter", getTranslation(10), 80, 80, 20, 10, (e) => {
 		ui.pauseMenuToggle();
 	}));
 
@@ -301,8 +301,8 @@ async function minigameWaiterGame() {
 	//variables
 	let endGamePromiseCompleted = false;
 
-	waiterButtons.push(addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, (e) => {
-		ui.info.money -= getEarlyLeaveTimeMoney(waiterCounters.time/10);
+	waiterButtons.push(ui.addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, (e) => {
+		ui.info.money -= ui.getEarlyLeaveTimeMoney(waiterCounters.time/10);
 		endGamePromiseCompleted = true;
 	}));
 	document.getElementById("skip").setAttribute("disabled", "disabled");
@@ -377,7 +377,7 @@ async function minigameWaiterGame() {
 		if(minutes != 0) renderWaiterCounter(String(minutes)+":"+String(seconds).padStart(2, "0"), 77);
 		else renderWaiterCounter(String(seconds)+"s", 77);
 
-		let MoneyAmount = getEarlyLeaveTimeMoney(waiterCounters.time/10);
+		let MoneyAmount = ui.getEarlyLeaveTimeMoney(waiterCounters.time/10);
 		if(ui.info.money>=MoneyAmount) {
 			document.getElementById("skip").removeAttribute("disabled");
 			document.getElementById("skip").innerHTML = getTranslation(80)+" "+MoneyAmount;
@@ -428,7 +428,7 @@ async function minigameWaiterSummary() {
 
 	canvas.textS(getTranslation(78), 10, 40);
 	
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, () => { 
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {
 		pauseHidden = false;
 		musicPause();
 	}));
@@ -440,6 +440,8 @@ async function minigameWaiterSummary() {
 
 async function minigameWaiter() {
 	ui.animationBlocked = true;
+	ui.arrowAnimationBlocked = true;
+	ui.disableWidgets();
 
 	minigameWaiterReset();
 	await minigameWaiterLoad();
@@ -448,4 +450,6 @@ async function minigameWaiter() {
 	await minigameWaiterSummary();
 
 	ui.animationBlocked = false;
+	ui.arrowAnimationBlocked = false;
+	ui.enableWidgets();
 }

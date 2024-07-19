@@ -3,60 +3,57 @@ let HNMimages = [];
 function HNMDomov() {
 	canvasPlayer(70, 60, 2.5);
 
-	return renderArrow(new ArrowInfo(90, 80, arrowType.RIGHT, async () => { ui.info.location_minor_next = 1; }));
+	return ui.makeArrow(new ArrowInfo(90, 80, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 1; }));
 }
 
 function HNMNamesti() {
 	canvasPlayer(50, 60, 1);
 	
-	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { ui.info.location_minor_next = 2; }),
-		new ArrowInfo(45, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 5; })
+	return ui.makeArrows([
+		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
+		new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 2; }),
+		new ArrowInfo(45, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 5; })
 	]);
 }
 
 function HNMNadrazi() {
 	canvasPlayer(35, 60, 1.7);
 
-	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.LEFT, () => { ui.info.location_minor_next = 1; }),
-		new ArrowInfo(95, 75, arrowType.UP, () => { ui.info.location_minor_next = 3; }),
-		new ArrowInfo(85, 85, arrowType.DOWN, () => { ui.info.location_minor_next = 4; })
+	return ui.makeArrows([
+		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 1; }),
+		new ArrowInfo(95, 75, ui.arrowType.UP, () => { ui.info.location_minor_next = 3; }),
+		new ArrowInfo(85, 85, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 4; })
 	]);
 }
 
 function HNMRestaurace() {
 	canvasPlayer(70, 90, 3);
 	makeNPC(NPC.COOK, 90, 50, 2, async (e) => {
-		hideAllInput();
+		ui.hideAllInput();
 
-		dialogueBegin();
-		await dialogueNext(0);
-		if(await dialogueChoice()) {
-			dialogueEnd();
+		await ui.dialogueLine(0);
+		if(await ui.dialogueChoice()) {
 			await minigameWaiter();
+			musicPlay(2);
 		}
-		dialogueEnd();
-		musicPlay(2);
 		canvas.background(HNMimages[ui.info.location_minor]);
 		canvasPlayer(70, 90, 3);
 		drawNPC(NPC.COOK, 90, 50, 2);
 		await ui.renderWidgets();
 
-		showAllInput();
+		ui.showAllInput();
 	});
 	
-	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 2; }));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 2; }));
 }
 
 function HNMNastupiste() {
 	canvasPlayer(65, 70, 1.3);
 
 	return Promise.any([
-	renderArrow(new ArrowInfo(50, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 2; })),
+	ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 2; })),
 	makeNPC(NPC.TRAIN, 40, 70, 1.3, (e) => {
-		clearArrows();
+		ui.clearArrows();
 		e.target.remove();
 		ui.info.location_minor_next = -1;
 		ui.info.location_major++;
@@ -71,7 +68,7 @@ function HNMPropast() {
 	HNMVisitedPropast = true;
 	HNMPropastEndingTimer = Date.now();
 
-	return renderArrow(new ArrowInfo(40, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 1; }));
+	return ui.makeArrow(new ArrowInfo(40, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 1; }));
 }
 
 async function HNMHandler() {
@@ -118,10 +115,9 @@ async function HNMHandler() {
 	
 	//entry dialogue
 	if(!ui.info.speedrun) {
-		dialogueBegin();
-		await dialogueNext(0);
-		dialogueEnd();
+		await ui.dialogueLine(0);
 	}
+	ui.UIanimationBlocked = false;
 
 	let promise;
 	while(ui.info.location_minor_next != -1) {
@@ -143,6 +139,7 @@ async function HNMHandler() {
 
 		//we wait until any promise met, then loop again
 		await promise;
+		ui.clearArrows();
 
 		if(ui.info.location_major != 0) {
 			ui.disablePauseButton();

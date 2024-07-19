@@ -54,6 +54,12 @@ button:disabled {
 	font-family: Arial, FreeSans;
 	text-align: center;
 }
+.pause_button {
+	font-size: clamp(20px, 35px, 70px);
+	position: absolute;
+	font-family: Arial, FreeSans;
+	text-align: center;
+}
 .draw_input_elem_small {
 	font-size: clamp(10px, 25px, 50px);
 	position: absolute;

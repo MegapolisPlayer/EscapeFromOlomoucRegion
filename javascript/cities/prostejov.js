@@ -4,9 +4,9 @@ function ProstejovNastupiste() {
 	canvasPlayer(50, 70, 2); 
 
 	return Promise.any([
-		renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
+		ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
 		makeNPC(NPC.TRAIN, 80, 55, 1.5, (e) => {
-			clearArrows();
+			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
 			ui.info.location_major++;
@@ -17,25 +17,25 @@ function ProstejovNastupiste() {
 function ProstejovNadrazi() {
 	canvasPlayer(30, 65, 0.8);
 
-	return renderArrows([
-		new ArrowInfo(50, 50, arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
-		new ArrowInfo(90, 90, arrowType.RIGHT, () => { ui.info.location_minor_next = 2; })
+	return ui.makeArrows([
+		new ArrowInfo(50, 50, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
+		new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 2; })
 	]);
 }
 
 function ProstejovNamesti() {
 	canvasPlayer(40, 80, 1.2);
 	makeNPC(NPC.UTILITY, 60, 60, 0.7, async() => {
-		hideAllInput();
+		ui.hideAllInput();
 		await minigameBench();
 		canvas.background(ProstejovImages[ui.info.location_minor]);
-		showAllInput();
+		ui.showAllInput();
 	});
 
-	return renderArrows([
-		new ArrowInfo(10, 90, arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
-		new ArrowInfo(80, 70, arrowType.UP, () => { ui.info.location_minor_next = 4; }),
-		new ArrowInfo(10, 70, arrowType.LEFT, () => { ui.info.location_minor_next = 3; })
+	return ui.makeArrows([
+		new ArrowInfo(10, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
+		new ArrowInfo(80, 70, ui.arrowType.UP, () => { ui.info.location_minor_next = 4; }),
+		new ArrowInfo(10, 70, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 3; })
 	]);
 }
 
@@ -43,19 +43,19 @@ function ProstejovObchod() {
 	canvasPlayer(65, 50, 3);
 	//TODO: cashier NPC
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
 }
 
 function ProstejovCafe() {
 	canvasPlayer(65, 55, 4);
 	makeNPC(NPC.COOK, 35, 55, 4, async() => {
-		hideAllInput();
+		ui.hideAllInput();
 		await minigameWaiter();
 		canvas.background(HNMimages[ui.info.location_minor]);
-		showAllInput();
+		ui.showAllInput();
 	});
 
-	return renderArrow(new ArrowInfo(90, 90, arrowType.RIGHT, async () => { ui.info.location_minor_next = 2; }));
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 2; }));
 }
 
 async function ProstejovHandler() {
@@ -91,9 +91,7 @@ async function ProstejovHandler() {
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
-		dialogueBegin();
-		await dialogueNext(0);
-		dialogueEnd();
+		await ui.dialogueLine(0);
 	}
 
 	let promise;
@@ -113,10 +111,10 @@ async function ProstejovHandler() {
 			case(3): promise = ProstejovCafe(); break;
 			case(4): promise = ProstejovObchod(); break;
 		}
-
 		await ui.renderWidgets();
 
 		await promise;
+		ui.clearArrows();
 
 		if(ui.info.location_major != 3) {
 			ui.disablePauseButton();

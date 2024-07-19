@@ -42,7 +42,7 @@ async function canvasResizeTo(x, y) {
 
 	//resize buttons and arrows
 
-	getAllInput().forEach((val) => {
+	ui.getAllInput().forEach((val) => {
 		val.style.setProperty("top",    parseFloat(val.style.getPropertyValue("top"))   *canvas.getScaleX()/oldscaleY+"px");
 		val.style.setProperty("left",   parseFloat(val.style.getPropertyValue("left"))  *canvas.getScaleX()/oldscaleX+"px");
 		val.style.setProperty("width",  parseFloat(val.style.getPropertyValue("width")) *canvas.getScaleX()/oldscaleX+"px");

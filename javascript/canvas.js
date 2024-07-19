@@ -18,9 +18,9 @@ class CanvasImplementation {
 		}
 		else {
 			this.canvas = document.getElementById("draw");
+			this.canvas.width = 1000;
+			this.canvas.height = 500;
 		}
-		this.canvas.width = 1000;
-		this.canvas.height = 500;
 
 		if(madectx_override != undefined) {
 			this.ctx = madectx_override;
@@ -28,8 +28,8 @@ class CanvasImplementation {
 		else {
 			this.ctx = this.canvas.getContext("2d");
 		}
-		this.ctx.width = 1000;
-		this.ctx.height = 500;
+		this.ctx.width = this.canvas.width;
+		this.ctx.height = this.canvas.height;
 		this.ctx.fillStyle = "#ffffff";
 		this.ctx.strokeStyle = "#ffffff";
 		this.ctx.lineWidth = 1;
@@ -65,8 +65,11 @@ class CanvasImplementation {
 		return Math.trunc(this.canvas.height*(yvalue/100));
 	}
 
-	convertXtoY(yvalue) {
-		return parseInt(this.canvas.height/this.canvas.width*yvalue);
+	convertYtoX(yvalue) {
+		return parseInt(this.canvas.height)/parseInt(this.canvas.width)*yvalue;
+	}
+	convertXtoY(xvalue) {
+		return parseInt(this.canvas.width)/parseInt(this.canvas.height)*xvalue;
 	}
 
 	getScaleX() {
@@ -353,6 +356,13 @@ class CanvasImplementation {
 			this.getX(x), this.getY(y), this.getY(size), this.getY(size)
 		);
 		return this;
+	}
+
+	eraseBox(x, y, sizex, sizey) {
+		this.ctx.clearRect(this.getX(x), this.getY(y), this.getX(sizex), this.getY(sizey));
+	}
+	eraseCanvas() {
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
 	//pass UI as object with parameter ref
