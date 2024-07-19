@@ -340,7 +340,7 @@ class UIImplementation {
 	renderSpeedrunWidget() {
 		this.canvas.setColor("#ffffff");
 		this.canvas.drawRoundedBox( 0, 0, 15, 20, 10);
-		this.canvas.setColor("#000080").setSmallFontSize();
+		this.canvas.setColor((this.UIanimationState == true) ? "#00aaaa" : "#000080").setSmallFontSize();
 		this.canvas.textS(getTranslation(3), 2, 7).textS(this.timePlaying+"s", 2, 17);
 	}
 
