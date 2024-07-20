@@ -1,5 +1,3 @@
-var canvas; //we do actually need var here
-var ui; //we do actually need var here
 let mainMenuImage;
 
 // MAIN MENU
@@ -131,7 +129,7 @@ async function renderCharacterSelection() {
 		);
 	}
 
-	return Promise.any(promises); 
+	return Promise.any(promises);
 }
 async function clearCharacterSelection() {
 	for(let i = 0; i < 4; i++) {
@@ -221,9 +219,6 @@ async function playHandler() {
 }
 
 async function gameHandler() {
-	canvas = new CanvasImplementation();
-	ui = new UIImplementation();
-
 	canvas.loadingScreen("Loading..."); //no translations loaded yet
 	//text only on first load
 	canvas.textS("Translations", 10, 15).textS("Music", 10, 20).textS("SFX", 10, 25).textS("Voice", 10, 30).textS("Characters", 10, 35).textS("Maps", 10, 40);

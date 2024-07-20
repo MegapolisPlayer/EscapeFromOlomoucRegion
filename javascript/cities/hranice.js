@@ -31,10 +31,15 @@ function HNMRestaurace() {
 	makeNPC(NPC.COOK, 90, 50, 2, async (e) => {
 		ui.hideAllInput();
 
-		await ui.dialogueLine(0);
+		await ui.dialogueLine(62);
+		await ui.dialogueLine(63);
 		if(await ui.dialogueChoice()) {
+			await ui.dialogueLine(64);
 			await minigameWaiter();
 			musicPlay(2);
+		}
+		else {
+			await ui.dialogueLine(65);
 		}
 		canvas.background(HNMimages[ui.info.location_minor]);
 		canvasPlayer(70, 90, 3);
@@ -104,6 +109,13 @@ async function HNMHandler() {
 		musicPlay(1);
 		await renderMap(1);
 		await canvas.fadeOut({ref:ui});
+
+		//init pause shortcut; just in HNM
+		window.addEventListener("keydown", (e) => {
+			if(e.code === "Escape") {
+				ui.pauseMenuToggle();
+			}
+		});
 	}
 
 	musicPlay(2); //start playing AFTER loading
@@ -115,7 +127,7 @@ async function HNMHandler() {
 	
 	//entry dialogue
 	if(!ui.info.speedrun) {
-		await ui.dialogueLine(0);
+		await ui.dialogueLine(49);
 	}
 	ui.UIanimationBlocked = false;
 

@@ -186,7 +186,7 @@ class UIImplementation {
 		this.canvas.setColor("#ffffff").drawRoundedBox( 0, 80, 100, 20, 10);
 
 		this.canvas.setSmallFontSize().setFontWeight("normal").setColor("#000000");
-		await this.canvas.typewriterM(wrapText(getTranslationAndVoice(idOfText), 90), 5, 85);
+		await Promise.all([this.canvas.typewriterM(wrapText(getTranslation(idOfText), 90), 5, 85), playVoice(idOfText)]);
 
 		await this.makeArrow(new ArrowInfo(92, 92, this.arrowType.RIGHT, () => {}));
 
@@ -202,41 +202,47 @@ class UIImplementation {
 
 		this.canvas.setColor("#ffffff").drawRoundedBox(0, 80, 100, 20, 10);
 
+		await Promise.all([this.canvas.setColor("#000000").typewriterM(wrapText(getTranslation(89), 40), 5, 85), playVoice(89)]);
+
 		//first draw then animate
-		this.canvas.imageSamesizeY(this.dialogueImages[0], 20, 82, 18);
-		this.canvas.imageSamesizeY(this.dialogueImages[2], 60, 82, 18);
+		this.canvas.imageSamesizeY(this.dialogueImages[0], 50, 82, 18);
+		this.canvas.imageSamesizeY(this.dialogueImages[2], 70, 82, 18);
 
 		let YesPromise = waiterEventFromElement(ui.makeButton(
 			"YesChoice", "", "draw_input_elem_arrow",
-			this.canvas.getX(20), this.canvas.getY(80),
+			this.canvas.getX(50), this.canvas.getY(80),
 			this.canvas.getY(20), this.canvas.getY(20),
 			() => {}
 		), "click", true);
 		let NoPromise = waiterEventFromElement(ui.makeButton(
 			"NoChoice", "", "draw_input_elem_arrow",
-			this.canvas.getX(60), this.canvas.getY(80),
+			this.canvas.getX(70), this.canvas.getY(80),
 			this.canvas.getY(20), this.canvas.getY(20),
 			() => {}
 		), "click", false);
 
-
 		let dialogueAnimationState = false;
 		let choiceInterval = window.setInterval(() => {
 			if(dialogueAnimationState) {
-				this.canvas.imageSamesizeY(this.dialogueImages[0], 20, 82, 18);
-				this.canvas.imageSamesizeY(this.dialogueImages[2], 60, 82, 18);
+				this.canvas.imageSamesizeY(this.dialogueImages[0], 50, 82, 18);
+				this.canvas.imageSamesizeY(this.dialogueImages[2], 70, 82, 18);
 			}
 			else {
-				this.canvas.imageSamesizeY(this.dialogueImages[1], 20, 82, 18);
-				this.canvas.imageSamesizeY(this.dialogueImages[3], 60, 82, 18);
+				this.canvas.imageSamesizeY(this.dialogueImages[1], 50, 82, 18);
+				this.canvas.imageSamesizeY(this.dialogueImages[3], 70, 82, 18);
 			}
 			dialogueAnimationState = !dialogueAnimationState;
 		}, 700, dialogueAnimationState);
 
 		let returnValue = await Promise.any([YesPromise, NoPromise]);
+		//draw over buttons
+		this.canvas.setColor("#ffffff").drawBoxSamesizeY(50, 82, 18).drawBoxSamesizeY(70, 82, 18);
 
 		window.clearInterval(choiceInterval);
 		this.removeButtons(["YesChoice", "NoChoice"]);
+
+		await playVoice(returnValue ? 87 : 88); //say yes/no
+
 		this.canvas.eraseBox(0, 80, 100, 20);
 		this.enableWidgets();
 
@@ -340,7 +346,7 @@ class UIImplementation {
 	renderSpeedrunWidget() {
 		this.canvas.setColor("#ffffff");
 		this.canvas.drawRoundedBox( 0, 0, 15, 20, 10);
-		this.canvas.setColor((this.UIanimationState == true) ? "#00aaaa" : "#000080").setSmallFontSize();
+		this.canvas.setColor("#000080").setSmallFontSize();
 		this.canvas.textS(getTranslation(3), 2, 7).textS(this.timePlaying+"s", 2, 17);
 	}
 
@@ -505,12 +511,6 @@ class UIImplementation {
 		}
 
 		this.pauseContext = this.pauseCanvasElement.getContext("2d");
-
-		window.addEventListener("keydown", (e) => {
-			if(e.code === "Escape") {
-				this.pauseMenuToggle();
-			}
-		});
 	}
 
 	async load() {

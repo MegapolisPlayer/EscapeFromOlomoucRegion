@@ -58,6 +58,22 @@ class CanvasImplementation {
 		this.characterSizeMultiplier = this.smallerWindowSize*0.0003;
 	}
 
+	async resize(x, y) {
+		//save state
+		let savedcvs = await loadImage(this.canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
+
+		//change vars
+		let oldfill = this.ctx.fillStyle;
+		this.canvas.width = x;
+		this.canvas.height = y;
+		this.ctx.width = x;
+		this.ctx.height = y;
+		this.ctx.fillStyle = oldfill;
+
+		this.updateValues();
+		this.background(savedcvs);
+	}
+
 	getX(xvalue) {
 		return Math.trunc(this.canvas.width*(xvalue/100));
 	}
@@ -368,7 +384,11 @@ class CanvasImplementation {
 	//pass UI as object with parameter ref
 	//{ref:ui}
 	async fadeOut(uiproxy) {
+		let oldAnimationBlocked = uiproxy.ref.animationBlocked;
+		let oldUIAnimationBlocked = uiproxy.ref.UIanimationBlocked;
 		uiproxy.ref.animationBlocked = true;
+		uiproxy.ref.UIanimationBlocked = true;
+
 		let savedcvs = await loadImage(canvas.canvas.toDataURL("image/png", 1)); //very useful!!!1!!!111!!
 		while(this.getBrightness() > 5) {
 			await new Promise((resolve) => {
@@ -386,7 +406,9 @@ class CanvasImplementation {
 		document.querySelectorAll(".overlay").forEach((val) => {
 			val.style.filter = "";
 		});
-		uiproxy.ref.animationBlocked = false;
+
+		uiproxy.ref.animationBlocked = oldAnimationBlocked;
+		uiproxy.ref.UIanimationBlocked = oldUIAnimationBlocked;
 		return this;
 	}
 

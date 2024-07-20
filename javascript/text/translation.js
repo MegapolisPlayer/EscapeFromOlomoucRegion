@@ -10,14 +10,6 @@ let translationSelected = 0;
 let translations = [ translationEN, translationCZ, translationDE, translationPL, translationSUS, translationBA ];
 let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Susština", "Baština" ];
 
-let voiceEN = [];
-let voiceCZ = [];
-let voiceDE = [];
-let voiceSUS = [];
-let voiceBA = [];
-
-let voice = [ voiceEN, voiceCZ, voiceDE, voiceSUS, voiceBA ];
-
 async function loadTranslation() {
 	const promise = new Promise((resolve) => {
 		const xhr = new XMLHttpRequest();
@@ -43,6 +35,49 @@ async function loadTranslation() {
 	});
 
     await promise; return;
+}
+
+//audio file names:
+//[LANGNO]-[DIALOGNO].wav
+//Lang. No: 1 - English, 2 - Čeština, 3 - Deutsch", 4 - Polski, 5 - Susština", 6 - Baština
+
+let voicedLines = [
+	40, 41, 42, 43, 47, 48, 49, 50, 63, 64, 65, 66, 88, 89, 90
+];
+
+let voiceEN = [];
+let voiceCZ = [];
+let voiceDE = [];
+let voiceSUS = [];
+let voiceBA = [];
+
+let voice = [ voiceEN, voiceCZ, voiceDE, voiceSUS, voiceBA ];
+
+async function loadVoice() {
+	for(let i = 0; i < voice.length; i++) {
+		for(let j = 0; j < translations[i].length; j++) {
+			voice[i].push(new Audio());
+		}
+	}
+
+	let promise = new Promise((resolve) => {
+		let allowedLoadCounter;
+		for(let i = 0; i < voice.length; i++) {
+			console.log("Loading translation "+i);
+			allowedLoadCounter = 0;
+			for(let j = 0; j < voice[i].length; j++) {
+				let filename = "assets/voice/"+String(i+1)+"-"+String(j)+".wav";
+				if(j === voicedLines[allowedLoadCounter]) {
+					voice[i][j-1] = new Audio(filename);
+					console.log("Voice file "+filename+" loaded to position ", i, j-1);
+					allowedLoadCounter++;
+				}
+			}
+		}
+		resolve();
+	});
+
+	await promise; return;
 }
 
 function getTranslation(id) {

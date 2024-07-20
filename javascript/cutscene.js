@@ -30,10 +30,10 @@ async function cutsceneNews() {
 	for(let i = 0; i < 3; i++) {
 		canvas.setColor("#000080").imageEquivalent(steelImage, 0, 70, 100, 30).setColor("#ffffff");
 
-		await canvas.typewriterM(wrapText(getTranslationAndVoice(46+i), 80), 10, 80, skipPromise);
+		await Promise.race([Promise.all([playVoice(46+i), canvas.typewriterM(wrapText(getTranslation(46+i), 80), 10, 80, skipPromise)]), skipPromise.promise]);
+		voiceStop();
 
-		console.log(skipPromise);
-		await Promise.any([waiterEventFromElement(document.getElementById("skip"), "click"), skipPromise.promise, ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}))]);
+		await Promise.race([waiterEventFromElement(document.getElementById("skip"), "click"), skipPromise.promise, ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}))]);
 		ui.clearArrows();
 	}
 

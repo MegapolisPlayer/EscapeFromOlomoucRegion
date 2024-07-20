@@ -94,38 +94,6 @@ async function loadSFX() {
 	await promise; return;
 }
 
-//audio file names:
-//[LANGNO]-[DIALOGNO].wav
-
-let voicedLines = [
-	0 // TODO: add actual lines!
-];
-
-async function loadVoice() {
-	for(let i = 0; i < voice.length; i++) {
-		for(let j = 0; j < translations[i].length; j++) {
-			voice[i].push(new Audio());
-		}
-	}
-
-	let promise = new Promise((resolve) => {
-		let allowedLoadCounter = 0;
-		for(let i = 0; i < voice.length; i++) {
-			for(let j = 0; j < voice[i].length; j++) {
-				let filename = "assets/voice/"+String(i+1)+"-"+String(j)+".wav";
-				if(j === voicedLines[allowedLoadCounter]) {
-					voice[i][j] = new Audio(filename);
-					console.log("Voice file "+filename+" loaded to position ", i, j);
-					allowedLoadCounter++;
-				}		
-			}
-		}
-		resolve();
-	});
-
-	await promise; return;
-}
-
 function audioToggle(elem) {
 	musicToggle();
 	if(elem != undefined) { elem.innerHTML = getTranslation(ui.settings.music_enabled ? 9 : 8); }
@@ -250,4 +218,22 @@ function voicePlay(id) {
 
 function getTranslationAndVoice(id) {
 	voicePlay(id); return getTranslation(id);
+}
+
+function playVoice(id) {
+	if(!ui.settings.voice_enabled) { return Promise.resolve(); }
+	getVoiceTranslation(id).play();
+	return Promise.any([Promise.resolve(), new Promise((resolve) => {
+		//clear event listeners by cloning
+		getVoiceTranslation(id).addEventListener("ended", (e) => { resolve(); e.target = e.target.cloneNode(true); });
+	})]);
+}
+
+function voiceStop() {
+	for(let i = 0; i < voice.length; i++) {
+		for(let j = 0; j < voice[i].length; j++) {
+			voice[i][j].pause();
+			voice[i][j].currentTime = 0;
+		}
+	}
 }

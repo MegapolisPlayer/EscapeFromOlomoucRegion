@@ -12,18 +12,15 @@ async function loadMaps() {
 }
 
 async function renderMap(day) {
-	ui.animationBlocked = true;
+	ui.UIanimationBlocked = true;
 
 	canvas.background(woodImage);
 	canvas.image(mapImages[day-1], 10, 10, (canvas.smallerWindowSize/mapImages[day-1].height)*0.8);
 
-	canvas.setLargeFontSize();
-	canvas.setColor("#ffffff");
-	canvas.setFontWeight("bold");
+	canvas.setLargeFontSize().setColor("#ffffff").setFontWeight("bold");
 	canvas.textS(getTranslation(50)+" "+String(day), 80, 20);
 
-	canvas.setSmallFontSize();
-	canvas.setFontWeight("normal");
+	canvas.setSmallFontSize().setFontWeight("normal");
 
 	let splitstring = getTranslation(52+day-1).split(" ");
 	let string = splitstring[0]+"\n";
@@ -35,5 +32,5 @@ async function renderMap(day) {
 
 	await ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}));
 	ui.clearArrows();
-	ui.animationBlocked = false;
+	ui.UIanimationBlocked = false;
 }
