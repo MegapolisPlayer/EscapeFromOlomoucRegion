@@ -1,13 +1,13 @@
 let HNMimages = [];
 
 function HNMDomov() {
-	canvasPlayer(70, 60, 2.5);
+	Player.set(70, 60, 2.5);
 
 	return ui.makeArrow(new ArrowInfo(90, 80, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 1; }));
 }
 
 function HNMNamesti() {
-	canvasPlayer(50, 60, 1);
+	Player.set(50, 60, 1);
 	
 	return ui.makeArrows([
 		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
@@ -17,7 +17,7 @@ function HNMNamesti() {
 }
 
 function HNMNadrazi() {
-	canvasPlayer(35, 60, 1.7);
+	Player.set(35, 60, 1.7);
 
 	return ui.makeArrows([
 		new ArrowInfo(10, 90, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 1; }),
@@ -27,8 +27,8 @@ function HNMNadrazi() {
 }
 
 function HNMRestaurace() {
-	canvasPlayer(70, 90, 3);
-	makeNPC(NPC.COOK, 90, 50, 2, async (e) => {
+	Player.set(70, 90, 3);
+	NPCManager.make(NPCManager.types.COOK, 90, 50, 2, async () => {
 		ui.hideAllInput();
 
 		await ui.dialogueLine(62);
@@ -42,8 +42,8 @@ function HNMRestaurace() {
 			await ui.dialogueLine(65);
 		}
 		canvas.background(HNMimages[ui.info.location_minor]);
-		canvasPlayer(70, 90, 3);
-		drawNPC(NPC.COOK, 90, 50, 2);
+		Player.set(70, 90, 3);
+		NPCManager.drawByAnimation(NPCManager.types.COOK, 90, 50, 2);
 		await ui.renderWidgets();
 
 		ui.showAllInput();
@@ -53,11 +53,11 @@ function HNMRestaurace() {
 }
 
 function HNMNastupiste() {
-	canvasPlayer(65, 70, 1.3);
+	Player.set(65, 70, 1.3);
 
 	return Promise.any([
 	ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 2; })),
-	makeNPC(NPC.TRAIN, 40, 70, 1.3, (e) => {
+	NPCManager.make(NPCManager.types.TRAIN, 40, 70, 1.3, (e) => {
 		ui.clearArrows();
 		e.target.remove();
 		ui.info.location_minor_next = -1;
@@ -69,7 +69,7 @@ let HNMPropastEndingTimer;
 let HNMVisitedPropast = false;
 
 function HNMPropast() {
-	canvasPlayer(10, 90, 2.5);
+	Player.set(10, 90, 2.5);
 	HNMVisitedPropast = true;
 	HNMPropastEndingTimer = Date.now();
 
@@ -123,7 +123,7 @@ async function HNMHandler() {
 
 	ui.enablePauseButton();
 	canvas.background(HNMimages[ui.info.location_minor]);
-	canvasPlayer(70, 60, 2.5);
+	Player.set(70, 60, 2.5);
 	
 	//entry dialogue
 	if(!ui.info.speedrun) {
@@ -155,7 +155,7 @@ async function HNMHandler() {
 
 		if(ui.info.location_major != 0) {
 			ui.disablePauseButton();
-			canvasPlayerDisable();
+			Player.hide();
 			ui.animationBlocked = true;
 			break;
 		}
@@ -164,6 +164,6 @@ async function HNMHandler() {
 
 		await canvas.fadeOut({ref:ui});
 		//clear NPCs when switching location
-		clearNPC();
+		NPCManager.clear();
 	}
 }

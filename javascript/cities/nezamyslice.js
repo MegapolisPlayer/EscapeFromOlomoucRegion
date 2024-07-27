@@ -1,11 +1,11 @@
 let NezamysliceImages = [];
 
 function NezamysliceNastupiste() {
-	canvasPlayer(90, 70, 0.7); 
+	Player.set(90, 70, 0.7);
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		makeNPC(NPC.TRAIN, 80, 70, 0.7, (e) => {
+		NPCManager.make(NPCManager.types.TRAIN, 80, 70, 0.7, (e) => {
 			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
@@ -15,8 +15,8 @@ function NezamysliceNastupiste() {
 }
 
 function NezamysliceNadrazi() {
-	canvasPlayer(70, 60, 2.5);
-	makeNPC(NPC.STATION, 30, 60, 2.5, (e) => {
+	Player.set(70, 60, 2.5);
+	NPCManager.make(NPCManager.types.STATION, 30, 60, 2.5, () => {
 			
 	});
 
@@ -27,7 +27,7 @@ function NezamysliceNadrazi() {
 }
 
 function NezamyslicePodnikVenek() {
-	canvasPlayer(70, 90, 1); 
+	Player.set(70, 90, 1);
 
 	return ui.makeArrows([
 		new ArrowInfo(70, 70, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 3; }),
@@ -36,8 +36,8 @@ function NezamyslicePodnikVenek() {
 }
 
 function NezamyslicePodnikVnitrek() {
-	canvasPlayer(80, 55, 3);
-	makeNPC(NPC.TRANSLATOR, 30, 55, 3, (e) => {
+	Player.set(80, 55, 3);
+	NPCManager.make(NPCManager.types.TRANSLATOR, 30, 55, 3, () => {
 		
 	});
 
@@ -72,7 +72,7 @@ async function NezamysliceHandler() {
 
 	ui.enablePauseButton();
 	canvas.background(NezamysliceImages[ui.info.location_minor]);
-	canvasPlayer(90, 70, 0.7); 
+	Player.set(90, 70, 0.7);
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
@@ -86,7 +86,7 @@ async function NezamysliceHandler() {
 		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
-		clearNPC();
+		NPCManager.clear();
 
 		console.log("NZM "+ui.info.location_minor);
 		canvas.background(NezamysliceImages[ui.info.location_minor]);
@@ -105,12 +105,12 @@ async function NezamysliceHandler() {
 
 		if(ui.info.location_major != 2) {
 			ui.disablePauseButton();
-			canvasPlayerDisable(); 
+			Player.hide();
 			ui.animationBlocked = true;
 			break;
 		}
 
 		await canvas.fadeOut({ref:ui});
-		clearNPC();
+		NPCManager.clear();
 	}
 }

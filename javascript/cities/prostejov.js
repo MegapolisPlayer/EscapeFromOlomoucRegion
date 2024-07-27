@@ -1,11 +1,11 @@
 let ProstejovImages = [];
 
 function ProstejovNastupiste() {
-	canvasPlayer(50, 70, 2); 
+	Player.set(50, 70, 2);
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		makeNPC(NPC.TRAIN, 80, 55, 1.5, (e) => {
+		NPCManager.make(NPCManager.types.TRAIN, 80, 55, 1.5, (e) => {
 			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
@@ -15,7 +15,7 @@ function ProstejovNastupiste() {
 }
 
 function ProstejovNadrazi() {
-	canvasPlayer(30, 65, 0.8);
+	Player.set(30, 65, 0.8);
 
 	return ui.makeArrows([
 		new ArrowInfo(50, 50, ui.arrowType.LEFT, () => { ui.info.location_minor_next = 0; }),
@@ -24,8 +24,8 @@ function ProstejovNadrazi() {
 }
 
 function ProstejovNamesti() {
-	canvasPlayer(40, 80, 1.2);
-	makeNPC(NPC.UTILITY, 60, 60, 0.7, async() => {
+	Player.set(40, 80, 1.2);
+	NPCManager.make(NPCManager.types.UTILITY, 60, 60, 0.7, async() => {
 		ui.hideAllInput();
 		await minigameBench();
 		canvas.background(ProstejovImages[ui.info.location_minor]);
@@ -40,15 +40,15 @@ function ProstejovNamesti() {
 }
 
 function ProstejovObchod() {
-	canvasPlayer(65, 50, 3);
+	Player.set(65, 50, 3);
 	//TODO: cashier NPC
 
 	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
 }
 
 function ProstejovCafe() {
-	canvasPlayer(65, 55, 4);
-	makeNPC(NPC.COOK, 35, 55, 4, async() => {
+	Player.set(65, 55, 4);
+	NPCManager.make(NPCManager.types.COOK, 35, 55, 4, async() => {
 		ui.hideAllInput();
 		await minigameWaiter();
 		canvas.background(HNMimages[ui.info.location_minor]);
@@ -87,7 +87,7 @@ async function ProstejovHandler() {
 
 	ui.enablePauseButton();
 	canvas.background(ProstejovImages[ui.info.location_minor]);
-	canvasPlayer(50, 70, 2); 
+	Player.set(50, 70, 2);
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
@@ -99,7 +99,7 @@ async function ProstejovHandler() {
 		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
-		clearNPC();
+		NPCManager.clear();
 
 		console.log("PROSTEJOV "+ui.info.location_minor);
 		canvas.background(ProstejovImages[ui.info.location_minor]);
@@ -118,12 +118,12 @@ async function ProstejovHandler() {
 
 		if(ui.info.location_major != 3) {
 			ui.disablePauseButton();
-			canvasPlayerDisable(); 
+			Player.hide();
 			ui.animationBlocked = true;
 			break;
 		}
 
 		await canvas.fadeOut({ref:ui});
-		clearNPC();
+		NPCManager.clear();
 	}
 }

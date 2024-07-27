@@ -3,7 +3,7 @@ async function cutsceneNews() {
 
 	let bg = await loadImage("assets/cutscene/news.jpg");
 
-	let skipPromise = { promise: new Promise((resolve) => {}) };
+	let skipPromise = { promise: new Promise(() => {}) };
 	ui.addButton("skip", getTranslation(7), 80, 0, 20, 10, () => {
 		skipPromise.promise = Promise.resolve();
 	});

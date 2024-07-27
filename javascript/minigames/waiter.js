@@ -285,7 +285,7 @@ function renderWaiterMinigame() {
 	}
 
 	//add other buttons
-	waiterButtons.push(ui.addSmallButton("pause_waiter", getTranslation(10), 80, 80, 20, 10, (e) => {
+	waiterButtons.push(ui.addSmallButton("pause_waiter", getTranslation(10), 80, 80, 20, 10, () => {
 		ui.pauseMenuToggle();
 	}));
 
@@ -301,7 +301,7 @@ async function minigameWaiterGame() {
 	//variables
 	let endGamePromiseCompleted = false;
 
-	waiterButtons.push(ui.addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, (e) => {
+	waiterButtons.push(ui.addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, () => {
 		ui.info.money -= ui.getEarlyLeaveTimeMoney(waiterCounters.time/10);
 		endGamePromiseCompleted = true;
 	}));
@@ -422,11 +422,11 @@ async function minigameWaiterSummary() {
 	canvas.setSmallFontSize();
 	canvas.setFontWeight("normal");
 
-	canvas.textS(getTranslation(76), 10, 20);
-
-	canvas.textS(getTranslation(77), 10, 30);
-
-	canvas.textS(getTranslation(78), 10, 40);
+	canvas.textS(getTranslation(76), 10, 20).textS(waiterCounters.completed, 80, 20);
+	canvas.textS(getTranslation(77), 10, 30).textS(waiterCounters.undelivered, 80, 30);
+	canvas.textS(getTranslation(78), 10, 40).textS(waiterCounters.ignored, 80, 40);
+	let amountMoneyAdded = waiterCounters.completed*20-(waiterCounters.undelivered*10*ui.settings.diff_multiplier);
+	canvas.textS(getTranslation(51), 10, 50).textS((amountMoneyAdded >= 0 ? "+" : "-") + String(amountMoneyAdded), 80, 50);
 	
 	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {
 		pauseHidden = false;

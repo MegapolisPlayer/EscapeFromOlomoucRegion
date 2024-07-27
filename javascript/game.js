@@ -14,10 +14,10 @@ function renderMainMenu() {
 	canvas.textM("Version 2.00, D.M.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
 
 	//render characters (all of them, for show)
-	canvas.image(players[0], 20, 50, canvas.characterSizeMultiplier);
-	canvas.image(players[1], 30, 50, canvas.characterSizeMultiplier);
-	canvas.image(players[2], 45, 50, canvas.characterSizeMultiplier);
-	canvas.image(players[3], 55, 50, canvas.characterSizeMultiplier);
+	canvas.image(Player.images[0], 20, 50, canvas.characterSizeMultiplier);
+	canvas.image(Player.images[1], 30, 50, canvas.characterSizeMultiplier);
+	canvas.image(Player.images[2], 45, 50, canvas.characterSizeMultiplier);
+	canvas.image(Player.images[3], 55, 50, canvas.characterSizeMultiplier);
 }
 
 async function loadMainMenu() {
@@ -27,11 +27,11 @@ async function loadMainMenu() {
 	//play buttons
 	ui.addButton(
 		"load", getTranslation(4), 65, 35, 30, 10,
-		(e) => { console.log("MM btn Load Game pressed"); loadGame(); }
+		() => { console.log("MM btn Load Game pressed"); loadGame(); }
 	);
 	ui.addButton(
 		"settings", getTranslation(5), 65, 45, 30, 10,
-		async (e) => { 
+		async () => {
 			console.log("MM btn Settings pressed");
 			hideMainMenu();
 			await renderSettings();
@@ -49,7 +49,7 @@ async function loadMainMenu() {
 	);
 	ui.addButton(
 		"credits", getTranslation(6), 65, 55, 30, 10,
-		(e) => { console.log("MM btn Credits pressed"); clearMainMenu(); renderCredits(); } 
+		() => { console.log("MM btn Credits pressed"); clearMainMenu(); renderCredits(); }
 	); //reloads window
 	
 	//audio buttons
@@ -63,12 +63,12 @@ async function loadMainMenu() {
 	promises.push(waiterEventFromElement(
 		ui.addButton(
 		"play", getTranslation(2), 65, 15, 30, 10,
-		(e) => { ui.info.speedrun = false; console.log("MM btn Play pressed"); }
+		() => { ui.info.speedrun = false; console.log("MM btn Play pressed"); }
 	), "click"));
 	promises.push(waiterEventFromElement(
 		ui.addButton(
 		"speedrun", getTranslation(3), 65, 25, 30, 10,
-		(e) => { ui.info.speedrun = true; console.log("MM btn Speedrun pressed"); }
+		() => { ui.info.speedrun = true; console.log("MM btn Speedrun pressed"); }
 	), "click"));
 
 	await Promise.any(promises);
@@ -118,12 +118,12 @@ async function renderCharacterSelection() {
 	let promises = [];
 
 	for(let i = 0; i < 4; i++) {
-		canvas.image(players[i], 5 + i * 25, 50, canvas.characterSizeMultiplier);
+		canvas.image(Player.images[i], 5 + i * 25, 50, canvas.characterSizeMultiplier);
 		promises.push(
 			waiterEventFromElement(
 				ui.addSmallButton(
 					"select"+String(i), getTranslation(14), 4 + i * 25, 90, 10, 10,
-					(e) => { selectedPlayer = i; }
+					() => { player = i; }
 				), "click"
 			)
 		);
@@ -188,7 +188,7 @@ async function gameOver(text) {
 	await waiterEventFromElement(
 		ui.addButton(
 		"quit", getTranslation(12), 80, 90, 20, 10,
-		(e) => { ui.removeButton("quit"); }
+		() => { ui.removeButton("quit"); }
 	), "click");
 
 	window.location.reload();
@@ -229,7 +229,7 @@ async function gameHandler() {
 	await loadSFX(); //sfx
 	canvas.loadingItemDone(1);
 
-	await loadCharacters(); //characters
+	await NPCManager.load(); //characters
 	canvas.loadingItemDone(2);
 	
 	await loadTranslation(); //translations

@@ -1,11 +1,11 @@
 let PrerovImages = [];
 
 function PrerovNastupiste() {
-	canvasPlayer(70, 60, 2.5);
+	Player.set(70, 60, 2.5);
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 80, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		makeNPC(NPC.TRAIN, 30, 60, 2.5, (e) => {
+		NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, (e) => {
 			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
@@ -15,7 +15,7 @@ function PrerovNastupiste() {
 }
 
 function PrerovNadrazi() {
-	canvasPlayer(75, 80, 1.7);
+	Player.set(75, 80, 1.7);
 
 	return ui.makeArrows([
 		new ArrowInfo(90, 50, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 2; }),
@@ -24,7 +24,7 @@ function PrerovNadrazi() {
 }
 
 function PrerovNamesti() {
-	canvasPlayer(55, 60, 0.5);
+	Player.set(55, 60, 0.5);
 
 	return ui.makeArrows([
 		new ArrowInfo(10, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
@@ -34,13 +34,13 @@ function PrerovNamesti() {
 }
 
 function PrerovBecva() {
-	canvasPlayer(38, 75, 0.5);
+	Player.set(38, 75, 0.5);
 
 	return ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
 }
 
 function PrerovAutobus() {
-	canvasPlayer(15, 80, 1.7);
+	Player.set(15, 80, 1.7);
 
 	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
 }
@@ -74,12 +74,13 @@ async function PrerovHandler() {
 
 	ui.enablePauseButton();
 	canvas.background(PrerovImages[ui.info.location_minor]);
-	canvasPlayer(70, 60, 2.5);
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
+		Player.set(70, 60, 2.5);
+		NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, (e) => {})
 		await ui.dialogueLine(0);
-
+		NPCManager.clear();
 	}
 
 	let promise;
@@ -87,7 +88,7 @@ async function PrerovHandler() {
 		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
-		clearNPC();
+		NPCManager.clear();
 
 		console.log("PREROV "+ui.info.location_minor);
 		canvas.background(PrerovImages[ui.info.location_minor]);
@@ -106,12 +107,12 @@ async function PrerovHandler() {
 
 		if(ui.info.location_major != 1) {
 			ui.disablePauseButton();
-			canvasPlayerDisable(); 
+			Player.hide();
 			ui.animationBlocked = true;
 			break;
 		}
 
 		await canvas.fadeOut({ref:ui});
-		clearNPC();
+		NPCManager.clear();
 	}
 }

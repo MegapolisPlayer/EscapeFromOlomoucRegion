@@ -427,7 +427,6 @@ class UIImplementation {
 		this.UIanimationInterval = window.setInterval((instance) => {
 			if(instance.UIanimationBlocked) return;
 			instance.UIanimationState = !instance.UIanimationState;
-
 			instance.renderWidgets();
 		}, 700, this);
 

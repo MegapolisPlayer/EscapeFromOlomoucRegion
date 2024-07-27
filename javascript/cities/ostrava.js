@@ -1,13 +1,13 @@
 let OstravaImages = [];
 
 function OstravaNastupiste() {
-	canvasPlayer(70, 60, 2); 
+	Player.set(70, 60, 2);
 
 	return ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; }));
 }
 
 function OstravaNadrazi() {
-	canvasPlayer(70, 72, 0.25); 
+	Player.set(70, 72, 0.25);
 
 	return ui.makeArrows([
 		new ArrowInfo(45, 75, ui.arrowType.UP, () => { ui.info.location_minor_next = 2; }),
@@ -16,7 +16,7 @@ function OstravaNadrazi() {
 }
 
 function OstravaNastupiste2() {
-	canvasPlayer(90, 80, 0.5); 
+	Player.set(90, 80, 0.5);
 
 	return ui.makeArrows([
 		new ArrowInfo(75, 60, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 1; }),
@@ -55,7 +55,7 @@ async function OstravaHandler() {
 
 	ui.enablePauseButton();
 	canvas.background(OstravaImages[ui.info.location_minor]);
-	canvasPlayer(70, 60, 2); 
+	Player.set(70, 60, 2);
 
 	//entry dialogue
 	if(!ui.info.speedrun) {
@@ -68,7 +68,7 @@ async function OstravaHandler() {
 		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
-		clearNPC();
+		NPCManager.clear();
 
 		console.log("OSTRAVA "+ui.info.location_minor);
 		canvas.background(OstravaImages[ui.info.location_minor]);
@@ -85,12 +85,12 @@ async function OstravaHandler() {
 
 		if(ui.info.location_major != 6) {
 			ui.disablePauseButton();
-			canvasPlayerDisable(); 
+			Player.hide();
 			ui.animationBlocked = true;
 			break;
 		}
 
 		await canvas.fadeOut({ref:ui});
-		clearNPC();
+		NPCManager.clear();
 	}
 }

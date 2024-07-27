@@ -1,17 +1,17 @@
 let StudenkaImages = [];
 
 function StudenkaPrejezd() {
-	canvasPlayer(20, 70, 1); 
+	Player.set(20, 70, 1);
 
 	return ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.LEFT, async () => { ui.info.location_minor_next = 3; }));
 }
 
 function StudenkaNastupiste() {
-	canvasPlayer(75, 78, 1); 
+	Player.set(75, 78, 1);
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(20, 70, ui.arrowType.LEFT, async () => { ui.info.location_minor_next = 3; })),
-		makeNPC(NPC.TRAIN, 60, 78, 1, (e) => {
+		NPCManager.make(NPCManager.types.TRAIN, 60, 78, 1, (e) => {
 			ui.clearArrows();
 			e.target.remove();
 			ui.info.location_minor_next = -1;
@@ -21,7 +21,7 @@ function StudenkaNastupiste() {
 }
 
 function StudenkaNadrazi() {
-	canvasPlayer(45, 65, 2); 
+	Player.set(45, 65, 2);
 
 	return ui.makeArrows([
 		new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 1; }),
@@ -30,7 +30,7 @@ function StudenkaNadrazi() {
 }
 
 function StudenkaPredNadrazi() {
-	canvasPlayer(75, 70, 2); 
+	Player.set(75, 70, 2);
 
 	return ui.makeArrows([
 		new ArrowInfo(90, 50, ui.arrowType.RIGHT, () => { ui.info.location_minor_next = 0; }),
@@ -41,7 +41,7 @@ function StudenkaPredNadrazi() {
 }
 
 function StudenkaNamesti() {
-	canvasPlayer(75, 70, 2); 
+	Player.set(75, 70, 2);
 
 	return ui.makeArrows([
 		new ArrowInfo(45, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 3; }),
@@ -50,15 +50,15 @@ function StudenkaNamesti() {
 }
 
 function StudenkaPole() {
-	canvasPlayer(75, 70, 1); 
+	Player.set(75, 70, 1);
 
 	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, async () => { ui.info.location_minor_next = 4; }));
 }
 
 function StudenkaMost() {
-	canvasPlayer(75, 70, 2); 
+	Player.set(75, 70, 2);
 	if(!ui.info.speedrun) {
-		ui.makeArrow(new ArrowInfo(40, 70, ui.arrowType.INFO, async (e) => {
+		ui.makeArrow(new ArrowInfo(40, 70, ui.arrowType.INFO, async () => {
 			ui.hideAllInput();
 			await ui.dialogueLine(0);
 
@@ -100,14 +100,14 @@ async function StudenkaHandler() {
 
 	ui.enablePauseButton();
 	canvas.background(StudenkaImages[ui.info.location_minor]);
-	canvasPlayer(20, 70, 1); 
+	Player.set(20, 70, 1);
 
 	let promise;
 	while(ui.info.location_minor_next != -1) {
 		ui.info.location_minor = ui.info.location_minor_next;
 
 		//clear NPCs when switching location
-		clearNPC();
+		NPCManager.clear();
 
 		console.log("STUDENKA "+ui.info.location_minor);
 		canvas.background(StudenkaImages[ui.info.location_minor]);
@@ -127,12 +127,12 @@ async function StudenkaHandler() {
 		ui.clearArrows();
 
 		if(ui.info.location_major != 5) {
-			canvasPlayerDisable(); 
+			Player.hide();
 			ui.animationBlocked = true;
 			break;
 		}
 
 		await canvas.fadeOut({ref:ui});
-		clearNPC();
+		NPCManager.clear();
 	}
 }
