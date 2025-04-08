@@ -1,3 +1,13 @@
+async function cutsceneTravel(price) {
+	ui.animationBlocked = true;
+
+	await ui.dialogueLine(175, price+" CZK");
+	await ui.dialogueLine(176);
+	await ui.dialogueChoice();
+
+	ui.animationBlocked = false;
+}
+
 async function cutsceneNews() {
 	ui.animationBlocked = true;
 
@@ -44,6 +54,8 @@ async function cutsceneNews() {
 async function cutsceneStudenka() {
 	ui.animationBlocked = true;
 
+	let bg = await loadImage("assets/cutscene/Bmz245.jpg");
+
 	//dialogue here
 
 	ui.animationBlocked = false;
@@ -51,5 +63,8 @@ async function cutsceneStudenka() {
 
 async function cutscenePoland() {
 	ui.animationBlocked = true;
+
+	let bg = await loadImage("assets/cutscene/B10bmnouz.jpg");
+
 	ui.animationBlocked = false;
 }

@@ -13,7 +13,7 @@ let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Susština
 async function loadTranslation() {
 	const promise = new Promise((resolve) => {
 		const xhr = new XMLHttpRequest();
-		xhr.open("GET", "javascript/text/translation.csv", true);
+		xhr.open("GET", "/javascript/text/translation.csv", true);
 
 		xhr.onload = () => {
 			let text = xhr.response;

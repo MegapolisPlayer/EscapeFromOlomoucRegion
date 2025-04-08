@@ -58,6 +58,7 @@ function HNMNastupiste() {
 	return Promise.any([
 	ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 2; })),
 	NPCManager.make(NPCManager.types.TRAIN, 40, 70, 1.3, (e) => {
+		//TODO add dialogue
 		ui.clearArrows();
 		e.target.remove();
 		ui.info.location_minor_next = -1;

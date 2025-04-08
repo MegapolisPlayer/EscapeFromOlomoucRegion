@@ -1,0 +1,13 @@
+// Unikovka cleanup TODO:
+
+DONE // Abstract Canvas into CanvasImplementation
+DONE // move UI and Dialogue to separate canvas
+DONE // Abstract UI and Dialogue to UIImplementation
+DONE // Abstract buttons to UI canvas
+DONE // Rewrite characters file
+// Abstract settings and achievements to separate canvas
+DONE // Remove declarations file
+IN PROGRESS // Add all sentences for translation
+IN PROGRESS // Cleanup code: daisy-chain, simplify
+IN PROGRESS // Record voice lines (TODO: rerecord czech line 49)
+// Add rest of minigames

@@ -9,15 +9,16 @@ function renderMainMenu() {
 	canvas.setLargeFontSize().setColor("#000080").setBorder("#ffffff").setFontWeight("bold");
 	canvas.textAndBorderS(getTranslation(1), 5,  10);
 
-	canvas.setColor("#ffffff").setSmallFontSize().setFontWeight("normal");
-	//Date changes here!!!
-	canvas.textM("Version 2.00, D.M.2024\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD, Petr/Vrtulka103", 3, 90);
-
 	//render characters (all of them, for show)
 	canvas.image(Player.images[0], 20, 50, canvas.characterSizeMultiplier);
 	canvas.image(Player.images[1], 30, 50, canvas.characterSizeMultiplier);
 	canvas.image(Player.images[2], 45, 50, canvas.characterSizeMultiplier);
 	canvas.image(Player.images[3], 55, 50, canvas.characterSizeMultiplier);
+
+	canvas.setColor("#ffffff").setSmallFontSize().setFontWeight("normal");
+	//Date changes here!!!
+	canvas.textM("Version 2.00, D.M.2025\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD\nThis game does NOT in any way, shape or form support or reflect the views of the authors.", 3, 80);
+
 }
 
 async function loadMainMenu() {

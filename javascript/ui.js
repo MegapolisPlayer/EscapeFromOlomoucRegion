@@ -177,7 +177,7 @@ class UIImplementation {
 		});
 	}
 
-	async dialogueLine(idOfText) {
+	async dialogueLine(idOfText, textAddition="") {
 		if(this.info.speedrun) return new Promise((resolve) => { resolve(); });
 
 		this.disableWidgets();
@@ -186,7 +186,7 @@ class UIImplementation {
 		this.canvas.setColor("#ffffff").drawRoundedBox( 0, 80, 100, 20, 10);
 
 		this.canvas.setSmallFontSize().setFontWeight("normal").setColor("#000000");
-		await Promise.all([this.canvas.typewriterM(wrapText(getTranslation(idOfText), 90), 5, 85), playVoice(idOfText)]);
+		await Promise.all([this.canvas.typewriterM(wrapText(getTranslation(idOfText)+textAddition, 90), 5, 85), playVoice(idOfText)]);
 
 		await this.makeArrow(new ArrowInfo(92, 92, this.arrowType.RIGHT, () => {}));
 
