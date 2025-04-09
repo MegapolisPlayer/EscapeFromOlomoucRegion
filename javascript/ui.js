@@ -1,3 +1,10 @@
+// TODO rebalance
+const LEAVE_COST_HRANICE = 1000;
+const LEAVE_COST_PREROV = 1000;
+const LEAVE_COST_NEZAMYSLICE = 1000;
+const LEAVE_COST_PROSTEJOV = 1000;
+const LEAVE_COST_OLOMOUC = 1000;
+
 function ArrowInfo(x, y, type, fn) {
 	this.x = x;
 	this.y = y;

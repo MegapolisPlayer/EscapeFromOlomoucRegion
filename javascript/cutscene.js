@@ -1,9 +1,28 @@
 async function cutsceneTravel(price) {
 	ui.animationBlocked = true;
 
-	await ui.dialogueLine(175, price+" CZK");
+	await ui.dialogueLine(175, " "+price+" CZK");
 	await ui.dialogueLine(176);
-	await ui.dialogueChoice();
+	if(await ui.dialogueChoice()) {
+		if(ui.info.money < price) {
+			await ui.dialogueLine(179);
+		}
+		else {
+			//yes
+			ui.info.money -= price*diff_multiplier;
+			await ui.dialogueLine(177);
+			//10% change some extra money is charged
+			if(Math.random() > 0.9) {
+				await ui.dialogueLine(180);
+				//5% of price if available
+				ui.info.money -= Math.min(price*0.05*diff_multiplier, ui.info.money);
+			}
+		}
+	}
+	else {
+		//no
+		await ui.dialogueLine(178);
+	}
 
 	ui.animationBlocked = false;
 }
