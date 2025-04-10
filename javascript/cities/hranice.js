@@ -57,16 +57,7 @@ function HNMNastupiste() {
 
 	NPCManager.make(NPCManager.types.TRAIN, 40, 70, 1.3, async (e) => {
 		ui.hideAllInput();
-
-		//pass price
-		if(await cutsceneTravel(LEAVE_COST_HRANICE)) {
-			//TODO add dialogue
-			ui.clearArrows();
-			e.target.remove();
-			ui.info.location_minor_next = -1;
-			ui.info.location_major++;
-		}
-
+		if(await cutsceneTravel(LEAVE_COST_HRANICE)) goToNextMajor(e.target);
 		ui.showAllInput();
 	});
 

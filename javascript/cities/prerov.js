@@ -5,11 +5,10 @@ function PrerovNastupiste() {
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 80, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, (e) => {
-			ui.clearArrows();
-			e.target.remove();
-			ui.info.location_minor_next = -1;
-			ui.info.location_major++;
+		NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, async (e) => {
+			ui.hideAllInput();
+			if(await cutsceneTravel(LEAVE_COST_PREROV)) goToNextMajor(e.target);
+			ui.showAllInput();
 		})]
 	);
 }

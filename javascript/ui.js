@@ -380,6 +380,13 @@ class UIImplementation {
 		this.UIanimationBlocked = true;
 	}
 
+	goToNextMajor(elem) {
+		this.clearArrows();
+		elem.remove();
+		this.info.location_minor_next = -1;
+		this.info.location_major++;
+	}
+
 	constructor() {
 		this.element = document.getElementById("uicanvas");
 		this.element.width = 1000;

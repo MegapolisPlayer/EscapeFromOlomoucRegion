@@ -16,7 +16,7 @@ async function minigameBenchSummary() {
 	
 }
 
-async function minigameFish() {
+async function minigameBench() {
 	ui.animationBlocked = true;
 	ui.UIanimationBlocked = true;
 

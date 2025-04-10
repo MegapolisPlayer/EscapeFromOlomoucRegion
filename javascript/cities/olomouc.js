@@ -5,11 +5,10 @@ function OlomoucNastupiste() {
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.LEFT, async () => { ui.info.location_minor_next = 1; })),
-		NPCManager.make(NPCManager.types.TRAIN, 55, 47, 0.5, (e) => {
-			ui.clearArrows();
-			e.target.remove();
-			ui.info.location_minor_next = -1;
-			ui.info.location_major++;
+		NPCManager.make(NPCManager.types.TRAIN, 55, 47, 0.5, async (e) => {
+			ui.hideAllInput();
+			if(await cutsceneTravel(LEAVE_COST_OLOMOUC)) goToNextMajor(e.target);
+			ui.showAllInput();
 		})
 	]);
 }
