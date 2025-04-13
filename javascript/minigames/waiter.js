@@ -2,6 +2,12 @@
 // VARIABLES
 //
 
+const DELIVERED_REWARD = 20;
+const FAIL_REWARD = 10;
+
+let ACTUAL_DELIVERED_REWARD = -1;
+let ACTUAL_FAIL_REWARD = -1;
+
 let waiterMinigameImages = [];
 let waiterLoaded = false;
 let waiterButtons = []; //list of buttons of tables
@@ -44,6 +50,10 @@ function minigameWaiterReset() {
 
 async function minigameWaiterLoad() {
 	if(waiterLoaded) return;
+
+	//invert success with difficulty
+	ACTUAL_DELIVERED_REWARD = Math.trunc(DELIVERED_REWARD*(1.0/ui.settings.diff_multiplier));
+	ACTUAL_FAIL_REWARD = Math.trunc(DELIVERED_REWARD*ui.settings.diff_multiplier);
 
 	await loadMusic([10]);
 	waiterMinigameImages.push(await loadImage("assets/minigames/waiter/belt.png"));
@@ -156,7 +166,7 @@ function waiterTableButtonCallback(e) {
 		waiterTableUpdate(e.target.custom_property_table_id, waiterTablePhases.GOOD);
 		removeOrder(e.target.custom_property_table_id);
 		waiterCounters.completed++;
-		ui.info.money += 20;
+		ui.addMoney(ACTUAL_DELIVERED_REWARD);
 		renderWaiterCounter(waiterCounters.completed, 17);
 		//reset selection
 		waiterOrderSelected = -1;
@@ -302,7 +312,7 @@ async function minigameWaiterGame() {
 	let endGamePromiseCompleted = false;
 
 	waiterButtons.push(ui.addVerySmallButton("skip", getTranslation(82), 80, 90, 20, 10, () => {
-		ui.info.money -= ui.getEarlyLeaveTimeMoney(waiterCounters.time/10);
+		ui.removeMoney(ui.getEarlyLeaveTimeMoney(waiterCounters.time/10));
 		endGamePromiseCompleted = true;
 	}));
 	document.getElementById("skip").setAttribute("disabled", "disabled");
@@ -349,7 +359,7 @@ async function minigameWaiterGame() {
 				waiterTableUpdate(i, waiterTablePhases.LEFT);
 				removeOrder(i);
 				waiterCounters.undelivered++;
-				ui.info.money -= Math.trunc(10*ui.settings.diff_multiplier);
+				ui.removeMoney(ACTUAL_FAIL_REWARD);
 				renderWaiterCounter(waiterCounters.undelivered, 37);
 			}
 			else if(waiterTables[i].phase == waiterTablePhases.LEFT && waiterTables[i].ticks >= shorttime) {

@@ -5,11 +5,14 @@ function NezamysliceNastupiste() {
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		NPCManager.make(NPCManager.types.TRAIN, 80, 70, 0.7, async (e) => {
-			ui.hideAllInput();
-			if(await cutsceneTravel(LEAVE_COST_NEZAMYSLICE)) goToNextMajor(e.target);
-			ui.showAllInput();
-		})
+		new Promise((resolve) => {
+			NPCManager.make(NPCManager.types.TRAIN, 80, 70, 0.7, async (e) => {
+				ui.hideAllInput();
+				if(await cutsceneTravel(LEAVE_COST_NEZAMYSLICE)) ui.goToNextMajor(e.target);
+				ui.showAllInput();
+				resolve();
+			})
+		}),
 	]);
 }
 
@@ -106,10 +109,12 @@ async function NezamysliceHandler() {
 			ui.disablePauseButton();
 			Player.hide();
 			ui.animationBlocked = true;
+			NPCManager.clear();
 			break;
 		}
 
-		await canvas.fadeOut({ref:ui});
+		if(ui.info.location_minor_next != ui.info.location_minor) await canvas.fadeOut({ref:ui});
 		NPCManager.clear();
+		ui.info.last_location_minor = ui.info.location_minor;
 	}
 }

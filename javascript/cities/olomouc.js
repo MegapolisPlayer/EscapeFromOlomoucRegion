@@ -5,11 +5,14 @@ function OlomoucNastupiste() {
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.LEFT, async () => { ui.info.location_minor_next = 1; })),
-		NPCManager.make(NPCManager.types.TRAIN, 55, 47, 0.5, async (e) => {
-			ui.hideAllInput();
-			if(await cutsceneTravel(LEAVE_COST_OLOMOUC)) goToNextMajor(e.target);
-			ui.showAllInput();
-		})
+		new Promise((resolve) => {
+			NPCManager.make(NPCManager.types.TRAIN, 55, 47, 0.5, async (e) => {
+				ui.hideAllInput();
+				if(await cutsceneTravel(LEAVE_COST_OLOMOUC)) ui.goToNextMajor(e.target);
+				ui.showAllInput();
+				resolve();
+			})
+		}),
 	]);
 }
 
@@ -134,10 +137,12 @@ async function OlomoucHandler() {
 			ui.disablePauseButton();
 			Player.hide();
 			ui.animationBlocked = true;
+			NPCManager.clear();
 			break;
 		}
 
-		await canvas.fadeOut({ref:ui});
+		if(ui.info.location_minor_next != ui.info.location_minor) await canvas.fadeOut({ref:ui});
 		NPCManager.clear();
+		ui.info.last_location_minor = ui.info.location_minor;
 	}
 }

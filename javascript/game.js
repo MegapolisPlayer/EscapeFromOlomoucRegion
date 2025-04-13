@@ -124,7 +124,7 @@ async function renderCharacterSelection() {
 			waiterEventFromElement(
 				ui.addSmallButton(
 					"select"+String(i), getTranslation(14), 4 + i * 25, 90, 10, 10,
-					() => { player = i; }
+					() => { Player.selected = i; }
 				), "click"
 			)
 		);

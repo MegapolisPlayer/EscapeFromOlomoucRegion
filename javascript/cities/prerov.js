@@ -5,12 +5,15 @@ function PrerovNastupiste() {
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 80, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, async (e) => {
-			ui.hideAllInput();
-			if(await cutsceneTravel(LEAVE_COST_PREROV)) goToNextMajor(e.target);
-			ui.showAllInput();
-		})]
-	);
+		new Promise((resolve) => {
+			NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, async (e) => {
+				ui.hideAllInput();
+				if(await cutsceneTravel(LEAVE_COST_PREROV)) ui.goToNextMajor(e.target);
+				ui.showAllInput();
+				resolve();
+			})
+		}),
+	]);
 }
 
 function PrerovNadrazi() {
@@ -34,6 +37,11 @@ function PrerovNamesti() {
 
 function PrerovBecva() {
 	Player.set(38, 75, 0.5);
+
+	ui.makeArrow(new ArrowInfo(70, 75, ui.arrowType.DOWN, async () => {
+		await minigameFish();
+		musicPlay(3);
+	}));
 
 	return ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
 }
@@ -78,7 +86,7 @@ async function PrerovHandler() {
 	if(!ui.info.speedrun) {
 		Player.set(70, 60, 2.5);
 		NPCManager.make(NPCManager.types.TRAIN, 30, 60, 2.5, (e) => {})
-		await ui.dialogueLine(0);
+		await ui.dialogueLine(170);
 		NPCManager.clear();
 	}
 
@@ -108,10 +116,12 @@ async function PrerovHandler() {
 			ui.disablePauseButton();
 			Player.hide();
 			ui.animationBlocked = true;
+			NPCManager.clear();
 			break;
 		}
 
-		await canvas.fadeOut({ref:ui});
+		if(ui.info.location_minor_next != ui.info.location_minor) await canvas.fadeOut({ref:ui});
 		NPCManager.clear();
+		ui.info.last_location_minor = ui.info.location_minor;
 	}
 }

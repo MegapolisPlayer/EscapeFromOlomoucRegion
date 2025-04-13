@@ -5,11 +5,14 @@ function ProstejovNastupiste() {
 
 	return Promise.any([
 		ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 1; })),
-		NPCManager.make(NPCManager.types.TRAIN, 80, 55, 1.5, async (e) => {
-			ui.hideAllInput();
-			if(await cutsceneTravel(LEAVE_COST_PROSTEJOV)) goToNextMajor(e.target);
-			ui.showAllInput();
-		})
+		new Promise((resolve) => {
+			NPCManager.make(NPCManager.types.TRAIN, 80, 55, 1.5, async (e) => {
+				ui.hideAllInput();
+				if(await cutsceneTravel(LEAVE_COST_PROSTEJOV)) ui.goToNextMajor(e.target);
+				ui.showAllInput();
+				resolve();
+			})
+		}),
 	]);
 }
 
@@ -122,7 +125,8 @@ async function ProstejovHandler() {
 			break;
 		}
 
-		await canvas.fadeOut({ref:ui});
+		if(ui.info.location_minor_next != ui.info.location_minor) await canvas.fadeOut({ref:ui});
 		NPCManager.clear();
+		ui.info.last_location_minor = ui.info.location_minor;
 	}
 }

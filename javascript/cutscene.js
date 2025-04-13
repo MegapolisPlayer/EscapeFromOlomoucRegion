@@ -6,28 +6,36 @@ async function cutsceneTravel(price) {
 	if(await ui.dialogueChoice()) {
 		if(ui.info.money < price) {
 			await ui.dialogueLine(179);
+			ui.animationBlocked = false;
+			return false;
 		}
 		else {
 			//yes
-			ui.info.money -= price*diff_multiplier;
+			ui.info.money -= price*ui.settings.diff_multiplier;
 			await ui.dialogueLine(177);
 			//10% change some extra money is charged
 			if(Math.random() > 0.9) {
 				await ui.dialogueLine(180);
 				//5% of price if available
-				ui.info.money -= Math.min(price*0.05*diff_multiplier, ui.info.money);
+				ui.info.money -= Math.min(price*0.05*ui.settings.diff_multiplier, ui.info.money);
 			}
+
+			await canvas.fadeOut({ref:ui});
+			ui.animationBlocked = false;
+			return true;
 		}
 	}
 	else {
 		//no
 		await ui.dialogueLine(178);
+		ui.animationBlocked = false;
+		return false;
 	}
-
-	ui.animationBlocked = false;
 }
 
 async function cutsceneNews() {
+	//TODO news anchors
+
 	ui.animationBlocked = true;
 
 	let bg = await loadImage("assets/cutscene/news.jpg");

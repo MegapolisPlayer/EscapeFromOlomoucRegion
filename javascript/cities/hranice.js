@@ -55,13 +55,17 @@ function HNMRestaurace() {
 function HNMNastupiste() {
 	Player.set(65, 70, 1.3);
 
-	NPCManager.make(NPCManager.types.TRAIN, 40, 70, 1.3, async (e) => {
-		ui.hideAllInput();
-		if(await cutsceneTravel(LEAVE_COST_HRANICE)) goToNextMajor(e.target);
-		ui.showAllInput();
-	});
-
-	return ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 2; }));
+	return Promise.any([
+		new Promise((resolve) => {
+			NPCManager.make(NPCManager.types.TRAIN, 40, 70, 1.3, async (e) => {
+				ui.hideAllInput();
+				if(await cutsceneTravel(LEAVE_COST_HRANICE)) ui.goToNextMajor(e.target);
+				ui.showAllInput();
+				resolve();
+			})
+		}),
+		ui.makeArrow(new ArrowInfo(50, 90, ui.arrowType.DOWN, () => { ui.info.location_minor_next = 2; }))
+	]);
 }
 
 let HNMPropastEndingTimer;
@@ -156,12 +160,16 @@ async function HNMHandler() {
 			ui.disablePauseButton();
 			Player.hide();
 			ui.animationBlocked = true;
+			NPCManager.clear();
 			break;
 		}
 
 		//cleanup code, moved here so doesnt get called on first entry to location
 
-		await canvas.fadeOut({ref:ui});
+		if(ui.info.location_minor_next != ui.info.location_minor) {
+			//only on new locations
+			await canvas.fadeOut({ref:ui});
+		}
 		//clear NPCs when switching location
 		NPCManager.clear();
 	}

@@ -132,7 +132,8 @@ async function StudenkaHandler() {
 			break;
 		}
 
-		await canvas.fadeOut({ref:ui});
+		if(ui.info.location_minor_next != ui.info.location_minor) await canvas.fadeOut({ref:ui});
 		NPCManager.clear();
+		ui.info.last_location_minor = ui.info.location_minor;
 	}
 }

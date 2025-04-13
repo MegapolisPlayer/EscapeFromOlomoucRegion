@@ -271,10 +271,10 @@ class UIImplementation {
 		window.clearInterval(this.timerInterval);
 	}
 
-	addMoney() {
+	addMoney(amount) {
 		this.info.money += amount;
 	}
-	removeMoney() {
+	removeMoney(amount) {
 		this.info.money -= amount;
 	}
 
@@ -291,7 +291,7 @@ class UIImplementation {
 	}
 
 	pauseMenuToggle() {
-		if(this.info.speedrun) return;
+		if(this.info.speedrun || this.animationBlocked) return;
 
 		if(this.info.paused) {
 			this.showAllInput();
