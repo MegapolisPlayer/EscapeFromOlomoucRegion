@@ -1,15 +1,33 @@
 let fishMinigameImages = [];
 let fishLoaded = false;
+let fishCounters = {
+	caught: 0,
+	boxes: 0,
+	shoes: 0,
+	tires: 0,
+	time: 9000 //1 minute 30
+};
 
 const FISH_REWARD = 100;
 const TIRE_REWARD = 20;
 const SHOE_REWARD = 10;
 const MAX_BOX_REWARD = 10;
+const FISH_ROD_LENGTH = 5;
+const FISH_ROD_MAX_LENGTH = 50;
+let fishRodCurrentLength = FISH_ROD_LENGTH;
 
 let ACTUAL_FISH_REWARD = -1;
 let ACTUAL_TIRE_REWARD = -1;
 let ACTUAL_SHOE_REWARD = -1;
 let ACTUAL_MAX_BOX_REWARD = -1;
+
+let fishRodAngle = 0;
+let fishRodPositiveDirection = false;
+const FISH_ANGLE_MAX = 75;
+const FISH_ANGLE_SPEED = 1; //side to side
+const FISH_MOVE_SPEED = 0.2; //extend, retract
+let fishRodExtending = false;
+let fishRodDirection = false;
 
 const FISH_OBJECT_TYPES = {
 	UNKNOWN: 0,
@@ -79,6 +97,8 @@ async function minigameFishLoad() {
 	fishMinigameImages.push(await loadImage("assets/minigames/fish/hook.png"));
 	//TODO rotate hook when fishing
 	fishLoaded = true;
+
+	Player.set(46, 10, 0.7);
 }
 
 async function minigameFishMenu() {
@@ -114,6 +134,8 @@ async function minigameFishMenu() {
 function renderFishMinigame() {
 	canvas.clear("#02b7db");
 
+	Player.draw();
+
 	//background
 
 	canvas.setColor("#aa2000");
@@ -125,6 +147,14 @@ function renderFishMinigame() {
 	for(let f of fishData) {
 		f.draw();
 	}
+
+	//hook
+
+	canvas.setLineWidth(5).setLineColor("#000000").line(
+		50, 10, 
+		50 + Math.sin(Math.PI/180*fishRodAngle)*fishRodCurrentLength,
+		10 + Math.cos(Math.PI/180*fishRodAngle)*canvas.convertXtoY(fishRodCurrentLength),
+	);
 }
 
 async function minigameFishGame() {
@@ -132,14 +162,55 @@ async function minigameFishGame() {
 
 	//setup
 	for(let i = 0; i < 50; i++) {
-		fishData.push(new FishData(5+(Math.random()*90), 5+(Math.random()*90), 1+Math.trunc(Math.random()*5)));
+		fishData.push(new FishData(5+(Math.random()*90), 30+(Math.random()*55), 1+Math.trunc(Math.random()*5)));
 	}
 
-	//while(!endGamePromiseCompleted) {
+	let f = (e) => {
+		console.log("Function!");
+		if(!fishRodExtending) {
+			fishRodDirection = true;
+		}
+	};
+
+	await new Promise((resolve) => {
+		setTimeout(() => { resolve(); }, 100);
+	});  
+	document.getElementById("draw_contain").addEventListener('click', f);
+
+	while(!endGamePromiseCompleted) {
+		if(!fishRodExtending) {
+			fishRodAngle += ((fishRodPositiveDirection*2)-1) * FISH_ANGLE_SPEED;
+			if(Math.abs(fishRodAngle) >= FISH_ANGLE_MAX) {
+				fishRodPositiveDirection = !fishRodPositiveDirection;
+			}
+		}
+
+		if(fishRodDirection) {
+			console.log("Extending!");
+			fishRodExtending = true;
+			fishRodCurrentLength = Math.min(FISH_ROD_MAX_LENGTH, fishRodCurrentLength+FISH_MOVE_SPEED);
+			if(fishRodCurrentLength == FISH_ROD_MAX_LENGTH) fishRodDirection = false;
+		}
+		else {
+			console.log("Retracting!");
+			fishRodCurrentLength = Math.max(FISH_ROD_LENGTH, fishRodCurrentLength-FISH_MOVE_SPEED);
+			if(fishRodCurrentLength == FISH_ROD_LENGTH) fishRodExtending = false;
+		}
+
 		renderFishMinigame();
-	//}
+
+		do {
+			await new Promise((resolve) => {
+				setTimeout(() => { resolve(); }, 10);
+			});  
+		}
+		while(ui.info.paused);
+	}
+
+	document.getElementById("draw_contain").removeEventListener('click', f);
 }
 async function minigameFishSummary() {
+	canvas.clear("#02b7db");
 
 }
 

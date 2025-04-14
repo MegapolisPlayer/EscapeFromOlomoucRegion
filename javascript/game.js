@@ -197,6 +197,79 @@ async function gameOver(text) {
 
 // GAME HANDLER
 
+//city handler - stay DRY
+async function cityHandler(imagePaths, locationId, musicId, entryDialogue, locationFunctions) {
+	// HANDLER <-> LOCATIONS
+	
+	// handler is a loop, return NextLocation as variable
+	// wait until any function returns, then run again
+	// when returning: set next location value, return promise
+
+	ui.info.location_major = locationId;
+	ui.info.location_minor = 0;
+	ui.info.location_minor_next = 0;
+
+	canvas.loadingScreen();
+	await loadMusic(musicId);
+
+	let images = await loadImages(imagePaths);
+
+	//map
+	if(!ui.info.speedrun) {
+		musicPlay(1);
+		await renderMap(ui.info.location_major);
+		await canvas.fadeOut({ref:ui});
+	}
+
+	musicPlay(musicId); //start playing AFTER loading
+	ui.animationBlocked = false;
+	
+	ui.enablePauseButton();
+	canvas.background(images[ui.info.location_minor]);
+	Player.set(70, 60, 2.5);
+
+	if(!ui.info.speedrun) {
+		for(let id of entryDialogue) {
+			await ui.dialogueLine(id);
+		}
+	}	
+
+	while(ui.info.location_minor_next != -1) {
+		ui.info.location_minor = ui.info.location_minor_next;
+		canvas.background(images[ui.info.location_minor]);
+
+		for(let location = 0; location < locationFunctions.length; location++) {
+			if(ui.info.location_minor == location) {
+				await locationFunctions[location].call(images);
+				break;
+			}
+		}
+
+		await ui.renderWidgets();
+
+		ui.clearArrows();
+
+		if(ui.info.location_major != locationId) {
+			ui.disablePauseButton();
+			Player.hide();
+			ui.animationBlocked = true;
+			NPCManager.clear();
+			break;
+		}
+
+		//cleanup code, moved here so doesnt get called on first entry to location
+
+		if(ui.info.location_minor_next != ui.info.location_minor) {
+			//only on new locations
+			await canvas.fadeOut({ref:ui});
+		}
+		//clear NPCs when switching location
+		NPCManager.clear();
+
+		//check game over
+	}
+}
+
 async function playHandler() {
 	await renderCharacterSelection();
 	clearCharacterSelection();
@@ -204,17 +277,150 @@ async function playHandler() {
 	await renderDisclaimer();
 	await renderCutscene();
 
+	if(!ui.info.speedrun) {
+		//init pause shortcut; just in HNM
+		window.addEventListener("keydown", (e) => {
+			if(e.code === "Escape") {
+				ui.pauseMenuToggle();
+			}
+		});
+	}
 	ui.beginTimer();
 
-	await HNMHandler();
-	await PrerovHandler();
-	await NezamysliceHandler();
-	await ProstejovHandler();
-	await OlomoucHandler();
+	await cityHandler(
+		[
+			"assets/photo/hnm/domov.png",
+			"assets/photo/hnm/namesti.jpg",
+			"assets/photo/hnm/nadrazi.jpg",
+			"assets/photo/hnm/restaurace.jpg",
+			"assets/photo/hnm/nastupiste.jpg",
+			"assets/photo/hnm/propast.jpg"
+		],
+		0, 2,
+		[49],
+		[
+			HNMDomov, 
+			HNMNamesti, 
+			HNMNadrazi,
+			HNMRestaurace, 
+			HNMNastupiste, 
+			HNMPropast
+		]
+	);
+	await cityHandler(
+		[
+			"assets/photo/prerov/nastupiste.jpg",
+			"assets/photo/prerov/nadrazi.jpg",
+			"assets/photo/prerov/namesti.jpg",
+			"assets/photo/prerov/becva.jpg",
+			"assets/photo/prerov/autobus.jpg"
+		],
+		1, 3,
+		[170],
+		[
+			PrerovNastupiste,
+			PrerovNadrazi,
+			PrerovNamesti,
+			PrerovBecva,
+			PrerovAutobus
+		]
+	);
+	await cityHandler(
+		[
+			"assets/photo/nezamyslice/nastupiste.jpg",
+			"assets/photo/nezamyslice/nadrazi.jpg",
+			"assets/photo/nezamyslice/podnik_venek.jpg",
+			"assets/photo/nezamyslice/podnik_vnitrek.jpg"
+		],
+		2, 4,
+		[0],
+		[
+			NezamysliceNastupiste, 
+			NezamysliceNadrazi, 
+			NezamyslicePodnikVenek,
+			NezamyslicePodnikVnitrek
+		]
+	);
+	await cityHandler(
+		[
+			"assets/photo/prostejov/nastupiste.jpg",
+			"assets/photo/prostejov/nadrazi.jpg",
+			"assets/photo/prostejov/namesti.jpg",
+			"assets/photo/prostejov/cafe.jpg",
+			"assets/photo/prostejov/obchod.jpg"
+		],
+		3, 5,
+		[],
+		[
+			ProstejovNastupiste,
+			ProstejovNadrazi,
+			ProstejovNamesti,
+			ProstejovCafe,
+			ProstejovObchod,
+		]
+	);
+	await cityHandler(
+		[
+			"assets/photo/olomouc/nastupiste.jpg",
+			"assets/photo/olomouc/nadrazi.jpg",
+			"assets/photo/olomouc/namesti.jpg",
+			"assets/photo/olomouc/syrarna.jpg",
+			"assets/photo/olomouc/restaurant.jpg",
+			"assets/photo/olomouc/obchod_venek.jpg",
+			"assets/photo/olomouc/obchod_vnitrek.jpg"
+		],
+		4, 6,
+		[0],
+		[
+			OlomoucNastupiste, 
+			OlomoucNadrazi,
+			OlomoucNamesti,
+			OlomoucSyrarna,
+			OlomoucRestaurant,
+			OlomoucObchodVenek,
+			OlomoucObchodVnitrek
+		]
+	);
 	await cutsceneStudenka();
-	await StudenkaHandler();
-	await OstravaHandler();
+	await cityHandler(
+		[
+			"assets/photo/studenka/prejezd.jpg",
+			"assets/photo/studenka/nastupiste.jpg",
+			"assets/photo/studenka/nadrazi.jpg",
+			"assets/photo/studenka/prednadrazi.jpg",
+			"assets/photo/studenka/namesti.jpg",
+			"assets/photo/studenka/pole.jpg",
+			"assets/photo/studenka/most.jpg",
+		],
+		5, 7,
+		[],
+		[
+			StudenkaPrejezd,
+			StudenkaNastupiste,
+			StudenkaNadrazi,
+			StudenkaPredNadrazi,
+			StudenkaNamesti,
+			StudenkaPole,
+			StudenkaMost,
+		]
+	);
+	await cityHandler(
+		[
+			"assets/photo/ostrava/nastupiste.jpg",
+			"assets/photo/ostrava/nadrazi.jpg",
+			"assets/photo/ostrava/nastupiste2.jpg",
+		],
+		6, 8,
+		[],
+		[
+			OstravaNastupiste,
+			OstravaNadrazi,
+			OstravaNastupiste2,
+		]
+	);
+
 	ui.endTimer();
+
 	await cutscenePoland();
 	await renderCredits();
 }

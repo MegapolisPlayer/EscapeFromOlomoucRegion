@@ -72,6 +72,8 @@ class CanvasImplementation {
 
 		this.updateValues();
 		this.background(savedcvs);
+
+		return this;
 	}
 
 	getX(xvalue) {
@@ -176,6 +178,11 @@ class CanvasImplementation {
 		this.ctx.strokeStyle = color;
 		return this;
 	}
+	setLineColor(color) {
+		this.ctx.strokeStyle = color;
+		return this;
+	}
+
 	setBrightness(brightness) {
 		this.ctx.filter = "brightness("+brightness+"%)";
 		return this;
@@ -327,6 +334,18 @@ class CanvasImplementation {
 		return this;
 	}
 
+	setLineWidth(width) {
+		this.ctx.lineWidth = width;
+		return this;
+	}
+	line(x1, y1, x2, y2) {
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.getX(x1), this.getY(y1));
+		this.ctx.lineTo(this.getX(x2), this.getY(y2));
+		this.ctx.stroke();
+		return this;
+	}
+
 	background(image) {
 		this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
 		this.currentBGImage = image;
@@ -376,9 +395,11 @@ class CanvasImplementation {
 
 	eraseBox(x, y, sizex, sizey) {
 		this.ctx.clearRect(this.getX(x), this.getY(y), this.getX(sizex), this.getY(sizey));
+		return this;
 	}
 	eraseCanvas() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		return this;
 	}
 
 	//pass UI as object with parameter ref

@@ -34,11 +34,11 @@ async function cutsceneTravel(price) {
 }
 
 async function cutsceneNews() {
-	//TODO news anchors
-
 	ui.animationBlocked = true;
 
 	let bg = await loadImage("assets/cutscene/news.jpg");
+	let lg = await loadImage("assets/cutscene/newsLogo.png");
+	let cw = await loadImage("assets/cutscene/oneLogo.png");
 
 	let skipPromise = { promise: new Promise(() => {}) };
 	ui.addButton("skip", getTranslation(7), 80, 0, 20, 10, () => {
@@ -46,24 +46,33 @@ async function cutsceneNews() {
 	});
 
 	canvas.background(bg);
+	//tint for bg
 	canvas.setColor("#000080");
-	canvas.setAlpha(0.5);
+	canvas.setAlpha(0.6);
 	canvas.drawBox(0, 0, 100, 100);
 	canvas.resetAlpha();
-
-	canvas.setColor("#800000");
-	canvas.drawRoundedBox( 0, 0, 40, 15, 10);
 
 	musicPause();
 	sfxPlayQuiet(10);
 
+	//news box
+	canvas.setColor("#800000");
+	canvas.drawRoundedBox(5, 5, 50, 60, 10);
 	canvas.setLargeFontSize();
 	canvas.setColor("#ffffff");
 	canvas.setBorder("#000080");
-	canvas.textAndBorderS(getTranslation(45), 5, 10);
-
+	canvas.textAndBorderS(getTranslation(45), 10, 60);
 	canvas.setSmallFontSize();
 
+	canvas.imageDest(lg, 7, 10, 46, 30);
+
+	//anchor
+	NPCManager.draw(NPCManager.types.NEWS, 80, 60, 3);
+
+	//channel wordmark
+	canvas.imageDest(cw, 5, 5, 10, 10);
+
+	//text
 	for(let i = 0; i < 3; i++) {
 		canvas.setColor("#000080").imageEquivalent(steelImage, 0, 70, 100, 30).setColor("#ffffff");
 

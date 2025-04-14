@@ -28,7 +28,6 @@ async function renderCredits() {
 	setCreditsStep(29, `
 		Martin/MegapolisPlayer (code and graphics)
 		Jirka/KohoutGD (idea, translations and voiceover)
-		Petr/Vrtulka103 (voiceover and testing)
 	`);
 	setCreditsStep(30, `
 		SReality, Freepik (jcomp), VlakemJednoduse.cz, Fortes Interactive, VagonWeb,

@@ -48,9 +48,10 @@ let NPCManager = {
 			TRANSLATOR: 4,
 			UTILITY: 5,
 			CHEESEMAKER: 6,
+			NEWS: 7,
 		};
 
-		let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility", "cheesemaker"];
+		let NPCSToLoad = ["army", "cook", "station", "train", "translator", "utility", "cheesemaker", "news"];
 		for(let i = 0; i < NPCSToLoad.length; i++) {
 			this.images.push(await loadImage("assets/characters/"+NPCSToLoad[i]+".png"));
 		}
