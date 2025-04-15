@@ -152,6 +152,11 @@ class UIImplementation {
 		this.canvas.eraseCanvas();
 		this.renderWidgets();
 	}
+	clearAll() {
+		ui.getAllInput().forEach((val) => { val.remove(); });
+		this.arrowList.length = 0;
+		this.canvas.eraseCanvas();
+	}
 
 	//takes in 1 ArrowInfo
 	makeArrow(arrow) {

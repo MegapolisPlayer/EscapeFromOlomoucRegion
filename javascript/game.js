@@ -174,8 +174,10 @@ async function renderCutscene() {
 // GAME OVER SCREEN
 
 async function gameOver(text) {
+	ui.clearAll();
 	ui.animationBlocked = true;
-	ui.getAllInput().forEach((val) => { val.remove(); });
+	ui.arrowAnimationBlocked = true;
+	ui.UIanimationBlocked = true;
 
 	musicPlay(1);
 	canvas.clear("#000000");
@@ -186,6 +188,7 @@ async function gameOver(text) {
 	canvas.setColor("#ffffff").setFontWeight("normal").setSmallFontSize();
 	canvas.textM(wrapText(text, 80), 10, 40);
 
+	
 	await waiterEventFromElement(
 		ui.addButton(
 		"quit", getTranslation(12), 80, 90, 20, 10,
@@ -210,7 +213,7 @@ async function cityHandler(imagePaths, locationId, musicId, entryDialogue, locat
 	ui.info.location_minor_next = 0;
 
 	canvas.loadingScreen();
-	await loadMusic(musicId);
+	await loadMusic([musicId]);
 
 	let images = await loadImages(imagePaths);
 
@@ -267,6 +270,19 @@ async function cityHandler(imagePaths, locationId, musicId, entryDialogue, locat
 		NPCManager.clear();
 
 		//check game over
+		let randomGameOverValue = Math.trunc(Math.random()*ui.settings.random_loss_chance);
+		console.log("Random game over", randomGameOverValue);
+		switch(randomGameOverValue) {
+			case(10):
+				await gameOver(getTranslation(40));
+				break;
+			case(11):
+				await gameOver(getTranslation(41));
+				break;
+			case(12):
+				await gameOver(getTranslation(42));
+				break;	
+		}
 	}
 }
 
@@ -274,6 +290,7 @@ async function playHandler() {
 	await renderCharacterSelection();
 	clearCharacterSelection();
 
+	await loadMusic([1]);
 	await renderDisclaimer();
 	await renderCutscene();
 

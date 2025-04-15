@@ -4,20 +4,25 @@ html, body {
 }
 
 body {
-	background-color: #00aaaa;
+	background-color: #00aaaa; /* for old browsers */
+	background: linear-gradient(180deg,rgba(0, 170, 170, 1) 0%, rgba(0, 0, 128, 1) 100%);
 	color: #ffffff;
 	font-family: sans-serif;
 	font-size: 25px;
 	padding-left: 25px;
+	text-align: center;
 }
 
-h {
+h1 {
 	font-size: 50px;
 	font-weight: bolder;
+	font-style: italic;
+	color: #000080;
 }
 
 a {
-	color: #aaaaaa;
+	color: #eeeeee;
+	font-style: italic;
 }
 
 button {
@@ -39,13 +44,19 @@ button:disabled {
     color: #000040;
 }
 
+#draw_mover {
+	display: flex;
+	justify-content: center;
+}
+
 #draw_contain {
 	position: relative;
+	text-align: left;
 }
 
 .drawable {
-   position: absolute;
-   z-index: -1;
+    position: absolute;
+    z-index: -1;
 }
 
 .draw_input_elem {
@@ -88,4 +99,8 @@ button:disabled {
 .draw_input_elem_npc {
 	position: absolute;
 	opacity: 0;
+}
+
+ul {
+	list-style-position: inside;
 }

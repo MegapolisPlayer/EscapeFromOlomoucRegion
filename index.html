@@ -65,17 +65,19 @@
 		<script src="./javascript/main.js"></script>
 	</head>
 	<body onload="initWebpage()">
-		<h>Escape from the Olomouc Region</h>
+		<h1>Escape from the Olomouc Region</h1>
 		<p>
 			To play the old version (1.00, the original school project) click <a href="https://megapolisplayer.github.io/game/escape_old/">HERE.</a><br>
 			<strong>This game does NOT in any way, shape or form support or reflect the views of the authors.</strong><br>
 		</p>
 
-		<div id="draw_contain">
-		<canvas class="drawable" id="draw">This game is not playable without support for the HTML canvas.</canvas>
-		<canvas class="drawable overlay" id="pausecanvas">Pause canvas</canvas>
-		<canvas class="drawable overlay" id="uicanvas">UI canvas</canvas>
-		<div id="draw_buffer" style="width: 1000px; height: 500px;"></div>
+		<div id="draw_mover">
+			<div id="draw_contain">
+				<canvas class="drawable" id="draw">This game is not playable without support for the HTML canvas.</canvas>
+				<canvas class="drawable overlay" id="pausecanvas">Pause canvas</canvas>
+				<canvas class="drawable overlay" id="uicanvas">UI canvas</canvas>
+				<div id="draw_buffer" style="width: 1000px; height: 500px;"></div>
+			</div>
 		</div>
 		<button class="size_control_buttons" onclick="canvasFullscreen()" disabled>Fullscreen/Na Plnou Obrazovku</button>
 		<button class="size_control_buttons" onclick="resizeAllCanvases(1000, 500)" disabled>Default size/Základní rozměr</button>
@@ -85,22 +87,22 @@
 		<br>
 		The changelog is available <a href="changelog.html">here.</a>
 		<br>
-		<h>How to play?</h>
+		<h2>How to play?</h2>
 		<p>
 			<ul>
-				<li></li>
+				<li>Characters are clickable!</li>
 			</ul>
 		</p>
-		<h>Settings</h>
+		<h2>Settings</h2>
 		<p>
 			<ul>
-				<li></li>
+				<li>Click settings button in main menu to change options.</li>
 				
 			</ul>
 		</p>
-		<h>
+		<h2>
 			PR Resources
-		</h>
+		</h2>
 		<p>
 			<button onclick="window.location.href=(window.location.href+'web/advert.png')">View advert, in Czech</button>
 		</p>
