@@ -11,7 +11,8 @@ let fishCounters = {
 const FISH_REWARD = 100;
 const TIRE_REWARD = 20;
 const SHOE_REWARD = 10;
-const MAX_BOX_REWARD = 10;
+const MAX_BOX_REWARD = 200;
+const FISH_ROD_COST = 10;
 const FISH_ROD_LENGTH = 5;
 const FISH_ROD_MAX_LENGTH = 50;
 let fishRodCurrentLength = FISH_ROD_LENGTH;
@@ -20,6 +21,7 @@ let ACTUAL_FISH_REWARD = -1;
 let ACTUAL_TIRE_REWARD = -1;
 let ACTUAL_SHOE_REWARD = -1;
 let ACTUAL_MAX_BOX_REWARD = -1;
+let ACTUAL_FISH_ROD_COST = -1;
 
 let fishRodAngle = 0;
 let fishRodPositiveDirection = false;
@@ -129,6 +131,8 @@ function minigameFishReset() {
 		boxes: 0,
 		shoes: 0,
 		tires: 0,
+		rods: 0,
+		money: 0,
 		time: 9000 //1 minute 30
 	};
 	fishRodCurrentLength = FISH_ROD_LENGTH;
@@ -136,6 +140,7 @@ function minigameFishReset() {
 	ACTUAL_TIRE_REWARD = -1;
 	ACTUAL_SHOE_REWARD = -1;
 	ACTUAL_MAX_BOX_REWARD = -1;
+	ACTUAL_FISH_ROD_COST = -1;
 	fishRodAngle = 0;
 	fishRodPositiveDirection = false;
 	fishRodExtending = false;
@@ -154,7 +159,8 @@ async function minigameFishLoad() {
 	ACTUAL_FISH_REWARD = Math.trunc(FISH_REWARD*ui.settings.diff_multiplier);
 	ACTUAL_TIRE_REWARD = Math.trunc(TIRE_REWARD*ui.settings.diff_multiplier);
 	ACTUAL_SHOE_REWARD = Math.trunc(SHOE_REWARD*ui.settings.diff_multiplier);
-	ACTUAL_MAX_BOX_REWARD = Math.trunc(ACTUAL_MAX_BOX_REWARD*ui.settings.diff_multiplier);
+	ACTUAL_MAX_BOX_REWARD = Math.trunc(MAX_BOX_REWARD*ui.settings.diff_multiplier);
+	ACTUAL_FISH_ROD_COST = Math.trunc(FISH_ROD_COST*ui.settings.diff_multiplier);
 
 	await loadMusic([11]);
 	fishMinigameImages.push(await loadImage("assets/minigames/fish/fish.png"));
@@ -185,7 +191,7 @@ async function minigameFishMenu() {
 
 	canvas.setSmallFontSize().setFontWeight("normal");
 	
-	canvas.textM(wrapText(getTranslation(91), 80), 5, 18);
+	canvas.textM(wrapText(getTranslation(91)+" "+ACTUAL_FISH_ROD_COST+" "+getTranslation(96), 80), 5, 18);
 
 	canvas.imageSamesizeY(fishMinigameImages[0], 5, 45, 10);
 	canvas.imageSamesizeY(fishMinigameImages[2], 12, 45, 10);
@@ -261,6 +267,9 @@ async function minigameFishGame() {
 		console.log("Function!");
 		if(!fishRodExtending) {
 			fishRodDirection = true;
+			fishCounters.rods++;
+			fishCounters.money -= ACTUAL_FISH_ROD_COST;
+			console.log("Fishing rod used!");
 		}
 	};
 
@@ -300,6 +309,40 @@ async function minigameFishGame() {
 			if(fishRodCurrentLength == FISH_ROD_LENGTH) {
 				fishRodExtending = false;
 				if(fishIdCaught != -1) {
+					//get money from le fish
+					switch(fishData[fishIdCaught].type) {
+						case(FISH_OBJECT_TYPES.FISH):
+						case(FISH_OBJECT_TYPES.FISH2):
+							fishCounters.caught++;
+							fishCounters.money += ACTUAL_FISH_REWARD;
+							break;
+						//TODO ui
+						case(FISH_OBJECT_TYPES.BOX):
+							switch(Math.trunc(Math.random()*3)) {
+								case(0):
+									fishCounters.boxes++;
+									//TODO random box amount
+									break;
+								case(1):
+									fishCounters.shoes++;
+									fishCounters.money += ACTUAL_SHOE_REWARD;
+									break;
+								case(2):
+									fishCounters.tires++;
+									fishCounters.money += ACTUAL_TIRE_REWARD;
+									break;
+							}
+							break;
+						case(FISH_OBJECT_TYPES.SHOE):
+							fishCounters.shoes++;
+							fishCounters.money += ACTUAL_SHOE_REWARD;
+							break;
+						case(FISH_OBJECT_TYPES.TIRE):
+							fishCounters.tires++;
+							fishCounters.money += ACTUAL_TIRE_REWARD;
+							break;
+					}
+
 					fishData.splice(fishIdCaught, 1);
 					fishIdCaught = -1;
 				}
