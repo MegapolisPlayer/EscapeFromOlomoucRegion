@@ -29,20 +29,25 @@ function HNMRestaurace() {
 	NPCManager.make(NPCManager.types.COOK, 90, 50, 2, async () => {
 		ui.hideAllInput();
 
-		await ui.dialogueLine(62);
-		await ui.dialogueLine(63);
-		if(await ui.dialogueChoice()) {
-			await ui.dialogueLine(64);
-			await minigameWaiter();
-			musicPlay(2);
+		if(ui.info.money >= ui.settings.moneyLimit) {
+			await ui.dialogueLine(39);	
 		}
 		else {
-			await ui.dialogueLine(65);
+			await ui.dialogueLine(62);
+			await ui.dialogueLine(63);
+			if(await ui.dialogueChoice()) {
+				await ui.dialogueLine(64);
+				await minigameWaiter();
+				musicPlay(2);
+			}
+			else {
+				await ui.dialogueLine(65);
+			}
+			canvas.background(this[ui.info.location_minor]);
+			Player.set(70, 90, 3);
+			NPCManager.drawByAnimation(NPCManager.types.COOK, 90, 50, 2);
+			ui.renderWidgets();
 		}
-		canvas.background(this[ui.info.location_minor]);
-		Player.set(70, 90, 3);
-		NPCManager.drawByAnimation(NPCManager.types.COOK, 90, 50, 2);
-		await ui.renderWidgets();
 
 		ui.showAllInput();
 	});

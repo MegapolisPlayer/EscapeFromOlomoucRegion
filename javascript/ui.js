@@ -56,8 +56,6 @@ class UIImplementation {
 	info;
 	achievements;
 
-	moneyLimit = 2500; //no minigames allowed above 2500 (prevent stacking)
-
 	arrowType = {
 		LEFT: 0,
 		RIGHT: 1,
@@ -419,6 +417,8 @@ class UIImplementation {
 			music_enabled: false,
 			//voiceover enabled
 			voice_enabled: false,
+
+			moneyLimit: 2500, //no minigames allowed above 2500 (prevent stacking)
 		};
 
 		this.info = {
@@ -427,9 +427,9 @@ class UIImplementation {
 			location_minor: 0,
 			location_minor_next: 0,
 			speedrun: false,
-			currentTicketPrice: 0,
 			paused: false,
 			pausedTime: 0,
+			
 		};
 
 		this.achievements = {

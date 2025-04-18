@@ -5,7 +5,9 @@ let fishCounters = {
 	boxes: 0,
 	shoes: 0,
 	tires: 0,
-	time: 9000 //1 minute 30
+	time: 90*40, //1 minute 30
+	rods: 0,
+	money: 0,
 };
 
 const FISH_REWARD = 100;
@@ -27,7 +29,7 @@ let fishRodAngle = 0;
 let fishRodPositiveDirection = false;
 const FISH_ANGLE_MAX = 75;
 const FISH_ANGLE_SPEED = 1; //side to side
-const FISH_MOVE_SPEED = 0.2; //extend, retract
+const FISH_MOVE_SPEED = 0.4; //extend, retract
 let fishRodExtending = false;
 let fishRodDirection = false;
 let fishIdCaught = -1;
@@ -133,7 +135,7 @@ function minigameFishReset() {
 		tires: 0,
 		rods: 0,
 		money: 0,
-		time: 9000 //1 minute 30
+		time: 90*20 //1 minute 30
 	};
 	fishRodCurrentLength = FISH_ROD_LENGTH;
 	ACTUAL_FISH_REWARD = -1;
@@ -225,8 +227,11 @@ function renderFishMinigame() {
 		f.draw();
 	}
 
+	//rod
+	canvas.setLineWidth(5).setLineColor("#281106").line(45, 20, 50, 10);
+
 	//hook
-	canvas.setLineWidth(5).setLineColor("#000000").line(
+	canvas.setLineColor("#000000").line(
 		50, 10, 
 		50 + Math.sin(Math.PI/180*fishRodAngle)*fishRodCurrentLength,
 		10 + Math.cos(Math.PI/180*fishRodAngle)*canvas.convertXtoY(fishRodCurrentLength),
@@ -240,27 +245,60 @@ function renderFishMinigame() {
 	canvas.ctx.translate(-canvas.getX(50), -canvas.getY(10));
 
 	//ui
-	this.canvas.setColor("#ffffff");
-	this.canvas.drawRoundedBox(0, 0, 15, 20, 10);
-	this.canvas.setColor("#000080").setSmallFontSize();
 
-	let minutes = Math.trunc(Math.trunc(fishCounters.time/100)/60);
-	let seconds = Math.trunc(Math.trunc(fishCounters.time/100)%60);
-	this.canvas.textS(getTranslation(79), 2, 7).textS(minutes+":"+seconds, 2, 17);
+	//time
+	canvas.setColor("#ffffff").drawRoundedBox(0, 0, 15, 20, 10).setColor("#000080").setSmallFontSize();
+	let minutes = Math.trunc(Math.trunc(fishCounters.time/40)/60);
+	let seconds = Math.trunc(Math.trunc(fishCounters.time/40)%60);
+	let timeStr = (minutes != 0) ? String(minutes)+":"+String(seconds).padStart(2, "0") : String(seconds)+"s";
+	canvas.textS(getTranslation(79), 2, 7).textS(timeStr, 2, 17);
+
+	//leave
+	canvas.setColor("#ffffff").drawRoundedBox(15, 0, 20, 10, 10).setColor("#000080").setSmallFontSize();
+	canvas.textS(getTranslation(80), 17, 7);
+
+	//fish/shoes/tires/rods
+	canvas.setColor("#ffffff").drawRoundedBox(80, 0, 20, 20, 10).setColor("#000080").setSmallFontSize();
+	//text rendering in main loop
 }
 
 async function minigameFishGame() {
+	let uiMode = 0; //UI cycles through some items
 	let endGamePromiseCompleted = false;
+	let skipButton = ui.addVerySmallButton("skip", getTranslation(82), 15, 10, 20, 10, () => {
+		ui.removeMoney(ui.getEarlyLeaveTimeMoney(fishCounters.time/100));
+		endGamePromiseCompleted = true;
+	});
+	document.getElementById("skip").setAttribute("disabled", "disabled");
 
 	//setup
 	for(let i = 0; i < 50; i++) {
-		let x, y;
+		let x, y, t;
 		do {
 			x = 5+(Math.random()*90);
 			y = 30+(Math.random()*65);
+			let rawType = Math.trunc(Math.random()*10);
+			switch(rawType) {
+				case(0): case(1): case(2):
+					//3 out of 10 chance
+					t = FISH_OBJECT_TYPES.FISH;
+					break;
+				case(3): case(4):  case(5):
+					t = FISH_OBJECT_TYPES.FISH2;
+					break;
+				case(6): case(7):
+					t = FISH_OBJECT_TYPES.SHOE;
+					break;
+				case(8):
+					t = FISH_OBJECT_TYPES.TIRE;
+					break;
+				case(9):
+					t = FISH_OBJECT_TYPES.BOX;
+					break;
+			}
 		}
 		while(tooCloseToAllFish(x, y));
-		fishData.push(new FishData(x, y, 1+Math.trunc(Math.random()*5)));
+		fishData.push(new FishData(x, y, t));
 	}
 
 	let f = (e) => {
@@ -269,14 +307,12 @@ async function minigameFishGame() {
 			fishRodDirection = true;
 			fishCounters.rods++;
 			fishCounters.money -= ACTUAL_FISH_ROD_COST;
+			ui.removeMoney(ACTUAL_FISH_ROD_COST);
 			console.log("Fishing rod used!");
 		}
 	};
 
-	await new Promise((resolve) => {
-		setTimeout(() => { resolve(); }, 100);
-	});  
-	document.getElementById("draw_contain").addEventListener('click', f);
+	document.getElementById("draw_buffer").addEventListener('click', f);
 
 	while(!endGamePromiseCompleted) {
 		fishCounters.time--;
@@ -316,30 +352,36 @@ async function minigameFishGame() {
 							fishCounters.caught++;
 							fishCounters.money += ACTUAL_FISH_REWARD;
 							break;
-						//TODO ui
 						case(FISH_OBJECT_TYPES.BOX):
 							switch(Math.trunc(Math.random()*3)) {
 								case(0):
 									fishCounters.boxes++;
-									//TODO random box amount
+									//random box amount: 50 to 200
+									let reward = 50+Math.random()*150;
+									fishCounters.money += reward;
+									ui.addMoney(reward);
 									break;
 								case(1):
 									fishCounters.shoes++;
 									fishCounters.money += ACTUAL_SHOE_REWARD;
+									ui.addMoney(ACTUAL_SHOE_REWARD);
 									break;
 								case(2):
 									fishCounters.tires++;
 									fishCounters.money += ACTUAL_TIRE_REWARD;
+									ui.addMoney(ACTUAL_TIRE_REWARD);
 									break;
 							}
 							break;
 						case(FISH_OBJECT_TYPES.SHOE):
 							fishCounters.shoes++;
 							fishCounters.money += ACTUAL_SHOE_REWARD;
+							ui.addMoney(ACTUAL_SHOE_REWARD);
 							break;
 						case(FISH_OBJECT_TYPES.TIRE):
 							fishCounters.tires++;
 							fishCounters.money += ACTUAL_TIRE_REWARD;
+							ui.addMoney(ACTUAL_TIRE_REWARD);
 							break;
 					}
 
@@ -355,19 +397,72 @@ async function minigameFishGame() {
 
 		renderFishMinigame();
 
+		switch(uiMode) {
+			case(0):
+				canvas.textS(getTranslation(97)+":", 81, 7).textS(fishCounters.caught, 81, 17);
+				break;
+			case(1):
+				canvas.textS(getTranslation(98)+":", 81, 7).textS(fishCounters.shoes, 81, 17);
+				break;
+			case(2):
+				canvas.textS(getTranslation(99)+":", 81, 7).textS(fishCounters.tires, 81, 17);
+				break;
+			case(3):
+				canvas.textS(getTranslation(100)+":", 81, 7).textS(fishCounters.boxes, 81, 17);
+				break;
+			case(4):
+				canvas.textS(getTranslation(101)+":", 81, 7).textS(fishCounters.rods, 81, 17);
+				break;
+		}
+		//every second
+		if(fishCounters.time % 40 == 0) uiMode++;
+		if(uiMode == 5) uiMode = 0;
+
+		let MoneyAmount = ui.getEarlyLeaveTimeMoney(fishCounters.time/40);
+		if(ui.info.money>=MoneyAmount) {
+			document.getElementById("skip").removeAttribute("disabled");
+			document.getElementById("skip").innerHTML = getTranslation(80)+" "+MoneyAmount;
+		}
+		else {
+			document.getElementById("skip").setAttribute("disabled", "disabled");
+			document.getElementById("skip").innerHTML = getTranslation(82)+"<br>"+MoneyAmount+" "+getTranslation(83)+", "+getTranslation(84)+" "+ui.info.money;
+		}
+
+		if(fishCounters.time <= 0) {
+			console.log("Time limit reached!");
+			endGamePromiseCompleted = true;
+			break;
+		}
+
 		do {
 			await new Promise((resolve) => {
-				setTimeout(() => { resolve(); }, 10);
+				setTimeout(() => { resolve(); }, 25);
 			});  
 		}
 		while(ui.info.paused);
 	}
 
 	document.getElementById("draw_contain").removeEventListener('click', f);
+	ui.removeButton("skip");
 }
 async function minigameFishSummary() {
 	canvas.clear("#02b7db");
+	canvas.setLargeFontSize().setColor("#000080").setFontWeight("bold");
 
+	canvas.textS(getTranslation(60), 10, 10);
+
+	canvas.setSmallFontSize().setFontWeight("normal");
+	canvas.textS(getTranslation(97), 10, 20).textS(fishCounters.caught, 80, 20);
+	canvas.textS(getTranslation(98), 10, 30).textS(fishCounters.shoes, 80, 30);
+	canvas.textS(getTranslation(99), 10, 40).textS(fishCounters.tires, 80, 40);
+	canvas.textS(getTranslation(100), 10, 50).textS(fishCounters.boxes, 80, 50);
+	canvas.textS(getTranslation(102), 10, 60).textS(fishCounters.rods, 80, 60);
+	canvas.textS(getTranslation(51), 10, 70).textS(fishCounters.money, 80, 70);
+
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {
+		pauseHidden = false;
+		musicPause();
+	}));
 }
 
 async function minigameFish() {

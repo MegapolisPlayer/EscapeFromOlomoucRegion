@@ -1,6 +1,9 @@
-html, body {
+html {
     margin: 0 !important;
     padding: 10px !important;
+	background-repeat: no-repeat;
+    background-attachment: fixed;
+	min-height: 100%;
 }
 
 body {

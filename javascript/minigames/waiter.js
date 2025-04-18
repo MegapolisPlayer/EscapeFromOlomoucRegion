@@ -422,16 +422,11 @@ async function minigameWaiterGame() {
 
 async function minigameWaiterSummary() {
 	canvas.clear("#aaaaaa");
-
-	canvas.setLargeFontSize();
-	canvas.setColor("#000080");
-	canvas.setFontWeight("bold");
+	canvas.setLargeFontSize().setColor("#000080").setFontWeight("bold");
 
 	canvas.textS(getTranslation(60), 10, 10);
 
-	canvas.setSmallFontSize();
-	canvas.setFontWeight("normal");
-
+	canvas.setSmallFontSize().setFontWeight("normal");
 	canvas.textS(getTranslation(76), 10, 20).textS(waiterCounters.completed, 80, 20);
 	canvas.textS(getTranslation(77), 10, 30).textS(waiterCounters.undelivered, 80, 30);
 	canvas.textS(getTranslation(78), 10, 40).textS(waiterCounters.ignored, 80, 40);

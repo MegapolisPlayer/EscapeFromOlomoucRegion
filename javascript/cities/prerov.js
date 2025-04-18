@@ -39,8 +39,21 @@ function PrerovBecva() {
 	Player.set(38, 75, 0.5);
 
 	ui.makeArrow(new ArrowInfo(70, 75, ui.arrowType.DOWN, async () => {
-		await minigameFish();
-		musicPlay(3);
+		ui.hideAllInput();
+
+		if(ui.info.money >= ui.settings.moneyLimit) {
+			await ui.dialogueLine(39);	
+		}
+		else {
+			await minigameFish();
+			musicPlay(3);
+
+			canvas.background(this[ui.info.location_minor]);
+			Player.set(38, 75, 0.5);
+			ui.renderWidgets();
+		}
+
+		ui.showAllInput();
 	}));
 
 	return ui.makeArrow(new ArrowInfo(10, 90, ui.arrowType.DOWN, async () => { ui.info.location_minor_next = 2; }));
