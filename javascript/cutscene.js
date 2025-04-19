@@ -92,7 +92,12 @@ async function cutsceneStudenka() {
 
 	let bg = await loadImage("assets/cutscene/Bmz245.jpg");
 
-	//dialogue here
+	await dialogueLine();	
+
+	//TODO
+	//fade to black
+	//more dialogue
+	//effect of blinking on tracks
 
 	ui.animationBlocked = false;
 }
@@ -101,6 +106,17 @@ async function cutscenePoland() {
 	ui.animationBlocked = true;
 
 	let bg = await loadImage("assets/cutscene/B10bmnouz.jpg");
+
+	await dialogueLine();
+
+	//TODO
+	//some time
+	//dialogue
+	//track SFX
+	//more dialogue
+	//fade to black
+	
+	//credits called separately
 
 	ui.animationBlocked = false;
 }

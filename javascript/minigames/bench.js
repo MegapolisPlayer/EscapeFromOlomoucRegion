@@ -2,6 +2,10 @@
 
 let benchMinigameImages = [];
 
+function minigameBenchReset() {
+
+}
+
 async function minigameBenchLoad() {
 
 }
@@ -18,13 +22,16 @@ async function minigameBenchSummary() {
 
 async function minigameBench() {
 	ui.animationBlocked = true;
-	ui.UIanimationBlocked = true;
+	ui.arrowAnimationBlocked = true;
+	ui.disableWidgets();
 
 	await minigameBenchLoad();
 	await minigameBenchMenu();
 	await minigameBenchGame();
 	await minigameBenchSummary();
+	minigameBenchReset();
 
 	ui.animationBlocked = false;
-	ui.UIanimationBlocked = false;
+	ui.arrowAnimationBlocked = false;
+	ui.enableWidgets();
 }
