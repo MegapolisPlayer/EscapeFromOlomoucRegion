@@ -10,10 +10,10 @@ let fishCounters = {
 	money: 0,
 };
 
-const FISH_REWARD = 100;
-const TIRE_REWARD = 20;
-const SHOE_REWARD = 10;
-const MAX_BOX_REWARD = 200;
+const FISH_REWARD = 50;
+const TIRE_REWARD = 10;
+const SHOE_REWARD = 5;
+const MAX_BOX_REWARD = 100;
 const FISH_ROD_COST = 10;
 const FISH_ROD_LENGTH = 5;
 const FISH_ROD_MAX_LENGTH = 50;
@@ -136,7 +136,7 @@ function minigameFishReset() {
 		tires: 0,
 		rods: 0,
 		money: 0,
-		time: 90*20 //1 minute 30
+		time: 90*40 //1 minute 30
 	};
 	fishRodCurrentLength = FISH_ROD_LENGTH;
 	ACTUAL_FISH_REWARD = -1;
@@ -186,7 +186,6 @@ async function minigameFishMenu() {
 	pauseHidden = true;
 
 	canvas.clear("#02b7db");
-
 	musicPlay(11);
 
 	canvas.setLargeFontSize().setColor("#000080").setFontWeight("bold");
@@ -350,12 +349,15 @@ async function minigameFishGame() {
 					switch(fishData[fishIdCaught].type) {
 						case(FISH_OBJECT_TYPES.FISH):
 						case(FISH_OBJECT_TYPES.FISH2):
+							sfxPlay(3);
 							fishCounters.caught++;
 							fishCounters.money += ACTUAL_FISH_REWARD;
+							ui.addMoney(ACTUAL_FISH_REWARD);
 							break;
 						case(FISH_OBJECT_TYPES.BOX):
 							switch(Math.trunc(Math.random()*3)) {
 								case(0):
+									sfxPlay(3);
 									fishCounters.boxes++;
 									//random box amount: 50 to 200
 									let reward = 50+Math.random()*150;
@@ -363,11 +365,13 @@ async function minigameFishGame() {
 									ui.addMoney(reward);
 									break;
 								case(1):
+									sfxPlay(4);
 									fishCounters.shoes++;
 									fishCounters.money += ACTUAL_SHOE_REWARD;
 									ui.addMoney(ACTUAL_SHOE_REWARD);
 									break;
 								case(2):
+									sfxPlay(4);
 									fishCounters.tires++;
 									fishCounters.money += ACTUAL_TIRE_REWARD;
 									ui.addMoney(ACTUAL_TIRE_REWARD);
@@ -375,11 +379,13 @@ async function minigameFishGame() {
 							}
 							break;
 						case(FISH_OBJECT_TYPES.SHOE):
+							sfxPlay(4);
 							fishCounters.shoes++;
 							fishCounters.money += ACTUAL_SHOE_REWARD;
 							ui.addMoney(ACTUAL_SHOE_REWARD);
 							break;
 						case(FISH_OBJECT_TYPES.TIRE):
+							sfxPlay(4);
 							fishCounters.tires++;
 							fishCounters.money += ACTUAL_TIRE_REWARD;
 							ui.addMoney(ACTUAL_TIRE_REWARD);
@@ -471,6 +477,7 @@ async function minigameFish() {
 	ui.arrowAnimationBlocked = true;
 	ui.disableWidgets();
 
+	minigameFishReset(); //actual rewards
 	await minigameFishLoad();
 	await minigameFishMenu();
 	await minigameFishGame();

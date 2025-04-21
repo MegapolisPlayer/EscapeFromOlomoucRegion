@@ -84,10 +84,10 @@ class CanvasImplementation {
 	}
 
 	convertYtoX(yvalue) {
-		return parseInt(this.canvas.height)/parseInt(this.canvas.width)*yvalue;
+		return Math.trunc(parseInt(this.canvas.height)/parseInt(this.canvas.width)*yvalue);
 	}
 	convertXtoY(xvalue) {
-		return parseInt(this.canvas.width)/parseInt(this.canvas.height)*xvalue;
+		return Math.trunc(parseInt(this.canvas.width)/parseInt(this.canvas.height)*xvalue);
 	}
 
 	getScaleX() {
