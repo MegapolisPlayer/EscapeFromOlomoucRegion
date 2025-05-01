@@ -266,7 +266,7 @@ async function minigameFishGame() {
 	let uiMode = 0; //UI cycles through some items
 	let endGamePromiseCompleted = false;
 	let skipButton = ui.addVerySmallButton("skip", getTranslation(82), 15, 10, 20, 10, () => {
-		ui.removeMoney(ui.getEarlyLeaveTimeMoney(fishCounters.time/100));
+		ui.removeMoney(ui.getEarlyLeaveTimeMoney(fishCounters.time/40));
 		endGamePromiseCompleted = true;
 	});
 	document.getElementById("skip").setAttribute("disabled", "disabled");

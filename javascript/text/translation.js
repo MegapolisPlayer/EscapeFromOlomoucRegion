@@ -2,13 +2,12 @@ let translationEN = [];
 let translationCZ = [];
 let translationDE = [];
 let translationPL = [];
-let translationSUS = [];
 let translationBA = [];
 
 let translationSelected = 0;
 
-let translations = [ translationEN, translationCZ, translationDE, translationPL, translationSUS, translationBA ];
-let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Susština", "Baština" ];
+let translations = [ translationEN, translationCZ, translationDE, translationPL, translationBA ];
+let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Baština" ];
 
 async function loadTranslation() {
 	const promise = new Promise((resolve) => {
@@ -39,7 +38,7 @@ async function loadTranslation() {
 
 //audio file names:
 //[LANGNO]-[DIALOGNO].wav
-//Lang. No: 1 - English, 2 - Čeština, 3 - Deutsch", 4 - Polski, 5 - Susština", 6 - Baština
+//Lang. No: 1 - English, 2 - Čeština, 3 - Deutsch", 4 - Polski, 5 - Baština
 
 let voicedLines = [
 	40, 41, 42, 43, 47, 48, 49, 50, 63, 64, 65, 66, 88, 89, 90
@@ -48,10 +47,9 @@ let voicedLines = [
 let voiceEN = [];
 let voiceCZ = [];
 let voiceDE = [];
-let voiceSUS = [];
 let voiceBA = [];
 
-let voice = [ voiceEN, voiceCZ, voiceDE, voiceSUS, voiceBA ];
+let voice = [ voiceEN, voiceCZ, voiceDE, voiceBA ];
 
 async function loadVoice() {
 	for(let i = 0; i < voice.length; i++) {
