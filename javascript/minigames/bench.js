@@ -199,8 +199,20 @@ async function minigameBenchGame() {
 async function minigameBenchSummary() {
 	canvas.clear("#cccccc");
 	canvas.setLargeFontSize().setColor("#000080").setFontWeight("bold");
-
 	
+	canvas.textS(getTranslation(60), 10, 10);
+
+	canvas.setSmallFontSize().setFontWeight("normal");
+
+	canvas.textS(getTranslation(138), 10, 20).textS(benchCounters.benchId, 80, 20);
+	if(benchCounters.percentage >= BENCH_PERCENTAGE_LIMIT) {
+		canvas.textS(getTranslation(139), 10, 30);
+	}
+
+	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {
+		pauseHidden = false;
+		musicPause();
+	}));
 }
 
 async function minigameBench() {

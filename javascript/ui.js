@@ -256,6 +256,9 @@ class UIImplementation {
 		this.canvas.eraseBox(0, 80, 100, 20);
 		this.enableWidgets();
 
+		if(returnValue) sfxPlay(1);
+		else sfxPlay(2);
+
 		return returnValue;
 	}
 
