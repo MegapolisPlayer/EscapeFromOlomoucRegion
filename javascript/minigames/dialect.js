@@ -1,11 +1,14 @@
 let dialectLoaded = false;
 let dialectCounters = {
-	time: 900, //tick every 100ms
+	time: 900, //tick every 100ms / 10tps
 	correct: 0,
 	incorrect: 0,
 	total: 0,
 	buttonValues: [],
 	correctId: 0,
+	timeCountdown: 0,
+	lastCorrect: false,
+	lastCorrectId: 0,
 };
 
 let dialectValues = [];
@@ -23,8 +26,13 @@ function minigameDialectReset() {
 		total: 0,
 		buttonValues: [],
 		correctId: 0,
+		timeCountdown: 0,
+		lastCorrect: false,
+		lastCorrectId: 0,
 	};
 }
+
+const DIALECT_TIMEOUT = 20; //2s
 
 async function minigameDialectLoad() {
 	if(dialectLoaded) return;
@@ -109,8 +117,12 @@ async function minigameDialectMenu() {
 	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}));
 }
 
-function renderDialectMinigame(id) {
-	canvas.clear("#cccccc");
+function renderDialectMinigame() {
+	if(dialectCounters.timeCountdown > 0) {
+		if(dialectCounters.lastCorrect) canvas.clear("#00aa00");
+		else canvas.clear("#aa0000");
+	}
+	else canvas.clear("#cccccc");
 
 	canvas.setColor("#ffffff").drawBox(0, 0, 100, 10);
 	canvas.setColor("#000080").setSmallFontSize().setFontWeight("normal");
@@ -128,22 +140,39 @@ function renderDialectMinigame(id) {
 
 	//question
 	canvas.setColor("#ffffff").drawRoundedBox(10, 15, 80, 20, 10);
-	canvas.setColor("#000080").setFontWeight("bold").textM(wrapText(getTranslation(117)+" \""+String(dialectValues[id])+"\"?", 60), 12, 22);
+	canvas.setColor("#000080").setFontWeight("bold").textM(wrapText(getTranslation(117)+" \""+String(dialectValues[dialectCounters.correctId])+"\"?", 60), 12, 22);
+
+	if(dialectCounters.timeCountdown > 0) {
+		if(dialectCounters.lastCorrect) canvas.setColor("#00aa00").textS(getTranslation(123)+" \""+String(dialectValues[dialectCounters.lastCorrectId])+"\" "+getTranslation(124)+String(dialectNonValues[dialectCounters.lastCorrectId]), 12, 32);
+		else canvas.setColor("#aa0000").textS(getTranslation(123)+" \""+String(dialectValues[dialectCounters.lastCorrectId])+"\" "+getTranslation(124)+String(dialectNonValues[dialectCounters.lastCorrectId]), 12, 32);
+	}
 }
 
 function dialectMinigameNext(buttonId) {
+	//time penalty
+	if(dialectCounters.timeCountdown != 0 && !dialectCounters.lastCorrect) return;
+
 	//skip if first init (buttonid is 0)
 	if(buttonId !== 0) {
 		//check if correct
 		if(dialectCounters.correctId === dialectCounters.buttonValues[buttonId-1]) {
 			dialectCounters.correct++;
+			dialectCounters.lastCorrect = true;
 			sfxPlay(3);
 		}
 		else {
 			dialectCounters.incorrect++;
+			dialectCounters.lastCorrect = false;
 			sfxPlay(4);
+
+			document.getElementById("a1").setAttribute("disabled", "disabled");
+			document.getElementById("a2").setAttribute("disabled", "disabled");
+			document.getElementById("a3").setAttribute("disabled", "disabled");
+			document.getElementById("a4").setAttribute("disabled", "disabled");
 		}
 		dialectCounters.total++;
+		dialectCounters.lastCorrectId = dialectCounters.correctId;
+		dialectCounters.timeCountdown = DIALECT_TIMEOUT;
 	}
 	
 	//generate random values of button ids and pick one of them as correct
@@ -187,8 +216,6 @@ async function minigameDialectGame() {
 	ui.addButton("a3", "", 20, 60, 30, 20, () =>{});
 	ui.addButton("a4", "", 50, 60, 30, 20, () =>{});
 
-	//TODO change background and add correct answer to box after every answer!
-
 	//answer button click handlers
 	document.getElementById("a1").onclick = () => { dialectMinigameNext(1); };
 	document.getElementById("a2").onclick = () => { dialectMinigameNext(2); };
@@ -202,7 +229,17 @@ async function minigameDialectGame() {
 	while(!endGamePromiseCompleted) {
 		dialectCounters.time--;
 
-		renderDialectMinigame(dialectCounters.correctId);
+		renderDialectMinigame();
+		
+		if(dialectCounters.timeCountdown > 0)
+			dialectCounters.timeCountdown--;
+		else {
+			//remove disabled attributes
+			document.getElementById("a1").removeAttribute("disabled");
+			document.getElementById("a2").removeAttribute("disabled");
+			document.getElementById("a3").removeAttribute("disabled");
+			document.getElementById("a4").removeAttribute("disabled");
+		}
 		
 		let MoneyAmount = ui.getEarlyLeaveTimeMoney(fishCounters.time/40);
 		if(ui.info.money>=MoneyAmount) {
