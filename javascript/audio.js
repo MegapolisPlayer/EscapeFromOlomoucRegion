@@ -29,7 +29,7 @@ let musicNames = [
 	"Porch Swing Days",
 	//12, Ticket check mg
 	"Rollin at 5",
-	//13, Direction help (Prerov BUS, Nezamyslice TRAIN) mg
+	//13, Map help mg
 	"Call to Adventure",
 	//14, Dialect mg
 	"Devonshire Waltz Allegretto",
@@ -70,19 +70,19 @@ async function loadMusic(toload) {
 }
 async function loadSFX() {
 	const promise = new Promise((resolve) => {
-		sfxArray.push(new Audio("assets/sfx/Click.mp3"));
-		sfxArray.push(new Audio("assets/sfx/DialogueYes.mp3"));
-		sfxArray.push(new Audio("assets/sfx/DialogueNo.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Success.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Fail.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Ticket.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Beep.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Shoot.mp3"));
-		sfxArray.push(new Audio("assets/sfx/GameOver.mp3"));
-		sfxArray.push(new Audio("assets/sfx/TrainBrake.mp3"));
-		sfxArray.push(new Audio("assets/sfx/News.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Type.mp3"));
-		sfxArray.push(new Audio("assets/sfx/Bell.mp3"));
+		/* 0 */ sfxArray.push(new Audio("assets/sfx/Click.mp3"));
+		/* 1 */ sfxArray.push(new Audio("assets/sfx/DialogueYes.mp3"));
+		/* 2 */ sfxArray.push(new Audio("assets/sfx/DialogueNo.mp3"));
+		/* 3 */ sfxArray.push(new Audio("assets/sfx/Success.mp3"));
+		/* 4 */ sfxArray.push(new Audio("assets/sfx/Fail.mp3"));
+		/* 5 */ sfxArray.push(new Audio("assets/sfx/Ticket.mp3"));
+		/* 6 */ sfxArray.push(new Audio("assets/sfx/Beep.mp3"));
+		/* 7 */ sfxArray.push(new Audio("assets/sfx/Shoot.mp3"));
+		/* 8 */ sfxArray.push(new Audio("assets/sfx/GameOver.mp3"));
+		/* 9 */ sfxArray.push(new Audio("assets/sfx/TrainBrake.mp3"));
+		/* 10 */ sfxArray.push(new Audio("assets/sfx/News.mp3"));
+		/* 11 */ sfxArray.push(new Audio("assets/sfx/Type.mp3"));
+		/* 12 */ sfxArray.push(new Audio("assets/sfx/Bell.mp3"));
 
 		for(let i = 0; i < sfxArray.length; i++) {
 			sfxArray[i].volume = 0.3;

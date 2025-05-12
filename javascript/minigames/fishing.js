@@ -75,8 +75,6 @@ function getWhichFishCollides(px, py) {
 	return -1;
 }
 
-//TODO SFX!!!! 
-
 class FishData {
 	x = 0;
 	y = 0;
@@ -139,11 +137,6 @@ function minigameFishReset() {
 		time: 90*40 //1 minute 30
 	};
 	fishRodCurrentLength = FISH_ROD_LENGTH;
-	ACTUAL_FISH_REWARD = -1;
-	ACTUAL_TIRE_REWARD = -1;
-	ACTUAL_SHOE_REWARD = -1;
-	ACTUAL_MAX_BOX_REWARD = -1;
-	ACTUAL_FISH_ROD_COST = -1;
 	fishRodAngle = 0;
 	fishRodPositiveDirection = false;
 	fishRodExtending = false;
@@ -477,7 +470,7 @@ async function minigameFish() {
 	ui.arrowAnimationBlocked = true;
 	ui.disableWidgets();
 
-	minigameFishReset(); //actual rewards
+	minigameFishReset(); //set actual rewards
 	await minigameFishLoad();
 	await minigameFishMenu();
 	await minigameFishGame();

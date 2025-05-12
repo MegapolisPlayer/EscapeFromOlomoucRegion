@@ -11,6 +11,8 @@
 //cargodist - array of passengers with goal (specific shop)
 //draw routes mode
 
+
+
 function minigameBusReset() {
 
 }

@@ -18,6 +18,7 @@ let benchCounters = {
 };
 const BENCH_TOTAL_DIRT = 2500;
 
+//TODO add touch support
 let benchIsTouch = false;
 
 const BENCH_DIRT_COLORS = ["#231705", "#3f3525", "#3f3e3d"];
@@ -68,10 +69,11 @@ function minigameBenchReset() {
 
 async function minigameBenchLoad() {
 	benchIsTouch = window.matchMedia("(any-hover: none)").matches;
-	ACTUAL_BENCH_REWARD = Math.trunc(BENCH_REWARD*ui.settings.diff_multiplier);
-	ACTUAL_BENCH_PARTIAL_REWARD = Math.trunc(BENCH_PARTIAL_REWARD*ui.settings.diff_multiplier);
 
 	if(benchLoaded) return;
+
+	ACTUAL_BENCH_REWARD = Math.trunc(BENCH_REWARD*ui.settings.diff_multiplier);
+	ACTUAL_BENCH_PARTIAL_REWARD = Math.trunc(BENCH_PARTIAL_REWARD*ui.settings.diff_multiplier);
 
 	await loadMusic([16]);
 	window.addEventListener("mousemove", minigameBenchMouseUpdate);

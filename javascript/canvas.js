@@ -115,6 +115,20 @@ class CanvasImplementation {
 	// PI - left size
 	// 1.5 PI - top
 
+	drawCircle(x, y, r) {
+		this.ctx.beginPath();
+		this.ctx.arc(this.getX(x), this.getY(y), this.getX(r), 0, Math.PI*2);
+		this.ctx.fill();
+		return this;
+	}
+	//radius in canvas Y coords
+	drawCircleY(x, y, r) {
+		this.ctx.beginPath();
+		this.ctx.arc(this.getX(x), this.getY(y), this.getY(r), 0, Math.PI*2);
+		this.ctx.fill();
+		return this;
+	}
+
 	drawCircleBox(x, y, sizex, sizey) {
 		let px = this.getX(x);
 		let py = this.getY(y);

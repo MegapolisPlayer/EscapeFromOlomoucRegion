@@ -35,7 +35,7 @@ async function renderCredits() {
 		From Wikimedia Commons (in no particular order):
 		Marie Čchiedzeová, Vojtěch Dočkal, Jiří Komárek, JirkaSv, Dezidor, Vitezslava,
 		Kamil Czianskim, Michal Klajban, STERUSSTUDENKA, Draceane, Herbert Frank,
-		Palickap, RPekar, Radim Holiš, Vojtěch Dočkal
+		Palickap, RPekar, Radim Holiš, Vojtěch Dočkal, Robins7, Michiel1972, Palosirrka
 	`);
 	setCreditsStep(30, `
 		Map images: Copyright (c) OpenStreetMap contributors

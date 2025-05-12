@@ -15,8 +15,9 @@ let dialectValues = [];
 let dialectNonValues = [];
 
 const CORRECT_TRANSLATION_REWARD = 10;
+let ACTUAL_CORRECT_TRANSLATION_REWARD = -1;
 const WRONG_TRANSLATION_REWARD = 5;
-const TIMEOUT = 1; //in seconds
+let ACTUAL_WRONG_TRANSLATION_REWARD = -1;
 
 function minigameDialectReset() {
 	dialectCounters = {
@@ -32,10 +33,13 @@ function minigameDialectReset() {
 	};
 }
 
-const DIALECT_TIMEOUT = 20; //2s
+const DIALECT_TIMEOUT = 30; //3s
 
 async function minigameDialectLoad() {
 	if(dialectLoaded) return;
+
+	ACTUAL_CORRECT_TRANSLATION_REWARD = Math.trunc(DELIVERED_REWARD*(1.0/ui.settings.diff_multiplier));
+	ACTUAL_WRONG_TRANSLATION_REWARD = Math.trunc(DELIVERED_REWARD*ui.settings.diff_multiplier);
 
 	await loadMusic([14]);
 
@@ -112,7 +116,7 @@ async function minigameDialectMenu() {
 
 	canvas.setSmallFontSize().setFontWeight("normal");
 
-	canvas.textM(wrapText(getTranslation(114)+" "+CORRECT_TRANSLATION_REWARD+" "+getTranslation(96)+" "+getTranslation(115)+" "+WRONG_TRANSLATION_REWARD+" "+getTranslation(96), 80), 5, 18);
+	canvas.textM(wrapText(getTranslation(114)+" "+ACTUAL_CORRECT_TRANSLATION_REWARD+" "+getTranslation(96)+" "+getTranslation(115)+" "+ACTUAL_WRONG_TRANSLATION_REWARD+" "+getTranslation(96), 80), 5, 18);
 
 	return ui.makeArrow(new ArrowInfo(90, 90, ui.arrowType.RIGHT, () => {}));
 }
@@ -124,10 +128,10 @@ function renderDialectMinigame() {
 	}
 	else canvas.clear("#cccccc");
 
+	//ui bar
+
 	canvas.setColor("#ffffff").drawBox(0, 0, 100, 10);
 	canvas.setColor("#000080").setSmallFontSize().setFontWeight("normal");
-
-	//ui bar
 
 	canvas.textS(getTranslation(118)+": "+dialectCounters.correct, 10, 7);
 	canvas.textS(getTranslation(119)+": "+dialectCounters.incorrect, 40, 7);
@@ -159,11 +163,13 @@ function dialectMinigameNext(buttonId) {
 			dialectCounters.correct++;
 			dialectCounters.lastCorrect = true;
 			sfxPlay(3);
+			ui.addMoney(ACTUAL_CORRECT_TRANSLATION_REWARD);
 		}
 		else {
 			dialectCounters.incorrect++;
 			dialectCounters.lastCorrect = false;
 			sfxPlay(4);
+			ui.removeMoney(ACTUAL_WRONG_TRANSLATION_REWARD);
 
 			document.getElementById("a1").setAttribute("disabled", "disabled");
 			document.getElementById("a2").setAttribute("disabled", "disabled");
@@ -241,7 +247,7 @@ async function minigameDialectGame() {
 			document.getElementById("a4").removeAttribute("disabled");
 		}
 		
-		let MoneyAmount = ui.getEarlyLeaveTimeMoney(fishCounters.time/40);
+		let MoneyAmount = ui.getEarlyLeaveTimeMoney(dialectCounters.time/10);
 		if(ui.info.money>=MoneyAmount) {
 			document.getElementById("skip").removeAttribute("disabled");
 			document.getElementById("skip").innerHTML = getTranslation(80)+" "+MoneyAmount;
