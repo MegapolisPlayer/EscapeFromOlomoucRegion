@@ -268,7 +268,7 @@ async function minigameMaphelpGame() {
 	let endGamePromiseCompleted = false;
 
 	let skipButton = ui.addVerySmallButton("skip", getTranslation(82), 80, 0, 20, 10, () => {
-		ui.removeMoney(ui.getEarlyLeaveTimeMoney(benchCounters.time/10));
+		ui.removeMoney(ui.getEarlyLeaveTimeMoney(maphelpCounters.time/10));
 		endGamePromiseCompleted = true;
 	});
 	document.getElementById("skip").setAttribute("disabled", "disabled");

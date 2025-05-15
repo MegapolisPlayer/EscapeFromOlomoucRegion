@@ -17,7 +17,7 @@ function renderMainMenu() {
 
 	canvas.setColor("#ffffff").setSmallFontSize().setFontWeight("normal");
 	//Date changes here!!!
-	canvas.textM("Version 2.00, D.M.2025\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD\nThis game does NOT in any way, shape or form support or reflect the views of the authors.", 3, 80);
+	canvas.textM("Version 2.00, D.05.2025\nCopyright (c) Martin/MegapolisPlayer, Jiri/KohoutGD\nThis game does NOT in any way, shape or form support or reflect the views of the authors.", 3, 80);
 
 }
 
