@@ -348,6 +348,17 @@ class CanvasImplementation {
 		return this;
 	}
 
+	setCenter() {
+		this.ctx.textAlign = "center";
+		this.ctx.textBaseline = "middle";
+		return this;
+	}
+	resetCenter() {
+		this.ctx.textAlign = "start";
+		this.ctx.textBaseline = "alphabetic";
+		return this;
+	}
+
 	setLineWidth(width) {
 		this.ctx.lineWidth = width;
 		return this;

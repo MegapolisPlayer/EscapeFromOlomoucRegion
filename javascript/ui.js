@@ -64,6 +64,8 @@ class UIImplementation {
 		INFO: 4
 	}
 
+	mouseDown = 0;
+
 	makeButton(id, text, classname, x, y, sizex, sizey, fn) {
 		let btn = document.createElement("button");
 		btn.id = id;
@@ -393,6 +395,14 @@ class UIImplementation {
 		this.info.location_major++;
 	}
 
+	//no way around this stupidity
+	_internalMouseDown(event, instance = ui) {
+		instance.mouseDown++;
+	}
+	_internalMouseUp(event, instance = ui) {
+		instance.mouseDown--;
+	}
+
 	constructor() {
 		this.element = document.getElementById("uicanvas");
 		this.element.width = 1000;
@@ -532,7 +542,15 @@ class UIImplementation {
 		}
 
 		this.pauseContext = this.pauseCanvasElement.getContext("2d");
-	}
+
+		//
+		// MOUSE DETECTION
+		//
+
+		this.mouseDown = 0;
+		document.body.onmousedown = this._internalMouseDown;
+		document.body.onmouseup = this._internalMouseUp;
+		}
 
 	async load() {
 		this.pause1 = await loadImage("assets/arrow/pause.png");
