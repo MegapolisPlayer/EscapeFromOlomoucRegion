@@ -72,7 +72,7 @@ async function minigameBenchLoad() {
 
 	if(benchLoaded) return;
 
-	ACTUAL_BENCH_REWARD = Math.trunc(BENCH_REWARD*ui.settings.diff_multiplier);
+	ACTUAL_BENCH_REWARD = Math.trunc(BENCH_REWARD*1.0/ui.settings.diff_multiplier);
 	ACTUAL_BENCH_PARTIAL_REWARD = Math.trunc(BENCH_PARTIAL_REWARD*ui.settings.diff_multiplier);
 
 	await loadMusic([16]);

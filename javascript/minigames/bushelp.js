@@ -11,18 +11,38 @@
 //cargodist - array of passengers with goal (specific shop)
 //draw routes mode
 
+let busCounters = {
+	time: 1200,
+	laneData: [],
+	vehicles: [],
+	passedVehicles: 0,
+};
 
+let busLoaded = false;
 
 function minigameBusReset() {
+
+}
+
+function busRenderLanes() {
+
+}
+function busRenderTrafficArrows() {
 
 }
 
 async function minigameBusLoad() {
 
 }
+
 async function minigameBusMenu() {
 
 }
+
+async function minigameBusSetup() {
+
+}
+
 async function minigameBusGame() {
 
 }
@@ -37,6 +57,7 @@ async function minigameBus() {
 
 	await minigameBusLoad();
 	await minigameBusMenu();
+	await minigameBusSetup();
 	await minigameBusGame();
 	await minigameBusSummary();
 	minigameBusReset();

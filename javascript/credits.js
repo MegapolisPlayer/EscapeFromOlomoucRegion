@@ -31,7 +31,7 @@ async function renderCredits() {
 	`);
 	setCreditsStep(30, `
 		SReality, Freepik (jcomp), VlakemJednoduse.cz, Fortes Interactive, VagonWeb,
-		Pixabay (PickupImage, pexels, igormattio)
+		Pixabay (PickupImage, pexels, igormattio, kokoreli777)
 		From Wikimedia Commons (in no particular order):
 		Marie Čchiedzeová, Vojtěch Dočkal, Jiří Komárek, JirkaSv, Dezidor, Vitezslava,
 		Kamil Czianskim, Michal Klajban, STERUSSTUDENKA, Draceane, Herbert Frank,
