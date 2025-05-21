@@ -11,10 +11,22 @@
 //cargodist - array of passengers with goal (specific shop)
 //draw routes mode
 
+class Lane {
+	constructor() {
+
+	}
+};
+
+class VehicleData {
+	constructor() {
+		
+	}
+};
+
 let busCounters = {
 	time: 1200,
-	laneData: [],
-	vehicles: [],
+	lanes: [], //array: N, S, E, W - each cardinal direction has a lane array
+	vehicles: [], //objects with id and vehicle data
 	passedVehicles: 0,
 };
 

@@ -12,7 +12,7 @@ let translationNames = [ "English", "Čeština", "Deutsch", "Polski", "Baština"
 async function loadTranslation() {
 	const promise = new Promise((resolve) => {
 		const xhr = new XMLHttpRequest();
-		xhr.open("GET", "/javascript/text/translation.csv", true);
+		xhr.open("GET", "javascript/text/translation.csv", true);
 
 		xhr.onload = () => {
 			let text = xhr.response;
@@ -105,4 +105,28 @@ function wrapText(str, maxwidth) {
 	}
 
 	return tempstr;
+}
+
+//male
+let randomNameNames = [];
+let randomNameSurnames = [];
+//female
+let randomNameNamesF = [];
+let randomNameSurnamesF = [];
+let firstRandomNameGeneratorRun = true;
+
+function getRandomName() {
+	if(firstRandomNameGeneratorRun) {
+		randomNameNames = getTranslation(193).split(',').filter(v => !v.empty());
+		randomNameSurnames = getTranslation(194).split(',').filter(v => !v.empty());
+		randomNameNamesF = getTranslation(195).split(',').filter(v => !v.empty());
+		randomNameSurnamesF = getTranslation(196).split(',').filter(v => !v.empty());
+		firstRandomNameGeneratorRun = false;
+	}
+
+	let gender = Math.trunc(Math.random()*2);
+	if(gender === 0) {
+		return randomNameNames[Math.trunc(Math.random()*randomNameNames.length)] + " " + randomNameSurnames[Math.trunc(Math.random()*randomNameSurnames.length)];
+	}
+	return randomNameNamesF[Math.trunc(Math.random()*randomNameNamesF.length)] + " " + randomNameSurnamesF[Math.trunc(Math.random()*randomNameSurnamesF.length)];
 }

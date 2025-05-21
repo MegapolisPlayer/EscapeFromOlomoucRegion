@@ -1,3 +1,19 @@
+
+//simple tower defense game
+//must be fairly neutral
+
+//towers:
+//knědlík cook?
+//
+
+//enemies:
+//halušky?
+//
+
+let defenseCounters = {
+
+};
+
 function minigameDefenseReset() {
 
 }
