@@ -107,22 +107,12 @@ function wrapText(str, maxwidth) {
 	return tempstr;
 }
 
-//male
-let randomNameNames = [];
-let randomNameSurnames = [];
-//female
-let randomNameNamesF = [];
-let randomNameSurnamesF = [];
-let firstRandomNameGeneratorRun = true;
 
 function getRandomName() {
-	if(firstRandomNameGeneratorRun) {
-		randomNameNames = getTranslation(193).split(',').filter(v => !v.empty());
-		randomNameSurnames = getTranslation(194).split(',').filter(v => !v.empty());
-		randomNameNamesF = getTranslation(195).split(',').filter(v => !v.empty());
-		randomNameSurnamesF = getTranslation(196).split(',').filter(v => !v.empty());
-		firstRandomNameGeneratorRun = false;
-	}
+	let randomNameNames = getTranslation(193).split(',').filter(v => v);
+	let randomNameSurnames = getTranslation(195).split(',').filter(v => v);
+	let randomNameNamesF = getTranslation(194).split(',').filter(v => v);
+	let randomNameSurnamesF = getTranslation(196).split(',').filter(v => v);
 
 	let gender = Math.trunc(Math.random()*2);
 	if(gender === 0) {
