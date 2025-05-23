@@ -18,10 +18,6 @@ const FARE_EVADER_FINE = 1500; //for final fare evader fine income
 const MAX_SPEED = 50;
 const STATION_ARRIVE_SPEED = 20;
 
-const STATION_TIME_TICKS = 2*8;
-
-const VEHICLE_CAPACITY = 25; //3 standing
-
 function addGrammarMistakes(name) {
 	let canUseRandom = false;
 	//change some letters
@@ -159,7 +155,7 @@ class TicketPassenger {
 	justEntered = false;
 
 	constructor() {
-		this.stationsRemaining = Math.trunc(Math.random()*4+1); //1-5 stations
+		this.stationsRemaining = Math.trunc(Math.random()*2+1); //1-3 stations
 		this.name = getRandomName();
 		this.checked = false;
 		this.justEntered = true;
@@ -201,8 +197,11 @@ let ticketCounters = {
 	offset: 0,
 	passedStation: false,
 	stationTime: -1,
+	passengersAtStation: 0,
 	passengers: [],
 	generatedPassengers: false,
+	vehiclePlaces: [],
+	vehicleCapacity: -1,
 };
 
 let ticketImages = {
@@ -256,6 +255,29 @@ async function minigameTicketsLoad() {
 	for(let i = 0; i < 2; i++) {
 		ticketImages.watermarkFakes.push(await loadImage("assets/minigames/ticket/watermarkf"+Number(i+1)+".png"));
 	}
+
+	let t = new XMLHttpRequest();
+	await new Promise((resolve) => {
+		t.open("GET", "assets/minigames/ticket/wagonLocations.txt", true);
+		t.onload = () => {
+			if(t.status != 200) {
+				console.error("Error loading wagon,location file: "+t.status);
+			}
+			let lines = t.response.replace('\r\n', '\n').split('\n').filter(v => !(v.length === 0 || v[0] === "#"));
+			for(let l of lines) {
+				let values = l.split(' ').filter(v => v.length != 0).map(v => Number(v));
+				ticketCounters.vehiclePlaces.push({
+					empty: true,
+					coords: values
+				});
+			}
+			resolve();
+		};
+		t.send(null);
+	});
+
+	ticketCounters.vehicleCapacity = ticketCounters.vehiclePlaces.length;
+
 }
 
 async function minigameTicketsMenu() {
@@ -305,7 +327,10 @@ function renderTicketMinigame() {
 	//draw vehicle
 	canvas.image(ticketImages.wagon, 0, 100-(h/canvas.canvas.height*100)*s, s);
 
-	//passengers TODO
+	//passengers
+	for(let p of ticketCounters.passengers) {
+		p.draw();
+	}
 
 	//ui bar
 	canvas.setColor("#ffffff").drawBox(0, 0, 100, 10);
@@ -333,7 +358,6 @@ async function minigameTicketsGame() {
 		if(ticketCounters.cycleUntilStation <= 2) {
 			if(!ticketCounters.generatedPassengers) {
 				ticketCounters.generatedPassengers = true;
-
 			}
 
 			if(ticketCounters.cycleUntilStation <= 0) {
@@ -367,7 +391,15 @@ async function minigameTicketsGame() {
 
 		if(ticketCounters.cycleUntilStation === 0 && ticketCounters.speed <= 0 && ticketCounters.stationTime === -1) { 
 			ticketCounters.passedStation = true;
-			ticketCounters.stationTime = STATION_TIME_TICKS;
+
+			//new passengers
+			passengersAtStation = Math.random()*(ticketCounters.vehicleCapacity-ticketCounters.passengers.length);
+
+			//sum of new passengers at station and the ones leaving
+			ticketCounters.stationTime = 
+				ticketCounters.passengers.filter(v => v.stationsRemaining === 0).length+
+				passengersAtStation
+			;
 			console.log("Arrived In station - ", ticketCounters.stationTime);
 
 			for(let p of ticketCounters.passengers) {
@@ -387,8 +419,13 @@ async function minigameTicketsGame() {
 			ticketCounters.stationTime -= 1;
 			console.log("In station - ", ticketCounters.stationTime);
 
+			//remove 1 who exits at station
+
 			//generate new passenger
 			ticketCounters.passengers.push(new TicketPassenger());
+			ticketCounters.passengers[ticketCounters.passengers.length-1].moveTo(
+				ticketCounters.vehiclePlaces[ticketCounters.passengers.length-1][0],
+			);
 		}
 	}, 12.5);
 
